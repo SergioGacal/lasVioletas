@@ -7,8 +7,10 @@
     <title>Las Violetas Fiambrería</title>
     <style>
         * {
-            background-color: #debdf0;
+            padding: 0;
+            margin: 0;
         }
+
 
         .ListadoStock {
             max-width: 100%;
@@ -18,6 +20,7 @@
         .tabla-stock {
             width: 414px;
             border-collapse: collapse;
+            background-color:#debdf0;
         }
 
         .tabla-stock th,
@@ -36,8 +39,12 @@
         .tabla-stock td:nth-child(4) {
             white-space: nowrap;
         }
+        h1,
+        .filtros{
+            background-color: black;
+            color: #debdf0;
+        }
     </style>
-
 </head>
 
 <body>
@@ -48,7 +55,7 @@
             <div class="filtros">
                 <div class="filtroFechaStock">
                     <br>
-                    <label for="filtroFechaStock">Fecha:</label>
+                    <label for="filtroFechaStock">Fecha: </label>
                     <select id="filtroFechaStock" v-model="filtroFechaStock">
                         <option value=""></option>
                         <option value="todos">Todos</option>
@@ -57,7 +64,7 @@
                 </div>
                 <div class="filtroProveedorStock">
                     <br>
-                    <label for="filtroProveedorStock">Proveedor:</label>
+                    <label for="filtroProveedorStock">Proveedor: </label>
                     <select id="filtroProveedorStock" v-model="filtroProveedor">
                         <option value=""></option>
                         <option v-for="proveedor in proveedores" :key="proveedor.idProveedor"
@@ -65,7 +72,7 @@
                             {{ proveedor.nombreProveedor }}
                         </option>
                     </select>
-                </div>
+                </div><br>
             </div>
             <table class="tabla-stock" v-if="stocksFiltrados.length > 0">
                 <br>

@@ -1,0 +1,174 @@
+.main {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #debdf0;
+}
+.panel {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #050801;
+    font-family: 'Raleway',sans-serif;
+    font-weight: bold;
+
+}
+.titulo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    background-color: black;
+}
+h1 {
+    margin: 0;
+    padding: 0;
+    background-color:black;
+    text-align: center;
+    color:   #debdf0;
+    font-size: 3rem;
+}
+
+table {
+    border-collapse: collapse;
+    width: auto;
+}
+th,
+td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid violet;
+}
+.imagen4x4 {
+    height: 80px;
+}
+.imagen3x3 {
+    height: 50px;
+}
+
+
+.fondo{
+    background-color: gold;
+}
+.botonVioleta {
+    position: relative;
+    display: inline-block;
+    padding: 25px 30px;
+    margin: 40px 0;
+    color: black;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: 0.5s;
+    letter-spacing: 4px;
+    overflow: hidden;
+    margin-right: 50px;
+}
+.botonVioleta:hover {
+    background: #debdf0;
+    color: #050801;
+    box-shadow: 0 0 5px #debdf0, 0 0 25px #debdf0, 0 0 50px #debdf0, 0 0 100px #debdf0;
+    -webkit-box-reflect: below 1px linear-gradient(transparent);
+}
+
+/* esto es para los colores de los botones, se divide 360 x la cantidad y sigo agregando */
+/* .botonVioleta:nth-child(1){
+    filter:hue-rotate(72deg);
+}
+.botonVioleta:nth-child(2){
+    filter:hue-rotate(144deg);
+}
+.botonVioleta:nth-child(3){
+    filter:hue-rotate(216deg);
+}
+.botonVioleta:nth-child(4){
+    filter:hue-rotate(288deg);
+}
+.botonVioleta:nth-child(5){
+    filter:hue-rotate(360deg);
+}
+ */
+.botonVioleta span {
+    position: absolute;
+    display: block;
+}
+.botonVioleta span:nth-child(1) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg,transparent,#21420F);
+    animation: animate1 1s linear infinite;
+}
+@keyframes animate1 {
+    0% {left: -100%;}
+    50%,
+    100% {left: 100%;}
+}
+
+.botonVioleta span:nth-child(2) {
+    top: -100%;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(180deg,transparent,#21420F);
+    animation: animate2 1s linear infinite;
+    animation-delay: 0.25s;
+}
+@keyframes animate2 {
+    0% {top: -100%;}
+    50%,
+    100% {top: 100%;}
+}
+
+.botonVioleta span:nth-child(3) {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(270deg,transparent,#21420F);
+    animation: animate3 1s linear infinite;
+    animation-delay: 0.50s;
+}
+@keyframes animate3 {
+    0% {right: -100%;}
+    50%,
+    100% {right: 100%;}
+}
+
+.botonVioleta span:nth-child(4) {
+    bottom: -100%;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(360deg,transparent,#21420F);
+    animation: animate4 1s linear infinite;
+    animation-delay: 0.75s;
+}
+@keyframes animate4 {
+    0% {bottom: -100%;}
+    50%,
+    100% {bottom: 100%;}
+}
+
+.botonVioleta2 {
+    color: white;
+    border-radius: 10px;
+    height: 50px;
+}
+.botonVioleta2:hover {
+    transform: scale(1.5);
+}
+
+input{
+    max-width: 100px;
+}
+
+/* 
+violeta #debdf0
+rosa #f003e9
+naranja #03e9f4
+verde #e9f003
+} */

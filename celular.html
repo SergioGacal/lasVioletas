@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Violetas Fiambrería</title>
+    <style>
+        * {
+            background-color: #debdf0;
+        }
+
+        .ListadoStock {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .tabla-stock {
+            width: 414px;
+            border-collapse: collapse;
+        }
+
+        .tabla-stock th,
+        .tabla-stock td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .tabla-stock th,
+        .tabla-stock td {
+            font-size: 18px;
+            padding: 6px;
+        }
+
+        .tabla-stock td:nth-child(4) {
+            white-space: nowrap;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="main" id="app">
+        <h1>Carga de Stock</h1>
+        <div class="ListadoStock">
+            <div class="filtros">
+                <div class="filtroFechaStock">
+                    <br>
+                    <label for="filtroFechaStock">Fecha:</label>
+                    <select id="filtroFechaStock" v-model="filtroFechaStock">
+                        <option value=""></option>
+                        <option value="todos">Todos</option>
+                        <option v-for="fecha in fechasStock" :key="fecha" :value="fecha">{{ fecha }}</option>
+                    </select>
+                </div>
+                <div class="filtroProveedorStock">
+                    <br>
+                    <label for="filtroProveedorStock">Proveedor:</label>
+                    <select id="filtroProveedorStock" v-model="filtroProveedor">
+                        <option value=""></option>
+                        <option v-for="proveedor in proveedores" :key="proveedor.idProveedor"
+                            :value="proveedor.idProveedor">
+                            {{ proveedor.nombreProveedor }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <table class="tabla-stock" v-if="stocksFiltrados.length > 0">
+                <br>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th></th>
+                        <th>Cantidad</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="stock in stocksFiltradosPorProveedor" :key="stock.fecha">
+                        <td>{{ obtenerDescripcionProducto(stock.idProducto) }}</td>
+                        <td><button @click="restarStock(stock)" v-if="stock.cantidad > 0.99">-</button></td>
+                        <td>{{ stock.cantidad }}</td>
+                        <td>
+                            <button @click="sumarStock(stock)">+</button>
+                            <button @click="sumarStock2(stock, 0.10)">+0.10</button>
+                            <button @click="sumarStock2(stock, 0.25)">+0.25</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p v-else-if="filtroFechaStock == ''"> </p>
+            <p v-else>No hay stock disponibles.</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="./js/main.js"></script>
+
+</body>
+
+</html>

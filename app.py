@@ -235,7 +235,7 @@ def crear_nuevo_stock(fechaN):
 @app.route('/stock/borrarStock/<fechaN>', methods=['GET'])
 def borrar_stock(fechaN):
     try:
-        sql = text("DELETE FROM lasVioletas.stock WHERE fecha ='" + fechaN + "';")
+        sql = text("DELETE FROM stock WHERE fecha ='" + fechaN + "';")
         db.session.execute(sql)
         db.session.commit()
         return jsonify({"message": "Registros borrados de la tabla Stock."})
@@ -259,8 +259,8 @@ def delete_stock(id, fecha):
 def crear_stock():
     idProducto = request.json['idProducto']
     fecha = request.json['fecha']
-    cantidad = None
-    cantidad2 = None
+    cantidad = 0
+    cantidad2 = 0
     nuevo_stock = Stock(fecha=fecha, idProducto=idProducto, cantidad=cantidad, cantidad2=cantidad2)
     db.session.add(nuevo_stock)
     db.session.commit()
@@ -396,7 +396,6 @@ def borrar_tipoproveedor(tipo):
     db.session.delete(tipo_borrar)
     db.session.commit()
     return f'Tipo proveedor borrado {tipo_borrar} '
-@app.route('/tipoproveedor/<tipo>',methods=['PUT'])
 
 #PROVEEDOR
 @app.route('/proveedores',methods=['GET'])

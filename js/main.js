@@ -716,6 +716,13 @@ const app = Vue.createApp({
                 decimal: ",",
             });
         },
+        formatoFecha(date) {
+            const parts = date.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return date; // Devuelve la fecha sin cambios si no está en el formato esperado
+        },
 
 
     },

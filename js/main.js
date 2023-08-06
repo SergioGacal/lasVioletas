@@ -38,7 +38,8 @@ const app = Vue.createApp({
                 observacion: '',
             },
             filtroFechaStock: '',
-            filtroProveedor: "",
+            filtroProveedor: '',
+            stocksFiltradosPorProveedor: '',
             nuevaFechaStock: '',
             fechaBorrarStock: '',
             productoModificable: {},
@@ -754,8 +755,16 @@ const app = Vue.createApp({
         fechasOrdenadasRporteEfectivo() {
             return this.reporteEfectivoFechasDisponibles.sort();
         },
-        stocksFiltradosPorProveedor() {
-            if (this.filtroProveedor) {
+        stocksFiltradosPorProveedorYFecha() {
+            if (this.filtroProveedor && this.filtroFechaStock) {
+              return this.stocks.filter((stock) => {
+                return this.productoProveedor.some(
+                  (producto) =>
+                    producto.idProducto === stock.idProducto &&
+                    producto.idProveedor === Number(this.filtroProveedor)
+                ) && stock.fecha === this.filtroFechaStock;
+              });
+            } else if (this.filtroProveedor) {
               return this.stocks.filter((stock) => {
                 return this.productoProveedor.some(
                   (producto) =>
@@ -763,10 +772,16 @@ const app = Vue.createApp({
                     producto.idProveedor === Number(this.filtroProveedor)
                 );
               });
+            } else if (this.filtroFechaStock) {
+              return this.stocks.filter((stock) => {
+                return stock.fecha === this.filtroFechaStock;
+              });
             } else {
               return this.stocks;
             }
-        },
+          },
+          
+          
     },
     mounted() {
         this.generaReporteEfectivo();

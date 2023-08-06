@@ -53,53 +53,55 @@
         <h1>Carga de Stock</h1>
         <div class="ListadoStock">
             <div class="filtros">
-                <div class="filtroFechaStock">
-                    <br>
-                    <label for="filtroFechaStock">Fecha: </label>
-                    <select id="filtroFechaStock" v-model="filtroFechaStock">
-                        <option value=""></option>
-                        <option value="todos">Todos</option>
-                        <option v-for="fecha in fechasStock" :key="fecha" :value="fecha">{{ formatoFecha(fecha) }}</option>
-                    </select>
-                </div>
-                <div class="filtroProveedorStock">
-                    <br>
-                    <label for="filtroProveedorStock">Proveedor: </label>
-                    <select id="filtroProveedorStock" v-model="filtroProveedor">
-                        <option value=""></option>
-                        <option v-for="proveedor in proveedores" :key="proveedor.idProveedor"
-                            :value="proveedor.idProveedor">
-                            {{ proveedor.nombreProveedor }}
-                        </option>
-                    </select>
-                </div><br>
-            </div>
-            <table class="tabla-stock" v-if="stocksFiltrados.length > 0">
+              <div class="filtroFechaStock">
                 <br>
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th></th>
-                        <th>Cantidad</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="stock in stocksFiltradosPorProveedor" :key="stock.fecha">
-                        <td>{{ obtenerDescripcionProducto(stock.idProducto) }}</td>
-                        <td><button @click="restarStock(stock)" v-if="stock.cantidad > 0.99">-</button></td>
-                        <td>{{ stock.cantidad }}</td>
-                        <td>
-                            <button @click="sumarStock(stock)">+</button>
-                            <button @click="sumarStock2(stock, 0.10)">+0.10</button>
-                            <button @click="sumarStock2(stock, 0.25)">+0.25</button>
-                        </td>
-                    </tr>
-                </tbody>
+                <label for="filtroFechaStock">Fecha: </label>
+                <select id="filtroFechaStock" v-model="filtroFechaStock">
+                  <option value=""></option>
+                  <option v-for="fecha in fechasStock" :key="fecha" :value="fecha">{{ formatoFecha(fecha) }}</option>
+                </select>
+              </div>
+              <div class="filtroProveedorStock">
+                <br>
+                <label for="filtroProveedorStock">Proveedor: </label>
+                <select id="filtroProveedorStock" v-model="filtroProveedor">
+                  <option value=""></option>
+                  <option v-for="proveedor in proveedores" :key="proveedor.idProveedor"
+                    :value="proveedor.idProveedor">
+                    {{ proveedor.nombreProveedor }}
+                  </option>
+                </select>
+              </div><br>
+            </div>
+            <table class="tabla-stock" v-if="stocksFiltradosPorProveedorYFecha.length > 0">
+              <br>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th></th>
+                  <th>Cantidad</th>
+                  <th></th>
+<!--                   <th></th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="stock in stocksFiltradosPorProveedorYFecha" :key="stock.fecha">
+                  <td>{{ obtenerDescripcionProducto(stock.idProducto) }}</td>
+                  <td><button @click="restarStock(stock)" v-if="stock.cantidad > 0.99">-</button></td>
+                  <td>{{ stock.cantidad }}</td>
+                  <td>
+                    <button @click="sumarStock(stock)">+</button>
+                    <button @click="sumarStock2(stock, 0.10)">+0.10</button>
+                    <button @click="sumarStock2(stock, 0.25)">+0.25</button>
+                  </td>
+<!--                   <td> {{stock.fecha}} </td> -->
+                </tr>
+              </tbody>
             </table>
             <p v-else-if="filtroFechaStock == ''"> </p>
             <p v-else>No hay stock disponibles.</p>
-        </div>
+          </div>
+          
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="./js/main.js"></script>

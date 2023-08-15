@@ -166,6 +166,10 @@ input{
     max-width: 100px;
 }
 
+.tablaCentro {
+    text-align: center;
+}
+
 /* 
 violeta #debdf0
 rosa #f003e9

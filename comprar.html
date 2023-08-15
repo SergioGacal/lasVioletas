@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprar</title>
+    <link rel="stylesheet" href="./css/estilos.css">
+</head>
+<body>
+    <div class="main" id="app">
+        <h2>Compras</h2>
+        <div class="ListadoStock">
+            <div class="filtros">
+              <div class="filtroFechaStock">
+                <br>
+                <label for="filtroFechaStock">Fecha: </label>
+                <select id="filtroFechaStock" v-model="filtroFechaStock">
+                  <option value=""></option>
+                  <option v-for="fecha in fechasStock" :key="fecha" :value="fecha">{{ formatoFecha(fecha) }}</option>
+                </select>
+              </div>
+              <div class="filtroProveedorStock">
+                <br>
+                <label for="filtroProveedorStock">Proveedor: </label>
+                <select id="filtroProveedorStock" v-model="filtroProveedor">
+                  <option value=""></option>
+                  <option v-for="proveedor in proveedores" :key="proveedor.idProveedor"
+                    :value="proveedor.idProveedor">
+                    {{ proveedor.nombreProveedor }}
+                  </option>
+                </select>
+              </div><br>
+            </div>
+            <table class="tabla-stock" v-if="stocksFiltradosPorProveedorYFecha.length > 0">
+              <br>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Lo que tengo</th>
+                  <th>Lo que necesito</th>
+                  <th>Lo que tengo que comprar</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="stock in stocksFiltradosPorProveedorYFecha" :key="stock.fecha">
+                  <td>{{ obtenerDescripcionProducto(stock.idProducto) }}</td>
+                  <td class="tablaCentro">{{ stock.cantidad }}</td>
+                  <td class="tablaCentro">{{stock.cantidad2}}</td>
+                  <td class="tablaCentro">{{ stock.cantidad2 - stock.cantidad }} </td>
+                </tr>
+              </tbody>
+            </table>
+            <p v-else-if="filtroFechaStock == ''"> </p>
+            <p v-else>No hay stock disponibles.</p>
+          </div>
+
+
+
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="./js/main.js"></script>
+
+</body>
+</html>

@@ -742,8 +742,10 @@ const app = Vue.createApp({
             if (this.nuevaFechaStock) {
                 fechasUnicas.push(this.nuevaFechaStock);
             }
+            const ultimas5Fechas = fechasUnicas.sort().reverse().slice(0, 5);
             console.log("fechas unicas " + fechasUnicas.sort());
-            return fechasUnicas.sort();
+            return ultimas5Fechas
+            /* return fechasUnicas.sort(); */ /* así estaba antes se modifica el 26/04/2024 */
         },
         stocksFiltrados() {
             if (this.filtroFechaStock === 'todos') {

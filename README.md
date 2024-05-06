@@ -10,6 +10,9 @@ Para facilitar el ingreso cuenta con un filtro por proveedor.
 Para ingresar las cantidades cuenta con botones '+' y '-' para digitar en el celular hasta completar la cantidad deseada.
 Asimismo se implementó una consulta que nos permite conocer las cantidades a reponer calculando por diferencia hasta completar el stock.
 
+## Mayo 2024
+Se está desarrollando administrador financiero para contar con un calendario de pagos en cuenta corriente. Con esto estaremos agregando una herramienta que permita visiulizar los pagos pendientes dentro de la aplicación integrando en una próxima versión el módulo de compras y proveedores.
+
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

@@ -116,7 +116,37 @@ def actualizar_medio_pago(idMedioPago):
     return jsonify({'message': 'Medio de pago actualizado correctamente'}), 200
 
 # MotivoGasto
-
+@app.route('/gasto/motivo_gasto/',methods=['GET'])
+def get_motivo_gasto():
+    motivos_gasto=MotivoGasto.query.all()
+    resultado = motivos_gasto_schema.dump(motivos_gasto)
+    return resultado
+@app.route('/gasto/motivo_gasto/<int:idMotivo>', methods=['DELETE'])
+def detete_motivo_gasto(idMotivo):
+    motivo_gasto = MotivoGasto.query.get(idMotivo)
+    if motivo_gasto:
+        descripcion = motivo_gasto.descripcion
+        db.session.delete(motivo_gasto)
+        db.session.commit()
+        return jsonify({'message': f'Motivo de gasto {descripcion} eliminado correctamente.'}), 200
+    else:
+        return jsonify({'error':'Motivo de gasto no encontrado'}),404
+@app.route('/gasto/motivo_gasto', methods=['POST'])
+def crear_motivo_gasto():
+    descripcion = request.json['descripcion']
+    nuevo_motivo_gasto = MotivoGasto(idMotivo=None, descripcion=descripcion)
+    db.session.add(nuevo_motivo_gasto)
+    db.session.commit()
+    return motivo_gasto_schema.jsonify(nuevo_motivo_gasto),200
+@app.route('/gasto/motivo_gasto/<int:idMotivo>', methods=['PUT'])
+def actualizar_motivo_gasto(idMotivo):
+    motivo_gasto = MotivoGasto.query.get(idMotivo)
+    data = request.json
+    if not motivo_gasto:
+        return jsonify({'message': 'Motivo de gasto no encontrado'}),404
+    motivo_gasto.descripcion = data.get('descripcion',motivo_gasto.descripcion)
+    db.session.commit()
+    return jsonify({'message': 'Motivo de gasto actualizado correctamente'}),200
 
 
 # Gasto

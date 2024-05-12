@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from marshmallow import Schema, fields
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 CORS(app)
@@ -148,9 +149,73 @@ def actualizar_motivo_gasto(idMotivo):
     db.session.commit()
     return jsonify({'message': 'Motivo de gasto actualizado correctamente'}),200
 
-
 # Gasto
+@app.route('/gasto/', methods=['GET'])
+def get_gastos():
+    gastos=Gasto.query.all()
+    resultado= gastos_schema.dump(gastos)
+    return resultado
+@app.route('/gasto/<int:idGasto>',methods=['DELETE'])
+def delete_gasto(idGasto):
+    gasto = Gasto.query.get(idGasto)
+    if gasto:
+        descripcion = f'ID: {gasto.idGasto}, Motivo: {gasto.observaciones}, Importe: {gasto.importe}, Fecha: {gasto.fecha_gasto}'
+        db.session.delete(gasto)
+        db.session.commit()
+        return jsonify({'message': f'Gasto {descripcion} eliminado correctamente'}),200
+    else:
+        return jsonify({'error':'Gasto no encontrado'}),404
+@app.route('/gasto/',methods=['POST'])
+def crear_gasto():
+    try:
+        idMotivo = request.json['idMotivo']
+        importe = request.json['importe']
+        fecha_gasto = request.json['fecha_gasto']
+        observaciones = request.json['observaciones']
+        nuevo_gasto = Gasto(idGasto=None,idMotivo=idMotivo,importe=importe,fecha_gasto=fecha_gasto,fecha_pago=None,pagado=False, saldo=importe,observaciones=observaciones)
+        db.session.add(nuevo_gasto)
+        db.session.commit()
+        return gasto_schema.jsonify(nuevo_gasto),200
+    except IntegrityError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/gasto/<int:idGasto>', methods=['PUT'])
+def modificar_gasto(idGasto):
+    gasto= Gasto.query.get(idGasto)
+    if not gasto:
+        return jsonify({'message': 'Gasto no encontrado'}),404
+    data = request.json
+    gasto.idMotivo = data.get('idMotivo', gasto.idMotivo)
+    gasto.importe = data.get('importe',gasto.importe)
+    gasto.fecha_gasto = data.get('fecha_gasto',gasto.fecha_gasto)
+    gasto.fecha_pago = data.get('fecha_pago',gasto.fecha_pago)
+    gasto.pagado = data.get('pagado', gasto.pagado)
+    gasto.saldo = data.get('saldo',gasto.saldo)
+    gasto.observaciones = data.get('observaciones', gasto.observaciones)
+    db.session.commit()
+    return gasto_schema.jsonify(gasto)
+    
 # Pago
+@app.route('/gasto/pago/<int:idPago>',methods=['GET'])
+def get_pago(idPago):
+    pago = Pago.query.get(idPago)
+    resultado = pago_schema.dump(pago)
+    return resultado
+@app.route('/gasto/pago/',methods=['GET'])
+def get_pagos():
+    pagos = Pago.query.all()
+    resultado = pagos_schema.dump(pagos)
+    return resultado
+@app.route('/gasto/pago/<int:idPago>',methods=['DELETE'])
+def delete_pago(idPago):
+    pago = Pago.query.get(idPago)
+    if not pago:
+        return jsonify({"error":"pago no encontrado"}),404
+    descripcion = f'pago {pago} eliminado correctamente' # poner algo más descriptivo.
+    db.session.delete(pago)
+    db.session.commit()
+    return jsonify({'message': descripcion})
 
 
 

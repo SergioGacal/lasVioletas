@@ -8,6 +8,7 @@ const app = Vue.createApp({
             motivo: '', 
             efectivo: [],
             proveedores: [],
+            proveedores2: [],
             tipoProveedor: [],
             productoProveedor: [],
             motivoSeleccionado: '',
@@ -105,6 +106,16 @@ const app = Vue.createApp({
                 .then(data => {
                     this.proveedores = data;
                     //console.log('Proveedores cargados: ', data)
+                })
+                .catch(error => {
+                    console.error('Error al cargar los proveedores', error);
+                });
+        },
+        cargarProveedores2() {
+            fetch(this.url + 'proveedores2')
+                .then(response => response.json())
+                .then(data => {
+                    this.proveedores2 = data;
                 })
                 .catch(error => {
                     console.error('Error al cargar los proveedores', error);
@@ -729,6 +740,7 @@ const app = Vue.createApp({
     },
     created() {
         this.cargarProveedores();
+        this.cargarProveedores2();
         this.cargarStock();
         this.cargarProductos();
         this.cargarMotivos();

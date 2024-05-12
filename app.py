@@ -403,6 +403,12 @@ def ver_proveedores():
     proveedores=Proveedor.query.all()
     resultado=proveedores_schema.dump(proveedores)
     return jsonify(resultado)
+@app.route('/proveedores2',methods=['GET'])
+def ver_proveedores2():
+    ids_proveedores_con_productos = [relacion.idProveedor for relacion in ProductoProveedor.query.all()]
+    proveedores_con_productos = Proveedor.query.filter(Proveedor.idProveedor.in_(ids_proveedores_con_productos)).all()
+    resultado = proveedores_schema.dump(proveedores_con_productos)
+    return jsonify(resultado)
 @app.route('/proveedores',methods=['POST'])
 def crear_proveedor():
     nombreProveedor=request.json['nombreProveedor']

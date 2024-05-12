@@ -66,7 +66,7 @@
                 <label for="filtroProveedorStock">Proveedor: </label>
                 <select id="filtroProveedorStock" v-model="filtroProveedor">
                   <option value=""></option>
-                  <option v-for="proveedor in proveedores" :key="proveedor.idProveedor"
+                  <option v-for="proveedor in proveedores2" :key="proveedor.idProveedor"
                     :value="proveedor.idProveedor">
                     {{ proveedor.nombreProveedor }}
                   </option>

@@ -12,7 +12,7 @@ Asimismo se implementó una consulta que nos permite conocer las cantidades a re
 
 ## Mayo 2024
 Se está desarrollando administrador financiero para contar con un calendario de pagos en cuenta corriente. Con esto estaremos agregando una herramienta que permita visiulizar los pagos pendientes dentro de la aplicación integrando en una próxima versión el módulo de compras y proveedores.
-
+El usuario identificó que los proveedores sin productos asociados aparecian en la pantalla de carga de stock (en el combo de selección de proveedor). Se corrigió generando una nueva varieble para para mostrar en el filtro de esta pantalla solo los proveedores que tienen productos en stock.
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

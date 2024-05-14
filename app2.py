@@ -157,14 +157,21 @@ def get_gastos():
     return resultado
 @app.route('/gasto/<int:idGasto>',methods=['DELETE'])
 def delete_gasto(idGasto):
-    gasto = Gasto.query.get(idGasto)
-    if gasto:
-        descripcion = f'ID: {gasto.idGasto}, Motivo: {gasto.observaciones}, Importe: {gasto.importe}, Fecha: {gasto.fecha_gasto}'
-        db.session.delete(gasto)
-        db.session.commit()
-        return jsonify({'message': f'Gasto {descripcion} eliminado correctamente'}),200
-    else:
-        return jsonify({'error':'Gasto no encontrado'}),404
+    try:
+        pago_asociado = Pago.query.filter_by(idGasto=idGasto).first()
+        if pago_asociado:
+            id_pago_asociado = pago_asociado.idPago
+            return jsonify({'error': f'No se puede eliminar el gasto {idGasto} porque tiene pagos asociados. Elimine primero el pago {id_pago_asociado}'}), 409
+        gasto = Gasto.query.get(idGasto)
+        if not gasto:
+            return jsonify({'error':'Gasto no encontrado'}),404
+        else:
+            descripcion = f'ID: {gasto.idGasto}, Motivo: {gasto.observaciones}, Importe: {gasto.importe}, Fecha: {gasto.fecha_gasto}'
+            db.session.delete(gasto)
+            db.session.commit()
+            return jsonify({'message': f'Gasto {descripcion} eliminado correctamente'}),200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 @app.route('/gasto/',methods=['POST'])
 def crear_gasto():
     try:
@@ -255,6 +262,9 @@ def anular_pago(idPago):
         gasto.saldo += pago.monto_pago
         db.session.delete(pago)
         db.session.commit()
+        if gasto.saldo == gasto.importe:
+            gasto.fecha_pago = None
+            db.session.commit()
         return jsonify({'message': f'Anulación de pago {idPago} realizada correctamente'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500

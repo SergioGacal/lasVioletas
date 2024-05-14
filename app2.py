@@ -182,7 +182,7 @@ def crear_gasto():
         return jsonify({'error': str(e)}), 500
 @app.route('/gasto/<int:idGasto>', methods=['PUT'])
 def modificar_gasto(idGasto):
-    gasto= Gasto.query.get(idGasto)
+    gasto= Gasto.Session.get(idGasto)
     if not gasto:
         return jsonify({'message': 'Gasto no encontrado'}),404
     data = request.json
@@ -207,15 +207,58 @@ def get_pagos():
     pagos = Pago.query.all()
     resultado = pagos_schema.dump(pagos)
     return resultado
-@app.route('/gasto/pago/<int:idPago>',methods=['DELETE'])
+@app.route('/gasto/pago/<int:idPago>',methods=['DELETE']) # Este no lo tendríamos que usar porque no anula el pago en la tabla Gasto. Se deja por si es necesario limpiar pagos que no impactaron en Gasto.
 def delete_pago(idPago):
     pago = Pago.query.get(idPago)
     if not pago:
         return jsonify({"error":"pago no encontrado"}),404
-    descripcion = f'pago {pago} eliminado correctamente' # poner algo más descriptivo.
+    descripcion = f'pago {pago} eliminado correctamente'
     db.session.delete(pago)
     db.session.commit()
     return jsonify({'message': descripcion})
+@app.route('/gasto/pago/pagar/<int:idGasto>', methods=['POST'])
+def crear_pago(idGasto):
+    gasto = Gasto.query.get(idGasto)
+    monto_pago = request.json['monto_pago']
+    fecha_pago = request.json['fecha_pago']
+    idMedioPago = request.json['idMedioPago']
+    observaciones = request.json['observaciones']
+    if gasto:
+        pagado_gasto = gasto.pagado
+        saldo_gasto = gasto.saldo
+    else:
+        return jsonify({'error': f'Gasto {idGasto} no encontrado'}), 404
+    if pagado_gasto or saldo_gasto < monto_pago:
+        return jsonify({'error': 'El gasto ya fue cancelado o el importe de pago es mayor al saldo'}), 405
+    try:
+        nuevoPago = Pago(idPago=None, idGasto=idGasto, monto_pago=monto_pago, fecha_pago=fecha_pago, idMedioPago=idMedioPago, observaciones=observaciones)
+        db.session.add(nuevoPago)
+        db.session.commit()
+        gasto.fecha_pago = fecha_pago
+        gasto.saldo -= monto_pago
+        if gasto.saldo == 0:
+            gasto.pagado = True
+        db.session.commit()
+        return jsonify({'message': 'Pago creado correctamente'}), 200
+    except IntegrityError as e:
+        return jsonify({'error': str(e)}), 400
+@app.route('/gasto/pago/anular/<int:idPago>', methods=['DELETE'])
+def anular_pago(idPago):
+    try:
+        pago = Pago.query.get(idPago)
+        if not pago:
+            return jsonify({'error': f'Pago {idPago} no encontrado'}), 404
+        gasto = Gasto.query.get(pago.idGasto)
+        if not gasto:
+            return jsonify({'error': f'Gasto asociado al pago {idPago} no encontrado'}), 404
+        gasto.pagado = False
+        gasto.saldo += pago.monto_pago
+        db.session.delete(pago)
+        db.session.commit()
+        return jsonify({'message': f'Anulación de pago {idPago} realizada correctamente'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 
 

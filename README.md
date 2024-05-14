@@ -11,7 +11,9 @@ Para ingresar las cantidades cuenta con botones '+' y '-' para digitar en el cel
 Asimismo se implementó una consulta que nos permite conocer las cantidades a reponer calculando por diferencia hasta completar el stock.
 
 ## Mayo 2024
-Se está desarrollando administrador financiero para contar con un calendario de pagos en cuenta corriente. Con esto estaremos agregando una herramienta que permita visiulizar los pagos pendientes dentro de la aplicación integrando en una próxima versión el módulo de compras y proveedores.
+Se está desarrollando administrador financiero para contar con un calendario de pagos en cuenta corriente. Con esto estaremos agregando una herramienta que permita visiulizar los pagos pendientes dentro de la aplicación integrando en una próxima versión el módulo de compras y proveedores.<br>
+Se genera la primer implementación en el backend del administrador financiero. Esta contempla gastos y pagos con sus endpoints de consulta, alta, baja y eliminación como también tablas relacionadas de tipos de gasto y medios de pago.
+<br>
 El usuario identificó que los proveedores sin productos asociados aparecian en la pantalla de carga de stock (en el combo de selección de proveedor). Se corrigió generando una nueva varieble para para mostrar en el filtro de esta pantalla solo los proveedores que tienen productos en stock.
 
 ## Tecnologías Utilizadas

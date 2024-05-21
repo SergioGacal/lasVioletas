@@ -8,6 +8,7 @@ from datetime import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 from sqlalchemy.exc import IntegrityError
+from decimal import Decimal
 
 app=Flask(__name__)
 CORS(app)
@@ -689,7 +690,7 @@ def delete_pago(idPago):
 @app.route('/gasto/pago/pagar/<int:idGasto>', methods=['POST'])
 def crear_pago(idGasto):
     gasto = Gasto.query.get(idGasto)
-    monto_pago = request.json['monto_pago']
+    monto_pago = Decimal(request.json['monto_pago'])
     fecha_pago = request.json['fecha_pago']
     idMedioPago = request.json['idMedioPago']
     observaciones = request.json['observaciones']
@@ -706,7 +707,8 @@ def crear_pago(idGasto):
         db.session.commit()
         gasto.fecha_pago = fecha_pago
         gasto.saldo -= monto_pago
-        if gasto.saldo == 0:
+        if gasto.saldo <  0.01:
+            gasto.saldo = 0
             gasto.pagado = True
         db.session.commit()
         return jsonify({'message': 'Pago creado correctamente'}), 200

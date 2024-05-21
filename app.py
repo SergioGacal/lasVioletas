@@ -642,7 +642,10 @@ def crear_gasto():
         idMotivo = request.json['idMotivo']
         importe = request.json['importe']
         fecha_gasto = request.json['fecha_gasto']
-        observaciones = request.json['observaciones']
+        if 'observaciones' in request.json and request.json['observaciones'] is not None:
+            observaciones = request.json['observaciones']
+        else:
+            observaciones = ''
         nuevo_gasto = Gasto(idGasto=None,idMotivo=idMotivo,importe=importe,fecha_gasto=fecha_gasto,fecha_pago=None,pagado=False, saldo=importe,observaciones=observaciones)
         db.session.add(nuevo_gasto)
         db.session.commit()

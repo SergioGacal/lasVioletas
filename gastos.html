@@ -16,31 +16,32 @@
         </div>
         <div class="informacion">
             <div class="panel">
-                <p>espacio para los filtros y menúes</p>
-                <div>
-                    <label for="filtroMotivo">Filtrar por Motivo:</label>
+                <p>Seleccione:</p>
+                <div class="filter-group">
+                    <label for="filtroMotivo">Motivo:</label>
                     <select v-model="filtroMotivo" id="filtroMotivo">
                         <option value="">Todos</option>
                         <option v-for="motivo in motivosGasto" :key="motivo.idMotivo" :value="motivo.descripcion">{{ motivo.descripcion }}</option>
                     </select>
                 </div>
-                <div>
-                    <label for="filtroFechaDesde">Filtrar por Fecha Desde:</label>
+                <div class="filter-group">
+                    <label for="filtroFechaDesde">Desde:</label>
                     <input type="date" v-model="filtroFechaDesde" id="filtroFechaDesde">
-                </div>
-                <div>
-                    <label for="filtroFechaHasta">Filtrar por Fecha Hasta:</label>
+                    <label for="filtroFechaHasta">Hasta:</label>
                     <input type="date" v-model="filtroFechaHasta" id="filtroFechaHasta">
                 </div>
-                <button @click="filtroPagos = filtroPagos === 0 ? 1 : 0; if (filtroPagado === 0 && filtroPagos === 1) filtroPagado = 2;">
-                    {{ filtroPagos === 0 ? 'Mostrar Pagos' : 'Ocultar Pagos' }}
-                </button>
-                <button @click="filtroPagado = (filtroPagado + 1) % 3">
-                    Mostrar: {{ filtroPagado === 0 ? 'No Pagados' : filtroPagado === 1 ? 'Pagados' : 'Todos' }}
-                </button>
-                <button @click="resetFiltros">Reset</button> <!-- Botón Reset -->
-                <button @click="mostrarFormulario = !mostrarFormulario">Nuevo Gasto</button> <!-- Botón Nuevo Gasto -->
+                <div class="button-group">
+                    <button @click="filtroPagos = filtroPagos === 0 ? 1 : 0; if (filtroPagado === 0 && filtroPagos === 1) filtroPagado = 2;">
+                        {{ filtroPagos === 0 ? 'Mostrar Pagos' : 'Ocultar Pagos' }}
+                    </button>
+                    <button @click="filtroPagado = (filtroPagado + 1) % 3">
+                        Mostrar: {{ filtroPagado === 0 ? 'No Pagados' : filtroPagado === 1 ? 'Pagados' : 'Todos' }}
+                    </button>
+                    <button @click="resetFiltros">Reset</button>
+                    <button @click="mostrarFormulario = !mostrarFormulario">Nuevo Gasto</button>
+                </div>
             </div>
+
             <div v-if="mostrarFormulario" class="formulario">
                 <h2>Nuevo Gasto</h2>
                 <form @submit.prevent="crearGasto">
@@ -62,12 +63,15 @@
                         <label for="observaciones">Observaciones:</label>
                         <textarea v-model="nuevoGasto.observaciones"></textarea>
                     </div>
-                    <button type="submit">Guardar</button>
-                    <button type="button" @click="mostrarFormulario = false">Cancelar</button>
+                    <div class="button-group">
+                        <button type="submit">Guardar</button>
+                        <button type="button" @click="mostrarFormulario = false">Cancelar</button>
+                    </div>
                 </form>
             </div>
+
             <div class="tablas">
-                <table border="1" width="auto">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>ID Gasto</th>
@@ -96,7 +100,7 @@
                             </tr>
                             <tr v-if="filtroPagos === 1 && pagos.some(pago => pago.idGasto === gasto.idGasto)" style="color: yellow;">
                                 <td colspan="8">
-                                    <table border="1" width="auto">
+                                    <table class="table">
                                         <thead>
                                             <tr>
                                                 <th>ID Pago</th>

@@ -74,7 +74,6 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>ID Gasto</th>
                             <th>Motivo</th>
                             <th>Importe</th>
                             <th>Fecha Gasto</th>
@@ -88,7 +87,6 @@
                     <tbody>
                         <template v-for="gasto in filtrarGastos" :key="gasto.idGasto">
                             <tr v-if="filtroPagado === 2 || (filtroPagado === 1 && gasto.pagado) || (filtroPagado === 0 && !gasto.pagado)">
-                                <td>{{ gasto.idGasto }}</td>
                                 <td>{{ gasto.motivoDescripcion }}</td>
                                 <td>{{ gasto.importe }}</td>
                                 <td>{{ gasto.fecha_gasto }}</td>
@@ -99,12 +97,10 @@
                                 <td></td>
                             </tr>
                             <tr v-if="filtroPagos === 1 && pagos.some(pago => pago.idGasto === gasto.idGasto)" style="color: yellow;">
-                                <td colspan="8">
+                                <td colspan="5">
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th>ID Pago</th>
-                                                <th>IdGasto</th>
                                                 <th>Fecha Pago</th>
                                                 <th>Monto Pago</th>
                                                 <th>Medio Pago</th>
@@ -113,8 +109,6 @@
                                         </thead>
                                         <tbody>
                                             <tr v-for="pago in pagos.filter(p => p.idGasto === gasto.idGasto)" :key="pago.idPago">
-                                                <td>{{ pago.idPago }}</td>
-                                                <td>{{ pago.idGasto }}</td>
                                                 <td>{{ pago.fecha_pago }}</td>
                                                 <td>{{ pago.monto_pago }}</td>
                                                 <td>{{ pago.idMedioPago }}</td>

@@ -717,6 +717,36 @@ def crear_pago(idGasto):
         return jsonify({'message': 'Pago creado correctamente'}), 200
     except IntegrityError as e:
         return jsonify({'error': str(e)}), 400
+@app.route('/gasto/pago/pago_total/<int:idGasto>', methods=['POST'])
+def pago_total(idGasto):
+    gasto = Gasto.query.get(idGasto)
+    if not gasto:
+        return jsonify({'error': f'Gasto {idGasto} no encontrado'}), 404
+    data = request.json
+    idMedioPago = data['idMedioPago']
+    fecha_pago = data['fecha_pago']
+    observaciones = data.get('observaciones', '')
+    if gasto.pagado or gasto.saldo == 0:
+        return jsonify({'error': 'El gasto ya está pagado o el saldo es cero'}), 405
+    monto_pago = gasto.saldo
+    try:
+        nuevoPago = Pago(
+            idPago=None,
+            idGasto=idGasto,
+            monto_pago=monto_pago,
+            fecha_pago=fecha_pago,
+            idMedioPago=idMedioPago,
+            observaciones=observaciones
+        )
+        db.session.add(nuevoPago)
+        db.session.commit()
+        gasto.fecha_pago = fecha_pago
+        gasto.saldo = 0
+        gasto.pagado = True
+        db.session.commit()
+        return jsonify({'message': 'Pago total realizado correctamente'}), 200
+    except IntegrityError as e:
+        return jsonify({'error': str(e)}), 400
 @app.route('/gasto/pago/anular/<int:idPago>', methods=['DELETE'])
 def anular_pago(idPago):
     try:

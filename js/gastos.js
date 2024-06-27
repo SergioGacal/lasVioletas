@@ -2,6 +2,7 @@ const app = Vue.createApp({
     data() {
         return {
             url: 'https://gacalsergio.pythonanywhere.com/',
+            //url: 'http://127.0.0.1:5000/',
             gastos: [], // traigo todos los gastos
             motivosGasto: [], // traigo motivos de los gastos
             pagos: [], // traigo los pagos
@@ -15,6 +16,21 @@ const app = Vue.createApp({
                 motivo: '',
                 importe: '',
                 fecha_gasto: '',
+                observaciones: ''
+            },
+            showPagoModal: false, // controlar el modal de pago
+            pagoData: { // datos del nuevo pago
+                idGasto: '',
+                monto_pago: '',
+                fecha_pago: '',
+                idMedioPago: '',
+                observaciones: ''
+            },
+            showPagoTotalModal: false, // controlar el modal de pago total
+            pagoTotalData: { // datos del pago total
+                idGasto: '',
+                fecha_pago: '',
+                idMedioPago: '',
                 observaciones: ''
             }
         };
@@ -103,6 +119,73 @@ const app = Vue.createApp({
             })
             .catch(error => {
                 console.error('Error al crear el gasto:', error);
+            });
+        },
+        openPagoModal(idGasto) {
+            this.pagoData.idGasto = idGasto;
+            this.pagoData.monto_pago = '';
+            this.pagoData.fecha_pago = '';
+            this.pagoData.idMedioPago = '';
+            this.pagoData.observaciones = '';
+            this.showPagoModal = true;
+        },
+        closePagoModal() {
+            this.showPagoModal = false;
+        },
+        crearPago() {
+            fetch(`${this.url}gasto/pago/pagar/${this.pagoData.idGasto}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.pagoData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    this.cargarGastos();
+                    this.cargarPagos();
+                    alert(data.message);
+                    this.closePagoModal();
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error al ingresar el pago:', error);
+            });
+        },
+        openPagoTotalModal(idGasto) {
+            this.pagoTotalData.idGasto = idGasto;
+            this.pagoTotalData.fecha_pago = '';
+            this.pagoTotalData.idMedioPago = '';
+            this.pagoTotalData.observaciones = '';
+            this.showPagoTotalModal = true;
+        },
+        closePagoTotalModal() {
+            this.showPagoTotalModal = false;
+        },
+        realizarPagoTotal() {
+            fetch(`${this.url}gasto/pago/pago_total/${this.pagoTotalData.idGasto}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.pagoTotalData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    this.cargarGastos();
+                    this.cargarPagos();
+                    alert(data.message);
+                    this.closePagoTotalModal();
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error al realizar el pago total:', error);
             });
         }
     },

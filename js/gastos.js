@@ -31,8 +31,9 @@ const app = Vue.createApp({
                 idGasto: '',
                 fecha_pago: '',
                 idMedioPago: '',
-                observaciones: ''
-            }
+                observaciones: '',
+            },
+            fechaPagoDefault: this.obtenerFechaActual()
         };
     },
     created() {
@@ -40,6 +41,15 @@ const app = Vue.createApp({
         this.cargarPagos();
     },
     methods: {
+        obtenerFechaActual() {
+            const today = new Date();
+            const year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            month = month < 10 ? '0' + month : month;
+            day = day < 10 ? '0' + day : day;
+            return `${year}-${month}-${day}`;
+        },
         cargarGastos() {
             fetch(this.url + 'gasto/motivo_gasto')
                 .then(response => response.json())
@@ -124,7 +134,7 @@ const app = Vue.createApp({
         openPagoModal(idGasto) {
             this.pagoData.idGasto = idGasto;
             this.pagoData.monto_pago = '';
-            this.pagoData.fecha_pago = '';
+            this.pagoData.fecha_pago = this.obtenerFechaActual();
             this.pagoData.idMedioPago = '';
             this.pagoData.observaciones = '';
             this.showPagoModal = true;
@@ -157,7 +167,7 @@ const app = Vue.createApp({
         },
         openPagoTotalModal(idGasto) {
             this.pagoTotalData.idGasto = idGasto;
-            this.pagoTotalData.fecha_pago = '';
+            this.pagoTotalData.fecha_pago = this.obtenerFechaActual();
             this.pagoTotalData.idMedioPago = '';
             this.pagoTotalData.observaciones = '';
             this.showPagoTotalModal = true;

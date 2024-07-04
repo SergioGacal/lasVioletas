@@ -15,7 +15,7 @@ const app = Vue.createApp({
             nuevoGasto: { // datos del nuevo gasto
                 motivo: '',
                 importe: '',
-                fecha_gasto: '',
+                fecha_gasto: this.obtenerFechaActual(),
                 observaciones: ''
             },
             showPagoModal: false, // controlar el modal de pago

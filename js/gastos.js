@@ -42,10 +42,14 @@ const app = Vue.createApp({
     },
     methods: {
         formatearNumero(valor) {
-            return valor.toLocaleString('es-ES', {
+            const numero = parseFloat(valor);
+            if (isNaN(numero)) {
+                return '';
+            }
+            return numero.toLocaleString('es-LA', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
-            }).replace('.', ',').replace(/,/g, '.').replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, '$1.');
+            });
         },
         obtenerFechaActual() {
             const today = new Date();

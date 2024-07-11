@@ -41,6 +41,12 @@ const app = Vue.createApp({
         this.cargarPagos();
     },
     methods: {
+        formatearNumero(valor) {
+            return valor.toLocaleString('es-ES', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).replace('.', ',').replace(/,/g, '.').replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, '$1.');
+        },
         obtenerFechaActual() {
             const today = new Date();
             const year = today.getFullYear();
@@ -101,9 +107,9 @@ const app = Vue.createApp({
                 day = '' + d.getDate(),
                 year = d.getFullYear();
 
-            if (month.length < 2) 
+            if (month.length < 2)
                 month = '0' + month;
-            if (day.length < 2) 
+            if (day.length < 2)
                 day = '0' + day;
 
             return [year, month, day].join('-');
@@ -121,15 +127,15 @@ const app = Vue.createApp({
                     observaciones: this.nuevoGasto.observaciones || ''
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                this.cargarGastos(); // Recargar la lista de gastos
-                this.mostrarFormulario = false; // Ocultar el formulario
-                this.nuevoGasto = { motivo: '', importe: '', fecha_gasto: '', observaciones: '' }; // Limpiar el formulario
-            })
-            .catch(error => {
-                console.error('Error al crear el gasto:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    this.cargarGastos(); // Recargar la lista de gastos
+                    this.mostrarFormulario = false; // Ocultar el formulario
+                    this.nuevoGasto = { motivo: '', importe: '', fecha_gasto: '', observaciones: '' }; // Limpiar el formulario
+                })
+                .catch(error => {
+                    console.error('Error al crear el gasto:', error);
+                });
         },
         openPagoModal(idGasto) {
             this.pagoData.idGasto = idGasto;
@@ -150,20 +156,20 @@ const app = Vue.createApp({
                 },
                 body: JSON.stringify(this.pagoData)
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    this.cargarGastos();
-                    this.cargarPagos();
-                    alert(data.message);
-                    this.closePagoModal();
-                } else if (data.error) {
-                    alert(data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error al ingresar el pago:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        this.cargarGastos();
+                        this.cargarPagos();
+                        alert(data.message);
+                        this.closePagoModal();
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al ingresar el pago:', error);
+                });
         },
         openPagoTotalModal(idGasto) {
             this.pagoTotalData.idGasto = idGasto;
@@ -183,20 +189,20 @@ const app = Vue.createApp({
                 },
                 body: JSON.stringify(this.pagoTotalData)
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    this.cargarGastos();
-                    this.cargarPagos();
-                    alert(data.message);
-                    this.closePagoTotalModal();
-                } else if (data.error) {
-                    alert(data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error al realizar el pago total:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        this.cargarGastos();
+                        this.cargarPagos();
+                        alert(data.message);
+                        this.closePagoTotalModal();
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al realizar el pago total:', error);
+                });
         }
     },
     computed: {

@@ -54,7 +54,7 @@ const app = Vue.createApp({
             fetch(this.url + 'gasto/motivo_gasto')
                 .then(response => response.json())
                 .then(data => {
-                    this.motivosGasto = data;
+                    this.motivosGasto = data.sort((a, b) => a.descripcion.localeCompare(b.descripcion));
                     fetch(this.url + 'gasto')
                         .then(response => response.json())
                         .then(gastos => {

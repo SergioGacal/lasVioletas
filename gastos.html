@@ -100,6 +100,7 @@
                                     <div class="button-group">
                                         <button v-if="!gasto.pagado" class="button" @click="openPagoTotalModal(gasto.idGasto)">Pago Total</button>
                                         <button v-if="!gasto.pagado" class="button" @click="openPagoModal(gasto.idGasto)">Ingresar Pago</button>
+                                        <button v-if="!tienePagosAsociados(gasto.idGasto)" class="button delete-button" @click="deleteGasto(gasto.idGasto)">Eliminar Gasto</button>
                                     </div>
                                 </td>
                                 

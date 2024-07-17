@@ -41,6 +41,37 @@ const app = Vue.createApp({
         this.cargarPagos();
     },
     methods: {
+        tienePagosAsociados(idGasto) {
+            return this.pagos.some(pago => pago.idGasto === idGasto);
+        },
+        deleteGasto(idGasto) {
+            if (confirm('¿Está seguro de que desea eliminar este gasto?')) {
+                fetch(`${this.url}gasto/${idGasto}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        alert(data.message);
+                        this.cargarGastos(); // Recargar la lista de gastos después de eliminar
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar el gasto:', error);
+                    alert('Ocurrió un error al intentar eliminar el gasto.');
+                });
+            }
+        },
         formatearNumero(valor) {
             const numero = parseFloat(valor);
             if (isNaN(numero)) {

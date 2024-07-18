@@ -7,6 +7,7 @@
     <title>Gastos y Pagos</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <link rel="stylesheet" href="./css/gastos.css">
+    <link rel="icon" type="image/png" href="./img/logo.png">
 </head>
 
 <body>
@@ -90,20 +91,23 @@
                             <tr
                                 v-if="filtroPagado === 2 || (filtroPagado === 1 && gasto.pagado) || (filtroPagado === 0 && !gasto.pagado)">
                                 <td>{{ gasto.motivoDescripcion }}</td>
-                                <td style="text-align: right;" >{{ formatearNumero(gasto.importe) }}</td>
+                                <td style="text-align: right;">{{ formatearNumero(gasto.importe) }}</td>
                                 <td>{{ gasto.fecha_gasto }}</td>
                                 <td>{{ gasto.fecha_pago }}</td>
                                 <td>{{ gasto.pagado ? 'Si' : 'No' }}</td>
-                                <td style="text-align: right;" >{{ formatearNumero(gasto.saldo) }}</td>
+                                <td style="text-align: right;">{{ formatearNumero(gasto.saldo) }}</td>
                                 <td>{{ gasto.observaciones }}</td>
                                 <td>
                                     <div class="button-group">
-                                        <button v-if="!gasto.pagado" class="button" @click="openPagoTotalModal(gasto.idGasto)">Pago Total</button>
-                                        <button v-if="!gasto.pagado" class="button" @click="openPagoModal(gasto.idGasto)">Ingresar Pago</button>
-                                        <button v-if="!tienePagosAsociados(gasto.idGasto)" class="button delete-button" @click="deleteGasto(gasto.idGasto)">Eliminar Gasto</button>
+                                        <button v-if="!gasto.pagado" class="button"
+                                            @click="openPagoTotalModal(gasto.idGasto)">Pago Total</button>
+                                        <button v-if="!gasto.pagado" class="button"
+                                            @click="openPagoModal(gasto.idGasto)">Ingresar Pago</button>
+                                        <button v-if="!tienePagosAsociados(gasto.idGasto)" class="button delete-button"
+                                            @click="deleteGasto(gasto.idGasto)">Eliminar Gasto</button>
                                     </div>
                                 </td>
-                                
+
 
 
                             </tr>
@@ -153,8 +157,11 @@
                         </div>
                         <div>
                             <label for="idMedioPago_total">Medio Pago:</label>
-                            <span>1-Efectivo 2-Santander 3-Ciudad 4-Mercado Pago 5-Cuenta DNI 6-Visa 7-Mastercard 8-American Express</span>
-                            <input type="number" v-model="pagoTotalData.idMedioPago" required>
+                            <select v-model="pagoTotalData.idMedioPago" required>
+                                <option v-for="medio in mediosPago" :key="medio.idMedioPago" :value="medio.idMedioPago">
+                                    {{ medio.descripcion }}
+                                </option>
+                            </select>
                         </div>
                         <div>
                             <label for="observaciones_total">Observaciones:</label>
@@ -184,8 +191,11 @@
                         </div>
                         <div>
                             <label for="idMedioPago">Medio Pago:</label>
-                            <span>1-Efectivo 2-Santander 3-Ciudad 4-Mercado Pago 5-Cuenta DNI 6-Visa 7-Mastercard 8-American Express</span>
-                            <input type="number" v-model="pagoData.idMedioPago" required>
+                            <select v-model="pagoData.idMedioPago" required>
+                                <option v-for="medio in mediosPago" :key="medio.idMedioPago" :value="medio.idMedioPago">
+                                    {{ medio.descripcion }}
+                                </option>
+                            </select>
                         </div>
                         <div>
                             <label for="observaciones">Observaciones:</label>

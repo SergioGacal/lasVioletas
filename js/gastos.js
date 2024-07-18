@@ -6,6 +6,7 @@ const app = Vue.createApp({
             gastos: [], // traigo todos los gastos
             motivosGasto: [], // traigo motivos de los gastos
             pagos: [], // traigo los pagos
+            mediosPago: [] , // traigo los medios de pago
             filtroPagos: 0, // 0 para ocultar pagos, 1 para mostrar pagos
             filtroPagado: 0, // 2 para todos, 1 para pagados, 0 para no pagados
             filtroMotivo: '', // filtro por motivo
@@ -39,8 +40,19 @@ const app = Vue.createApp({
     created() {
         this.cargarGastos();
         this.cargarPagos();
+        this.obtenerMediosPago();
     },
     methods: {
+        obtenerMediosPago() {
+            fetch(this.url + 'gasto/medio_pago/')
+                .then(response => response.json())
+                .then(data => {
+                    this.mediosPago = data;
+                })
+                .catch(error => {
+                    console.error('Error al obtener los medios de pago:', error);
+                });
+        },
         tienePagosAsociados(idGasto) {
             return this.pagos.some(pago => pago.idGasto === idGasto);
         },

@@ -53,6 +53,10 @@ const app = Vue.createApp({
                     console.error('Error al obtener los medios de pago:', error);
                 });
         },
+        obtenerDescripcionMedioPago(idMedioPago) {
+            const medio = this.mediosPago.find(m => m.idMedioPago === idMedioPago);
+            return medio ? medio.descripcion : 'Desconocido';
+        },
         tienePagosAsociados(idGasto) {
             return this.pagos.some(pago => pago.idGasto === idGasto);
         },

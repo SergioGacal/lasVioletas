@@ -127,7 +127,7 @@
                                             <tr v-for="pago in pagos.filter(p => p.idGasto === gasto.idGasto)"
                                                 :key="pago.idPago">
                                                 <td>{{ pago.fecha_pago }}</td>
-                                                <td>{{ pago.monto_pago }}</td>
+                                                <td style="text-align: right;">{{ formatearNumero(pago.monto_pago) }}</td>
                                                 <td>{{ obtenerDescripcionMedioPago(pago.idMedioPago) }}</td>
                                                 <td>{{ pago.observaciones }}</td>
                                             </tr>

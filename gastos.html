@@ -128,7 +128,7 @@
                                                 :key="pago.idPago">
                                                 <td>{{ pago.fecha_pago }}</td>
                                                 <td>{{ pago.monto_pago }}</td>
-                                                <td>{{ pago.idMedioPago }}</td>
+                                                <td>{{ obtenerDescripcionMedioPago(pago.idMedioPago) }}</td>
                                                 <td>{{ pago.observaciones }}</td>
                                             </tr>
                                             <tr v-if="pagos.filter(p => p.idGasto === gasto.idGasto).length === 0">

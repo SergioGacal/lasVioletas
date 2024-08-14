@@ -136,8 +136,19 @@ class Pago(db.Model):
     gasto = db.relationship('Gasto', backref=db.backref('pagos', lazy=True))
     medio_pago = db.relationship('MedioPago', backref=db.backref('pagos', lazy=True))
 
-
-
+class Balanza(db.Model):
+    idBalanza = db.Column(db.Integer, primary_key=True, autoincrement=False)
+    nombre1 = db.Column(db.String(50), nullable=True)
+    nombre2 = db.Column(db.String(50), nullable=True)
+    precio = db.Column(db.Integer, nullable=False)
+    concertado = db.Column(db.Boolean, default=False)
+    def __init__(self, idBalanza, precio, nombre1=None, nombre2=None, concertado=False):
+        self.idBalanza = idBalanza
+        self.nombre1 = nombre1
+        self.nombre2 = nombre2
+        self.precio = precio
+        self.concertado = concertado
+ 
 with app.app_context():
     db.create_all()
 
@@ -194,6 +205,10 @@ class PagoSchema(ma.Schema):
     class Meta:
         fields=('idPago', 'idGasto', 'monto_pago', 'fecha_pago', 'idMedioPago', 'observaciones')
 
+class BalanzaSchema(ma.Schema):
+    class Meta:
+        fields = ('idBalanza', 'nombre1', 'nombre2', 'precio', 'concertado')
+
 producto_schema=ProductoSchema()
 productos_schema=ProductoSchema(many=True)
 stock_schema=StockSchema()
@@ -215,7 +230,8 @@ gasto_schema = GastoSchema()
 gastos_schema = GastoSchema(many=True)
 pago_schema = PagoSchema()
 pagos_schema = PagoSchema(many=True)
-
+balanza_schema = BalanzaSchema()
+balanzas_schema = BalanzaSchema(many=True)
 
 @app.route('/',methods=['GET'])
 def home():

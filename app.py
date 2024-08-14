@@ -783,8 +783,29 @@ def anular_pago(idPago):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Balanza
+@app.route('/balanza/<int:idBalanza>', methods=['GET'])
+def get_balanza(idBalanza):
+    balanza = Balanza.query.get(idBalanza)
+    resultado = balanza_schema.dump(balanza)
+    return resultado
+@app.route('/balanza/',methods=['GET'])
+def get_balanzas():
+    balanza = Balanza.query.all()
+    resultado = balanzas_schema.dump(balanza)
+    return resultado
+@app.route('/balanza/<idBalanza>', methods=['DELETE'])
+def delete_balanza(idBalanza):
+    balanza = Balanza.query.get(idBalanza)
+    if balanza:
+        db.session.delete(balanza)
+        db.session.commit()
+        return jsonify({'message': f'{balanza} eliminada correctamente'}), 200
+    else:
+        return jsonify({'error': 'Balanza no encontrada'}), 404
 
 
 
+    
 if __name__=='__main__':  
     app.run(debug=True, port=5000) 

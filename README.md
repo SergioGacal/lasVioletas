@@ -16,6 +16,13 @@ Se genera la primer implementación en el backend del administrador financiero. 
 <br>
 El usuario identificó que los proveedores sin productos asociados aparecian en la pantalla de carga de stock (en el combo de selección de proveedor). Se corrigió generando una nueva varieble para para mostrar en el filtro de esta pantalla solo los proveedores que tienen productos en stock.
 
+## Julio 2024
+Se finaliza la implementación de Administrador Financiero. El misom permite el registro (CRUD) de gastos, a estos se les pueden aplicar pagos parciales/totales. Permite clasificación por tipo y cuenta con filtros por fecha/tipo. Asimismo cada gasto puede desplegar los pagos asociados.
+
+## Agosto 2024
+Se comienza a desarrollar una nueva versión que permitirá contar con un módulo de compras que actualizará stock, gastos, calculará precios de venta y permitirá contar con una valuación de stock.
+El infoque que permitirá agregar soluciones parciales será por pequeños módulos desde back a front para probar funcionalidades en paralelo y realizar los ajustes necesarios para una mejor usabilidad.
+
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.
 - **HTML/CSS**: Lenguajes de marcado y estilos utilizados para estructurar y diseñar la interfaz de usuario.

@@ -665,7 +665,7 @@ def crear_gasto():
         nuevo_gasto = Gasto(idGasto=None,idMotivo=idMotivo,importe=importe,fecha_gasto=fecha_gasto,fecha_pago=None,pagado=False, saldo=importe,observaciones=observaciones)
         db.session.add(nuevo_gasto)
         db.session.commit()
-        return gasto_schema.jsonify(nuevo_gasto),200
+        return gasto_schema.jsonify(nuevo_gasto),201
     except IntegrityError as e:
         return jsonify({'error': str(e)}), 400
     except Exception as e:
@@ -794,7 +794,7 @@ def get_balanzas():
     balanza = Balanza.query.all()
     resultado = balanzas_schema.dump(balanza)
     return resultado
-@app.route('/balanza/<idBalanza>', methods=['DELETE'])
+@app.route('/balanza/<int:idBalanza>', methods=['DELETE'])
 def delete_balanza(idBalanza):
     balanza = Balanza.query.get(idBalanza)
     if balanza:
@@ -803,9 +803,37 @@ def delete_balanza(idBalanza):
         return jsonify({'message': f'{balanza} eliminada correctamente'}), 200
     else:
         return jsonify({'error': 'Balanza no encontrada'}), 404
-
-
-
+@app.route('/balanza/',methods=['POST'])
+def crear_balanza():
+    try:
+        idBalanza = request.json['idBalanza']
+        nombre1 = request.json['nombre1']
+        nombre2 = request.json['nombre2']
+        precio = request.json['precio']
+        concertado = request.json['concertado']
+        if Balanza.query.get(idBalanza):
+            return jsonify({'error': f'La balanza ya tiene el código {idBalanza} eliminelo para reutilizar'}), 409
+        else:
+            nueva_balanza = Balanza(idBalanza=idBalanza,nombre1=nombre1,nombre2=nombre2,precio=precio,concertado=concertado)
+            db.session.add(nueva_balanza)
+            db.session.commit()
+            return balanza_schema.jsonify(nueva_balanza),201
+    except IntegrityError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/balanza/<int:idBalanza>', methods=['PUT'])
+def modificar_balanza(idBalanza):
+    balanza = Balanza.query.get(idBalanza)
+    if not balanza:
+        return jsonify({'message': 'Balanza no encontrada'}),404
+    data = request.json
+    balanza.nombre1 = data.get('nombre1', balanza.nombre1)
+    balanza.nombre2 = data.get('nombre2', balanza.nombre2)
+    balanza.precio = data.get('precio', balanza.precio)
+    balanza.concertado = data.get('concertado', balanza.concertado)
+    db.session.commit()
+    return balanza_schema.jsonify(balanza)
     
 if __name__=='__main__':  
     app.run(debug=True, port=5000) 

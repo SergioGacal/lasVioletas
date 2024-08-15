@@ -54,6 +54,16 @@
             color: red;
             font-size: 1.2em;
         }
+        .dropdown-menu {
+            background-color: #000;
+        }
+        .dropdown-item {
+            color: #09cc0e;
+        }
+        .dropdown-item:hover {
+            background-color: #0033a0;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -74,6 +84,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Eliminar</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Filtros
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Novedades</a>
+                            <a class="dropdown-item" href="#">Concertados</a>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -86,7 +105,7 @@
                     <th>id</th>
                     <th>Nombre</th>
                     <th>Precio</th>
-                    <th>Concertado</th>
+                    <!-- <th>Concertado</th> -->
                 </tr>
             </thead>
             <tbody id="balanza-table-body">
@@ -108,9 +127,7 @@
                             <td>${balanza.idBalanza}</td>
                             <td>${balanza.nombre1}</td>
                             <td>${balanza.precio}</td>
-                            <td class="checkbox">
-                                ${balanza.concertado ? '<span class="checkmark">&#10004;</span>' : '<span class="cross">&#10060;</span>'}
-                            </td>
+                            <!-- <td class="checkbox">${balanza.concertado ? '<span class="checkmark">&#10004;</span>' : '<span class="cross">&#10060;</span>'}</td> -->
                         </tr>
                     `).join('');
                 })

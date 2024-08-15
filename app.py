@@ -148,6 +148,8 @@ class Balanza(db.Model):
         self.nombre2 = nombre2
         self.precio = precio
         self.concertado = concertado
+
+
  
 with app.app_context():
     db.create_all()

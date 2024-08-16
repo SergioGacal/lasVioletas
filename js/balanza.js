@@ -6,9 +6,41 @@ document.getElementById('cancel-btn').addEventListener('click', function() {
     document.getElementById('form-container').style.display = 'none';
 });
 
-const url = 'https://gacalsergio.pythonanywhere.com/balanza';
+document.getElementById('balanza-form').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-document.addEventListener('DOMContentLoaded', function() {
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+    data.concertado = formData.get('concertado') === 'on';
+    data.nombre2 = formData.get('nombre2') || "";
+    const url = 'https://gacalsergio.pythonanywhere.com/'
+
+    fetch(url + 'balanza/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(`Error: ${data.error}`);
+        } else {
+            alert('Balanza agregada exitosamente');
+            document.getElementById('balanza-form').reset();
+            document.getElementById('form-container').style.display = 'none';
+            updateTable();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Hubo un problema con la solicitud.');
+    });
+});
+
+function updateTable() {
+    const url = 'https://gacalsergio.pythonanywhere.com/balanza';
     fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -23,4 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `).join('');
         })
         .catch(error => console.error('Error:', error));
-});
+}
+
+document.addEventListener('DOMContentLoaded', updateTable);

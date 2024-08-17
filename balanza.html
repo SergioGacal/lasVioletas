@@ -26,6 +26,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="eliminar-btn">Eliminar</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="editar-btn">Editar</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Filtros
@@ -41,6 +44,7 @@
     </nav>
 
     <div class="container">
+        <!-- Formulario de agregar -->
         <div class="form-container hidden" id="form-container">
             <form id="balanza-form">
                 <div class="form-group">
@@ -64,9 +68,9 @@
             </form>
         </div>
 
+        <!-- Formulario para eliminar -->
         <div class="form-container hidden" id="delete-form-container">
             <div class="form-group">
-                <label for="delete-select">Selecciona el código para eliminar:</label>
                 <select id="delete-select" class="form-control">
                     <!-- Opciones se llenarán con JavaScript -->
                 </select>
@@ -74,6 +78,31 @@
             <button id="delete-btn" class="btn btn-danger">Eliminar</button>
             <button type="button" class="btn btn-secondary" id="cancel-delete-btn">Cancelar</button>
             <div id="response-message" class="mt-3"></div>
+        </div>
+
+        <!-- Formulario de edición -->
+        <div class="form-container hidden" id="edit-form-container">
+            <div class="form-group">
+                <select id="edit-select" class="form-control">
+                    <!-- Opciones se llenarán con JavaScript -->
+                </select>
+            </div>
+            <form id="edit-form" style="display:none;">
+                <div class="form-group">
+                    <label for="edit-nombre1">Nombre</label>
+                    <input type="text" class="form-control" id="edit-nombre1" name="nombre1" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-precio">Precio</label>
+                    <input type="number" class="form-control" id="edit-precio" name="precio" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="edit-concertado" name="concertado">
+                    <label for="edit-concertado">Concertado</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-secondary" id="cancel-edit-btn">Cancelar</button>
+            </form>
         </div>
 
         <table class="table table-striped">

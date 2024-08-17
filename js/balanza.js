@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                alert('Balanza agregada exitosamente');
+                //alert('Balanza agregada exitosamente');
                 document.getElementById('balanza-form').reset();
                 document.getElementById('form-container').style.display = 'none';
                 updateTable();
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
-                alert(`Balanza ${idBalanza} eliminada con éxito`);
+                //alert(`Balanza ${idBalanza} eliminada con éxito`);
                 document.getElementById('delete-form-container').style.display = 'none';
                 loadOptions(); // Volver a cargar opciones si es necesario
                 updateTable();
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            alert(`Balanza ${data.idBalanza} modificada con éxito`);
+            //alert(`Balanza ${data.idBalanza} modificada con éxito`);
             document.getElementById('edit-form').style.display = 'none';
             document.getElementById('edit-select').value = ''; // Resetear selección
             updateTable();

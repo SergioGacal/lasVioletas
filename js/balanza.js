@@ -195,6 +195,88 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    document.getElementById('filtros-novedades').addEventListener('click', function() {
+        // Ocultar la tabla principal
+        document.getElementById('balanza-table').style.display = 'none';
+        
+        // Mostrar la tabla de novedades
+        document.getElementById('novedades-table').style.display = 'table';
+        
+        // Mostrar los botones
+        document.getElementById('novedades-buttons').style.display = 'block';
+    
+        // Llamar a la función para cargar los datos de novedades
+        loadNovedades();
+    });
+    
+    // Manejar el clic en el botón de cancelar
+    document.getElementById('cancel-novedades-btn').addEventListener('click', function() {
+        // Ocultar la tabla de novedades
+        document.getElementById('novedades-table').style.display = 'none';
+        
+        // Ocultar los botones
+        document.getElementById('novedades-buttons').style.display = 'none';
+        
+        // Mostrar la tabla principal
+        document.getElementById('balanza-table').style.display = 'table';
+    });
+    
+    // Manejar el clic en el botón de eliminar novedades
+    document.getElementById('delete-novedades-btn').addEventListener('click', function() {
+        // Implementar la funcionalidad para eliminar novedades aquí
+        // Ejemplo: alert('Eliminar novedades');
+    });
+    function loadNovedades() {
+        fetch('https://gacalsergio.pythonanywhere.com/balanza/fitro/novedades')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('novedades-table-body');
+                tbody.innerHTML = ''; // Limpiar la tabla
+                
+                data.forEach(novedad => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${novedad.idBalanza}</td>
+                        <td>${novedad.nombre1}</td>
+                        <td>${novedad.precio}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un problema al cargar las novedades.');
+            });
+    }
+    
+    document.getElementById('delete-novedades-btn').addEventListener('click', function() {
+        fetch('https://gacalsergio.pythonanywhere.com/balanza/novedades/', {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.mensaje) {
+                //alert(data.mensaje); // Mostrar mensaje de éxito
+                console.log(data.mensaje)
+            } else if (data.error) {
+                alert(`Error: ${data.error}`); // Mostrar mensaje de error
+            }
+            // Ocultar la tabla de novedades y los botones
+            document.getElementById('novedades-table').style.display = 'none';
+            document.getElementById('novedades-buttons').style.display = 'none';
+            // Mostrar la tabla principal
+            document.getElementById('balanza-table').style.display = 'table';
+            // Opcional: Volver a cargar la tabla principal si es necesario
+            updateTable();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un problema con la solicitud.');
+        });
+    });
+    
+
+
     // Inicializar la tabla al cargar la página
     updateTable();
 });

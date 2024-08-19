@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cancelar formulario de edición
     document.getElementById('cancel-edit-btn').addEventListener('click', function() {
         document.getElementById('edit-form').style.display = 'none';
-        document.getElementById('edit-select').value = ''; // Resetear la selección
+        document.getElementById('edit-form-container').style.display = 'none';
     });
 
     // Enviar el formulario de agregar

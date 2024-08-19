@@ -149,7 +149,10 @@ class Balanza(db.Model):
         self.precio = precio
         self.concertado = concertado
 
-
+class NovedadBalanza(db.Model):
+    idNovedadBalanza = db.Column(db.Integer, primary_key=True, autoincrement=False)
+    def __init__(self,idNovedadBalanza):
+        self.idNovedadBalanza = idNovedadBalanza
  
 with app.app_context():
     db.create_all()
@@ -211,6 +214,11 @@ class BalanzaSchema(ma.Schema):
     class Meta:
         fields = ('idBalanza', 'nombre1', 'nombre2', 'precio', 'concertado')
 
+class NovedadBalanzaSchema(ma.Schema):
+    class Meta:
+        model = NovedadBalanza
+        fields = ("idNovedadBalanza",) 
+
 producto_schema=ProductoSchema()
 productos_schema=ProductoSchema(many=True)
 stock_schema=StockSchema()
@@ -234,6 +242,8 @@ pago_schema = PagoSchema()
 pagos_schema = PagoSchema(many=True)
 balanza_schema = BalanzaSchema()
 balanzas_schema = BalanzaSchema(many=True)
+NovedadBalanza_schema = NovedadBalanzaSchema()
+NovedadBalanzas_schema = NovedadBalanzaSchema(many=True)
 
 @app.route('/',methods=['GET'])
 def home():
@@ -817,8 +827,15 @@ def crear_balanza():
             return jsonify({'error': f'La balanza ya tiene el código {idBalanza} eliminelo para reutilizar'}), 409
         else:
             nueva_balanza = Balanza(idBalanza=idBalanza,nombre1=nombre1,nombre2=nombre2,precio=precio,concertado=concertado)
+            nueva_novedad_balanza = NovedadBalanza(idNovedadBalanza=idBalanza)
             db.session.add(nueva_balanza)
             db.session.commit()
+            try:
+                db.session.add(nueva_novedad_balanza)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                db.session.commit()
             return balanza_schema.jsonify(nueva_balanza),201
     except IntegrityError as e:
         return jsonify({'error': str(e)}), 400
@@ -828,14 +845,41 @@ def crear_balanza():
 def modificar_balanza(idBalanza):
     balanza = Balanza.query.get(idBalanza)
     if not balanza:
-        return jsonify({'message': 'Balanza no encontrada'}),404
-    data = request.json
-    balanza.nombre1 = data.get('nombre1', balanza.nombre1)
-    balanza.nombre2 = data.get('nombre2', balanza.nombre2)
-    balanza.precio = data.get('precio', balanza.precio)
-    balanza.concertado = data.get('concertado', balanza.concertado)
-    db.session.commit()
-    return balanza_schema.jsonify(balanza)
+        return jsonify({'message': 'Balanza no encontrada'}), 404
+    try:
+        data = request.json
+        balanza.nombre1 = data.get('nombre1', balanza.nombre1)
+        balanza.nombre2 = data.get('nombre2', balanza.nombre2)
+        balanza.precio = data.get('precio', balanza.precio)
+        balanza.concertado = data.get('concertado', balanza.concertado)
+        nueva_novedad_balanza = NovedadBalanza(idNovedadBalanza=idBalanza)
+        try:
+            db.session.add(nueva_novedad_balanza)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            db.session.commit()
+        return balanza_schema.jsonify(balanza)
+    except IntegrityError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Novedadbalanza
+@app.route('/balanza/novedades/', methods=['GET'])
+def get_novedadesBalanza():
+    novedades = NovedadBalanza.query.all()
+    resultado = NovedadBalanzas_schema.dump(novedades)
+    return resultado
+@app.route('/balanza/novedades/', methods=['DELETE'])
+def delete_novedadesBalanza():
+    try:
+        db.session.query(NovedadBalanza).delete()
+        db.session.commit()
+        return jsonify({'mensaje': 'Todos los registros borrados'}),200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500    
     
 if __name__=='__main__':  
     app.run(debug=True, port=5000) 

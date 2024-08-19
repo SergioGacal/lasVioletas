@@ -880,6 +880,14 @@ def delete_novedadesBalanza():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500    
+@app.route('/balanza/fitro/novedades', methods=['GET'])
+def get_novedades_balanza(): # trae los datos de balanza
+    try:
+        novedades = db.session.query(Balanza).join(NovedadBalanza, Balanza.idBalanza == NovedadBalanza.idNovedadBalanza).all()
+        resultado = balanzas_schema.dump(novedades)
+        return jsonify(resultado), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     
 if __name__=='__main__':  
     app.run(debug=True, port=5000) 

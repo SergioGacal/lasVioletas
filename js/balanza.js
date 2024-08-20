@@ -177,23 +177,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Función para actualizar la tabla
-    function updateTable() {
+    function updateTable(showConcertados = false) {
         fetch('https://gacalsergio.pythonanywhere.com/balanza')
             .then(response => response.json())
             .then(data => {
                 const tbody = document.getElementById('balanza-table-body');
                 tbody.innerHTML = ''; // Limpiar tabla
+    
                 data.forEach(balanza => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${balanza.idBalanza}</td>
-                        <td>${balanza.nombre1}</td>
-                        <td>${balanza.precio}</td>
-                    `;
-                    tbody.appendChild(row);
+                    // Si showConcertados es true, filtra para mostrar solo los concertados
+                    if (!showConcertados || balanza.concertado === true) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${balanza.idBalanza}</td>
+                            <td>${balanza.nombre1}</td>
+                            <td>${balanza.precio}</td>
+                        `;
+                        tbody.appendChild(row);
+                    }
                 });
             });
     }
+    
+    
 
     document.getElementById('filtros-novedades').addEventListener('click', function() {
         // Ocultar la tabla principal
@@ -275,7 +281,48 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    document.getElementById('filtros-concertados').addEventListener('click', function () {
+        updateTable(true); // Esto aplicará el filtro para mostrar solo los concertados
+    });
+    
 
+    function filterConcertados() {
+        fetch('https://gacalsergio.pythonanywhere.com/balanza')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('balanza-table-body');
+                tbody.innerHTML = ''; // Limpiar la tabla
+    
+                const filteredData = data.filter(balanza => balanza.concertado === true);
+    
+                filteredData.forEach(balanza => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${balanza.idBalanza}</td>
+                        <td>${balanza.nombre1}</td>
+                        <td>${balanza.precio}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+    
+                // Mostrar el botón "Mostrar todos"
+                document.getElementById('mostrar-todos-btn').style.display = 'block';
+            });
+    }
+    
+    function mostrarTodos() {
+        // Vuelve a mostrar todos los registros
+        updateTable();
+        // Ocultar el botón "Mostrar todos"
+        document.getElementById('mostrar-todos-btn').style.display = 'none';
+    }
+    
+    // Asignar la función al botón
+    document.getElementById('mostrar-todos-btn').addEventListener('click', mostrarTodos);
+    
+    document.getElementById('filtros-concertados').addEventListener('click', function() {
+        filterConcertados();
+    });
 
     // Inicializar la tabla al cargar la página
     updateTable();

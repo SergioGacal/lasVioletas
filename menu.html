@@ -62,7 +62,44 @@
             font-size: 1.5rem;
             margin: 0;
         }
+        .btn-custom {
+            display: block;
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+        }
     </style>
+    <script>
+        function enviarSolicitud() {
+            // Obtiene la fecha actual en formato YYYYMMDD
+            const fecha = new Date();
+            const anio = fecha.getFullYear();
+            const mes = ('0' + (fecha.getMonth() + 1)).slice(-2);
+            const dia = ('0' + fecha.getDate()).slice(-2);
+            const fechaN = anio + mes + dia;
+
+            // Construye la URL con la fecha
+            const url = `https://gacalsergio.pythonanywhere.com/stock/nuevoStock/${fechaN}`;
+
+            // Envía la solicitud GET
+            fetch(url, {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Muestra la respuesta en un alert
+                if (data.error && data.error.includes('Duplicate entry')) {
+                    alert('El stock ya estaba creado');
+                } else {
+                    alert('Respuesta: ' + JSON.stringify(data));
+                }
+            })
+            .catch(error => {
+                // Muestra el error en un alert
+                alert('Error: ' + error);
+            });
+        }
+    </script>
 </head>
 <body>
 
@@ -93,6 +130,12 @@
                 <p>Balanza</p>
             </div>
         </a>
+        <div class="menu-item" onclick="enviarSolicitud()">
+            <img src="img/nuevo_Stock.png" alt="Nuevo Stock">
+            <div class="overlay">
+                <p>Nuevo Stock</p>
+            </div>
+        </div>
     </div>
 </div>
 

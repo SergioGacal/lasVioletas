@@ -8,25 +8,59 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #030e44; /* Fondo oscuro */
+            background-color: #001f3f; /* Fondo azul oscuro */
             font-family: 'Poppins', sans-serif;
         }
         .title {
             text-align: center;
             margin-top: 20px;
             font-size: 2.5rem;
-            color: #dac4f8; /* Título en color lila claro */
+            color: #ff851b; /* Título en naranja brillante */
         }
-        .btn-custom {
-            background-color: #4ab1f0; /* Azul claro */
-            color: white;
-            border-radius: 25px;
-            margin: 10px 0;
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .menu-item {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .menu-item img {
             width: 100%;
-            font-size: 1.2rem;
+            height: auto;
+            display: block;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
         }
-        .btn-custom:hover {
-            background-color: #389cd3; /* Azul más oscuro para hover */
+        .menu-item:hover img {
+            transform: scale(1.1);
+        }
+        .menu-item .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 204, 64, 0.7); /* Verde lima */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 15px;
+        }
+        .menu-item:hover .overlay {
+            opacity: 1;
+        }
+        .menu-item .overlay p {
+            font-size: 1.5rem;
+            margin: 0;
         }
     </style>
 </head>
@@ -34,11 +68,31 @@
 
 <div class="container">
     <h1 class="title">Las Violetas</h1>
-    <div class="d-grid gap-2 mt-4">
-        <a href="https://sergiogacal.github.io/lasVioletas/celular.html" class="btn btn-custom">Cargar Stock</a>
-        <a href="https://sergiogacal.github.io/lasVioletas/comprar.html" class="btn btn-custom">Pedidos</a>
-        <a href="https://sergiogacal.github.io/lasVioletas/gastos.html" class="btn btn-custom">Gastos</a>
-        <a href="https://sergiogacal.github.io/lasVioletas/balanza.html" class="btn btn-custom">Balanza</a>
+    <div class="menu-grid">
+        <a href="https://sergiogacal.github.io/lasVioletas/celular.html" class="menu-item">
+            <img src="img/stock.jpeg" alt="Cargar Stock">
+            <div class="overlay">
+                <p>Cargar Stock</p>
+            </div>
+        </a>
+        <a href="https://sergiogacal.github.io/lasVioletas/comprar.html" class="menu-item">
+            <img src="img/pedidos.jpeg" alt="Pedidos">
+            <div class="overlay">
+                <p>Pedidos</p>
+            </div>
+        </a>
+        <a href="https://sergiogacal.github.io/lasVioletas/gastos.html" class="menu-item">
+            <img src="img/gastos.jpeg" alt="Gastos">
+            <div class="overlay">
+                <p>Gastos</p>
+            </div>
+        </a>
+        <a href="https://sergiogacal.github.io/lasVioletas/balanza.html" class="menu-item">
+            <img src="img/balanza.jpeg" alt="Balanza">
+            <div class="overlay">
+                <p>Balanza</p>
+            </div>
+        </a>
     </div>
 </div>
 

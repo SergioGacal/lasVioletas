@@ -153,6 +153,22 @@ class NovedadBalanza(db.Model):
     idNovedadBalanza = db.Column(db.Integer, primary_key=True, autoincrement=False)
     def __init__(self,idNovedadBalanza):
         self.idNovedadBalanza = idNovedadBalanza
+
+class Productos_x_proveedor(db.Model):
+    idProveedor = db.Column(db.Integer, db.ForeignKey('proveedor.idProveedor'), primary_key=True)
+    idProdXProv = db.Column(db.Integer, primary_key=True)
+    descripcion = db.Column(db.String(100))
+    medicion = db.Column(db.String(100),nullable=False)
+    divideX = db.Column(db.Numeric(10, 2),nullable=False)
+    OPCIONES_MEDICION = {'kilo', 'unidad'}
+    def __init__(self,idProveedor,idProdXProv,descripcion,medicion, divideX):
+        if medicion not in self.OPCIONES_MEDICION:
+            raise ValueError(f"Medición inválida: {medicion}. Opciones válidas son: {self.OPCIONES_MEDICION}")
+        self.idProveedor = idProveedor
+        self.idProdXProv = idProdXProv
+        self.descripcion = descripcion
+        self.medicion = medicion
+        self.divideX = divideX
  
 with app.app_context():
     db.create_all()
@@ -219,6 +235,10 @@ class NovedadBalanzaSchema(ma.Schema):
         model = NovedadBalanza
         fields = ("idNovedadBalanza",) 
 
+class Productos_x_proveedorSchema(ma.Schema):
+    class Meta:
+        fields = ('idProveedor','idProdXProv','descripcion','medicion', 'divideX')
+
 producto_schema=ProductoSchema()
 productos_schema=ProductoSchema(many=True)
 stock_schema=StockSchema()
@@ -242,8 +262,10 @@ pago_schema = PagoSchema()
 pagos_schema = PagoSchema(many=True)
 balanza_schema = BalanzaSchema()
 balanzas_schema = BalanzaSchema(many=True)
-NovedadBalanza_schema = NovedadBalanzaSchema()
-NovedadBalanzas_schema = NovedadBalanzaSchema(many=True)
+novedadBalanza_schema = NovedadBalanzaSchema()
+novedadBalanzas_schema = NovedadBalanzaSchema(many=True)
+producto_x_proveedor_schema = Productos_x_proveedorSchema()
+productos_x_proveedor_schemas = Productos_x_proveedorSchema(many=True)
 
 @app.route('/',methods=['GET'])
 def home():
@@ -869,7 +891,7 @@ def modificar_balanza(idBalanza):
 @app.route('/balanza/novedades/', methods=['GET'])
 def get_novedadesBalanza():
     novedades = NovedadBalanza.query.all()
-    resultado = NovedadBalanzas_schema.dump(novedades)
+    resultado = novedadBalanzas_schema.dump(novedades)
     return resultado
 @app.route('/balanza/novedades/', methods=['DELETE'])
 def delete_novedadesBalanza():
@@ -888,6 +910,88 @@ def get_novedades_balanza(): # trae los datos de balanza
         return jsonify(resultado), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+# productos_x_proveedor
+@app.route('/compras/productoxproveedor/<int:idProveedor>/<int:idProdxProv>', methods=['GET'])
+def get_pxp(idProveedor, idProdxProv):
+    producto_x_proveedor = Productos_x_proveedor.query.filter_by(idProveedor=idProveedor, idProdXProv=idProdxProv).first()
+    resultado = producto_x_proveedor_schema.dump(producto_x_proveedor)
+    if producto_x_proveedor is None:
+        return {"message": "Producto por proveedor no encontrado"}, 404
+    return resultado
+@app.route('/compras/productoxproveedor', methods=['GET'])
+def get_pxproveedores():
+    try:
+        pxproveedores = Productos_x_proveedor.query.all()
+        resultado = productos_x_proveedor_schemas.dump(pxproveedores)
+        return resultado
+    except Exception as e:
+        return {"message": str(e)}, 500
+@app.route('/compras/productoxproveedor/<int:idProveedor>/<int:idProdxProv>', methods=['DELETE'])
+def delete_pxp(idProveedor, idProdxProv):
+    try:
+        producto_x_proveedor = Productos_x_proveedor.query.filter_by(idProveedor=idProveedor, idProdXProv=idProdxProv).first()
+        if producto_x_proveedor is None:
+            return jsonify({'mensaje': 'Producto por proveedor no encontrado'}), 404
+        datos_eliminado = {
+            'idProveedor': producto_x_proveedor.idProveedor,
+            'idProdXProv': producto_x_proveedor.idProdXProv,
+            'descripcion': producto_x_proveedor.descripcion,
+            'medicion': producto_x_proveedor.medicion,
+            'divideX': str(producto_x_proveedor.divideX)
+        }
+        db.session.delete(producto_x_proveedor)
+        db.session.commit()
+        return jsonify({'mensaje': 'Borrado exitoso', 'datos': datos_eliminado}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+@app.route('/compras/productoxproveedor', methods=['POST'])
+def crear_pxp():
+    try:
+        idProveedor = request.json.get('idProveedor')
+        idProdXProv = request.json.get('idProdXProv')
+        descripcion = request.json.get('descripcion', '')
+        medicion = request.json.get('medicion')
+        divideX = request.json.get('divideX')
+        if idProveedor is None or idProdXProv is None or medicion is None or divideX is None:
+            return jsonify({'error': 'Faltan datos obligatorios: idProveedor, idProdXProv, medicion y divideX son requeridos.'}), 400
+        if Productos_x_proveedor.query.filter_by(idProveedor=idProveedor, idProdXProv=idProdXProv).first():
+            return jsonify({'error': f'Ya existe el producto {idProdXProv} para el proveedor {idProveedor}'}), 409
+        nuevo_pxp = Productos_x_proveedor(idProveedor=idProveedor,idProdXProv=idProdXProv,descripcion=descripcion,medicion=medicion, divideX=divideX)
+        db.session.add(nuevo_pxp)
+        db.session.commit()
+        return jsonify({'mensaje': 'Alta exitosa'}), 201
+    except IntegrityError as e:
+        if 'foreign key constraint fails' in str(e):
+            return jsonify({'error': 'El proveedor no existe. Por favor, asegúrate de que el idProveedor sea válido.'}), 400
+        return jsonify({'error': 'Error de integridad en la base de datos. Por favor, verifica los datos proporcionados.'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compras/productoxproveedor/<int:idProveedor>/<int:idProdXProv>', methods=['PUT'])
+def modificar_pxp(idProveedor, idProdXProv):
+    try:
+        datos = request.json
+        descripcion = datos.get('descripcion', None)
+        medicion = datos.get('medicion', None)
+        divideX = datos.get('divideX', None)
+        producto_x_proveedor = Productos_x_proveedor.query.filter_by(idProveedor=idProveedor, idProdXProv=idProdXProv).first()
+        if not producto_x_proveedor:
+            return jsonify({'error': 'El producto por proveedor especificado no existe.'}), 404
+        if descripcion is not None:
+            producto_x_proveedor.descripcion = descripcion
+        if medicion is not None:
+            producto_x_proveedor.medicion = medicion
+        if divideX is not None:
+            producto_x_proveedor.divideX = divideX
+        db.session.commit()
+        return jsonify({'mensaje': 'Modificación exitosa', 'producto_x_proveedor': producto_x_proveedor_schema.dump(producto_x_proveedor)}), 200
+    except IntegrityError as e:
+        if 'foreign key constraint fails' in str(e):
+            return jsonify({'error': 'El proveedor especificado no existe. Por favor, asegúrate de que el idProveedor sea válido.'}), 400
+        return jsonify({'error': 'Error de integridad en la base de datos. Por favor, verifica los datos proporcionados.'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__=='__main__':  
     app.run(debug=True, port=5000) 

@@ -21,9 +21,10 @@ Se finaliza la implementación de Administrador Financiero. El misom permite el 
 
 ## Agosto 2024
 Se comienza a desarrollar una nueva versión que permitirá contar con un módulo de compras que actualizará stock, gastos, calculará precios de venta y permitirá contar con una valuación de stock.
-El infoque que permitirá agregar soluciones parciales será por pequeños módulos desde back a front para probar funcionalidades en paralelo y realizar los ajustes necesarios para una mejor usabilidad.
+El enfoque que permitirá agregar soluciones parciales será por pequeños módulos desde back a front para probar funcionalidades en paralelo y realizar los ajustes necesarios para una mejor usabilidad.
 - 19/8 se implementa con funcionalidad completa la consulta de balanza. La misma tiene un CRUD y cuenta con filtro de novedades y productos concertados. 
 - 22/8 se implementa la entidad productos_x_proveedor que tiene los productos comercializados por cada proveedor así como sus principales características. Esta tabla se usa en conjunto con los formularios de compras/stock.
+
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.
 - **HTML/CSS**: Lenguajes de marcado y estilos utilizados para estructurar y diseñar la interfaz de usuario.

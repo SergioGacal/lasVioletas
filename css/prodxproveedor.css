@@ -1,0 +1,105 @@
+/* Estilos básicos */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+button {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 50px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Estilos para versión móvil */
+@media (max-width: 768px) {
+    th {
+        display: table-cell; /* Asegurarse de que los encabezados se muestren como celdas de tabla */
+    }
+    table {
+        width: 100%; /* Asegurarse de que la tabla ocupe todo el ancho disponible */
+    }
+    th, td {
+        padding: 8px; /* Ajustar el padding para mejorar la legibilidad */
+        font-size: 12px; /* Reducir el tamaño de fuente si es necesario */
+    }
+}
+
+/* Estilos para el formulario de alta */
+form {
+    max-width: 600px; /* Ancho máximo del formulario */
+    margin: 20px auto; /* Centra el formulario horizontalmente */
+    padding: 20px; /* Espaciado interno */
+    border: 1px solid #ddd; /* Borde del formulario */
+    border-radius: 8px; /* Bordes redondeados */
+    background-color: #f9f9f9; /* Fondo del formulario */
+}
+
+form div {
+    margin-bottom: 15px; /* Espaciado entre los campos */
+}
+
+form label {
+    display: block; /* Etiquetas en una línea separada */
+    font-weight: bold; /* Fuente en negrita */
+    margin-bottom: 5px; /* Espaciado debajo de las etiquetas */
+}
+
+form input, form select {
+    width: 100%; /* Asegura que los campos ocupen todo el ancho disponible */
+    padding: 8px; /* Espaciado interno de los campos */
+    border: 1px solid #ccc; /* Borde de los campos */
+    border-radius: 4px; /* Bordes redondeados */
+    box-sizing: border-box; /* Incluye el padding y borde en el ancho total */
+}
+
+form button {
+    background-color: #007bff; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    border: none; /* Sin borde */
+    padding: 10px 20px; /* Espaciado interno del botón */
+    border-radius: 4px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    font-size: 16px; /* Tamaño de la fuente del botón */
+}
+
+form button:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el ratón */
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Violetas - Productos por Proveedor</title>
+    <link rel="stylesheet" href="./css/prodxproveedor.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/prodxproveedor.js" defer></script>
+</head>
+
+<body>
+    <div id="app">
+        <button @click="toggleList">Listado</button>
+        <button @click="toggleAlta">Nuevo</button>
+        <div v-if="showAlta">
+            <form @submit.prevent="crearRelacionPxP">
+                <div>
+                    <div>
+                        <label for="idProveedor">Proveedor:</label>
+                        <select id="idProveedor" v-model="formData.idProveedor" required>
+                            <option value="" disabled selected>Seleccione</option>
+                            <option v-for="proveedor in proveedores" :key="proveedor.idProveedor" :value="proveedor.idProveedor">
+                                {{ proveedor.nombreProveedor }}
+                            </option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="idProdXProv">idProdXProv:</label>
+                        <input type="text" id="idProdXProv" v-model="formData.idProdXProv" required>
+                    </div>
+                    <div>
+                        <label for="descripcion">Descripción:</label>
+                        <input type="text" id="descripcion" v-model="formData.descripcion" required>
+                    </div>
+                    <div>
+                        <label for="medicion">Medición:</label>
+                        <select id="medicion" v-model="formData.medicion" required>
+                            <option value="kilo">Kilo</option>
+                            <option value="unidad">Unidad</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="divideX">DivideX:</label>
+                        <input type="number" id="divideX" v-model="formData.divideX" value="1" required>
+                    </div>
+                </div>
+                <button type="submit">Agregar</button>
+                
+            </form>
+        </div>
+        
+        <div v-if="showList">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Proveedor</th>
+                        <th>Descripción</th>
+                        <th>Medición</th>
+                        <th>DivideX</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="producto in productosConProveedores" :key="producto.idProdXProv">
+                        <td>{{ producto.nombreProveedor }}</td>
+                        <td>{{ producto.descripcion }}</td>
+                        <td>{{ producto.medicion }}</td>
+                        <td>{{ producto.divideX }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

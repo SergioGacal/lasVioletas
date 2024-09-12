@@ -170,6 +170,51 @@ class Productos_x_proveedor(db.Model):
         self.medicion = medicion
         self.divideX = divideX
  
+class Compra(db.Model):
+    idCompra = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idProveedor = db.Column(db.Integer, db.ForeignKey('proveedor.idProveedor'), nullable=False)
+    fechaCompra = db.Column(db.Date, nullable=False)
+    numFactura = db.Column(db.Integer)
+    iva = db.Column(db.Boolean, default=False)
+    descuento = db.Column(db.Numeric(5, 2), default=0)
+    proveedor = db.relationship('Proveedor', backref=db.backref('compras', lazy=True))
+    def __init__(self,idCompra, idProveedor,fechaCompra,numFactura,iva,descuento):
+        self.idCompra = idCompra
+        self.idProveedor = idProveedor
+        self.fechaCompra = fechaCompra
+        self.numFactura = numFactura
+        self.iva = iva
+        self.descuento = descuento
+        
+class DetalleCompra(db.Model):
+    idDetalle = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idCompra = db.Column(db.Integer, db.ForeignKey('compra.idCompra'), nullable=False)
+    idProveedor = db.Column(db.Integer, db.ForeignKey('productos_x_proveedor.idProveedor'), nullable=False)
+    idProducto = db.Column(db.Integer, db.ForeignKey('productos_x_proveedor.idProdXProv'), nullable=False)
+    unidades = db.Column(db.Integer)
+    cantidad = db.Column(db.Numeric(10, 2), nullable=False)
+    precioUnitario = db.Column(db.Numeric(10, 2), nullable=False)
+    precioFinal = db.Column(db.Numeric(10, 2))
+    importe = db.Column(db.Numeric(10, 2))
+    importeFinal = db.Column(db.Numeric(10, 2))
+    
+    compra = db.relationship('Compra', backref=db.backref('detalles', lazy=True))
+    producto = db.relationship('Productos_x_proveedor', primaryjoin=(
+        (idProveedor == Productos_x_proveedor.idProveedor) &
+        (idProducto == Productos_x_proveedor.idProdXProv)
+    ), backref=db.backref('detalles', lazy=True))
+
+    def __init__(self, idCompra, idProveedor, idProducto, unidades, cantidad, precioUnitario, precioFinal, importe, importeFinal):
+        self.idCompra = idCompra
+        self.idProveedor = idProveedor
+        self.idProducto = idProducto
+        self.unidades = unidades
+        self.cantidad = cantidad
+        self.precioUnitario = precioUnitario
+        self.precioFinal = precioFinal
+        self.importe = importe
+        self.importeFinal = importeFinal
+
 with app.app_context():
     db.create_all()
 
@@ -239,6 +284,17 @@ class Productos_x_proveedorSchema(ma.Schema):
     class Meta:
         fields = ('idProveedor','idProdXProv','descripcion','medicion', 'divideX')
 
+class CompraSchema(ma.Schema):
+    proveedorNombre = ma.Function(lambda obj: obj.proveedor.nombreProveedor if obj.proveedor else None)
+    class Meta:
+        fields = ('idCompra', 'idProveedor', 'fechaCompra', 'numFactura', 'iva', 'proveedorNombre', 'descuento')
+
+class DetalleCompraSchema(ma.Schema):
+    compra = ma.Nested(CompraSchema, only=['idCompra'])
+    producto = ma.Nested(Productos_x_proveedorSchema, only=['idProdXProv', 'descripcion'])  # Ajusta según los campos necesarios
+    class Meta:
+        fields = ('idDetalle', 'idCompra', 'idProveedor', 'idProducto', 'unidades', 'cantidad', 'precioUnitario', 'precioFinal', 'importe', 'importeFinal', 'compra', 'producto')
+
 producto_schema=ProductoSchema()
 productos_schema=ProductoSchema(many=True)
 stock_schema=StockSchema()
@@ -266,6 +322,10 @@ novedadBalanza_schema = NovedadBalanzaSchema()
 novedadBalanzas_schema = NovedadBalanzaSchema(many=True)
 producto_x_proveedor_schema = Productos_x_proveedorSchema()
 productos_x_proveedor_schemas = Productos_x_proveedorSchema(many=True)
+compra_schema = CompraSchema()
+compras_schemas = CompraSchema(many=True)
+detalleCompra_schema = DetalleCompraSchema()
+detalleCompras_schema = DetalleCompraSchema(many=True)
 
 @app.route('/',methods=['GET'])
 def home():
@@ -990,6 +1050,210 @@ def modificar_pxp(idProveedor, idProdXProv):
         if 'foreign key constraint fails' in str(e):
             return jsonify({'error': 'El proveedor especificado no existe. Por favor, asegúrate de que el idProveedor sea válido.'}), 400
         return jsonify({'error': 'Error de integridad en la base de datos. Por favor, verifica los datos proporcionados.'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# compra
+@app.route('/compra/<int:idCompra>', methods= ['GET'])
+def get_compra(idCompra):
+    compra = Compra.query.filter_by(idCompra=idCompra).first()
+    if compra is None:
+        return {'message': 'Compra no encontrada'}, 404
+    resultado = compra_schema.dump(compra)
+    return resultado
+@app.route('/compras', methods=['GET'])
+def get_compras():
+    try:
+        compras = Compra.query.all()
+        resultado = compras_schemas.dump(compras)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compra', methods=['POST'])
+def crear_compra():
+    try:
+        data = request.get_json()
+        idProveedor = data.get('idProveedor')
+        fechaCompra = data.get('fechaCompra')
+        numFactura = data.get('numFactura')
+        iva = data.get('iva')
+        descuento = data.get('descuento')
+        if idProveedor is None or fechaCompra is None or numFactura is None or iva is None or descuento is None:
+            return jsonify({'error': 'Faltan datos obligatorios: idProveedor, fechaCompra, numFactura, iva y descuento son requeridos.'}), 400
+        nuevaCompra = Compra(idCompra=None, idProveedor=idProveedor, fechaCompra=fechaCompra, numFactura=numFactura, iva=iva, descuento=descuento)
+        db.session.add(nuevaCompra)
+        db.session.commit()
+        return jsonify({'mensaje': 'Compra agregada'}), 201
+    except IntegrityError as e:
+        if 'foreign key constraint fails' in str(e):
+            return jsonify({'error': 'El proveedor no existe. Por favor, asegúrate de que el idProveedor sea válido.'}), 400
+        return jsonify({'error': 'Error de integridad en la base de datos. Por favor, verifica los datos proporcionados.'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compra/<int:idCompra>', methods=['DELETE'])
+def delete_compra(idCompra):
+    try:
+        compra = Compra.query.filter_by(idCompra=idCompra).first()
+        if compra is None:
+            return jsonify({'message': 'Compra no encontrada'}), 404
+        db.session.delete(compra)
+        db.session.commit()
+        return jsonify({'resultado': f'Compra {idCompra} borrada exitósamente.'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compra/<int:idCompra>', methods=['PUT'])
+def modificar_compra(idCompra):
+    try:
+        compra = Compra.query.filter_by(idCompra=idCompra).first()
+        if compra is None:
+            return jsonify({'message': 'Compra no encontrada'}), 404
+        data = request.get_json()
+        idProveedor = data.get('idProveedor')
+        fechaCompra = data.get('fechaCompra')
+        numFactura = data.get('numFactura')
+        descuento = data.get('descuento')
+        iva = data.get('iva')
+        if idProveedor is None or fechaCompra is None or numFactura is None or iva is None or descuento is None:
+            return jsonify({'error': 'Faltan datos obligatorios: idProveedor, fechaCompra, numFactura, iva y descuento son requeridos.'}), 400
+        compra.idProveedor = idProveedor
+        compra.fechaCompra = fechaCompra
+        compra.numFactura = numFactura
+        compra.iva = iva
+        compra.descuento = descuento
+        db.session.commit()
+        return jsonify({'mensaje': 'Compra actualizada exitosamente'}), 200
+    except IntegrityError as e:
+        if 'foreign key constraint fails' in str(e):
+            return jsonify({'error': 'El proveedor no existe. Por favor, asegúrate de que el idProveedor sea válido.'}), 400
+        return jsonify({'error': 'Error de integridad en la base de datos. Por favor, verifica los datos proporcionados.'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# detalle_compra
+@app.route('/compras/detalle', methods=['GET']) # todos
+def get_detalle_compras():
+    try:
+        detalle = DetalleCompra.query.all()
+        resultado = detalleCompras_schema.dump(detalle)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compras/detalle/compra/<int:idCompra>', methods=['GET']) # una compra
+def get_detalle_compra(idCompra):
+    try:
+        detalle = DetalleCompra.query.filter_by(idCompra=idCompra).all()
+        if not detalle:
+            return jsonify({'error': 'No se encontraron detalles para esta compra'}), 404
+        resultado = detalleCompras_schema.dump(detalle)
+        return jsonify(resultado), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compras/detalle/<int:idDetalle>', methods=['GET']) # un registro x registro
+def get_registro_compra(idDetalle):
+    try:
+        detalle = DetalleCompra.query.filter_by(idDetalle=idDetalle).first()
+        if not detalle:
+            return jsonify({'mensaje': f'con id {idDetalle} detalle de compra no hallada.'}),404
+        resultado = detalleCompra_schema.dump(detalle)
+        return jsonify(resultado),200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compra/agrega_detalle', methods=['POST'])
+def agregar_detalle_compra():
+    try:
+        data = request.get_json()
+        if not all(k in data for k in ('idCompra', 'idProveedor', 'idProducto', 'cantidad', 'precioUnitario')):
+            return jsonify({'error': 'Faltan datos obligatorios'}), 400
+        idCompra = data['idCompra']
+        idProveedor = data['idProveedor']
+        idProducto = data['idProducto']
+        unidades = data.get('unidades')
+        cantidad = data['cantidad']
+        precioUnitario = data['precioUnitario']
+        precioFinal = data.get('precioFinal')
+        importe = data.get('importe')
+        importeFinal = data.get('importeFinal')
+
+        compra = db.session.get(Compra, idCompra)
+        if not compra:
+            return jsonify({'error': 'Compra no encontrada'}), 404
+
+        iva = 1.0 if compra.iva else 1.21
+        descuento = compra.descuento
+
+        divideX = (db.session.query(Productos_x_proveedor.divideX).filter_by(idProdXProv=idProducto, idProveedor=idProveedor).scalar())
+        if divideX is None:
+            return jsonify({'error': 'Producto/Proveedor no encontrado para el Producto/Proveedor especificado'}), 404
+        divideX = float(divideX)
+
+        precioFinal = float((precioUnitario * iva) - ((precioUnitario * iva) * float(descuento))) / divideX
+        importe  = cantidad * precioUnitario
+        importeFinal = cantidad * precioFinal
+        nuevo_detalle = DetalleCompra(idCompra=idCompra,idProveedor=idProveedor,idProducto=idProducto,unidades=unidades,cantidad=cantidad,precioUnitario=precioUnitario,precioFinal=precioFinal,importe=importe,importeFinal=importeFinal)
+        db.session.add(nuevo_detalle)
+        db.session.commit()
+        return jsonify({'message': 'Detalle de compra agregado exitosamente', 'idDetalle': nuevo_detalle.idDetalle}), 201
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({'error': 'Error de integridad en la base de datos'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compra/detalle/<int:idDetalle>', methods=['DELETE'])
+def borrar_detalle(idDetalle):
+    try:
+        detalle = DetalleCompra.query.filter_by(idDetalle=idDetalle).first()
+        if not detalle:
+            return jsonify({'mensaje': f'con id {idDetalle} detalle de compra no hallada.'}),404
+        db.session.delete(detalle)
+        db.session.commit()
+        return jsonify({'mensaje': f'compra con id {idDetalle} fue borrada exitosamente.'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/compra/detalle/<int:idDetalle>', methods=['PUT'])
+def modificar_detalle(idDetalle):
+    try:
+        detalle = DetalleCompra.query.filter_by(idDetalle=idDetalle).first()
+        if not detalle:
+            return jsonify({'mensaje': f'Detalle de compra con id {idDetalle} no encontrado.'}), 404
+        data = request.get_json()
+        if 'idCompra' in data and isinstance(data['idCompra'], int):
+            detalle.idCompra = data['idCompra']
+        if 'idProveedor' in data and isinstance(data['idProveedor'], int):
+            detalle.idProveedor = data['idProveedor']
+        if 'idProducto' in data and isinstance(data['idProducto'], int):
+            detalle.idProducto = data['idProducto']
+        if 'unidades' in data:
+            if isinstance(data['unidades'], int) or data['unidades'] is None:
+                detalle.unidades = data['unidades']
+            else:
+                return jsonify({'error': 'El campo unidades debe ser un entero o nulo.'}), 400
+        if 'cantidad' in data:
+            try:
+                detalle.cantidad = float(data['cantidad'])
+            except ValueError:
+                return jsonify({'error': 'El campo cantidad debe ser un número decimal.'}), 400
+        if 'precioUnitario' in data:
+            try:
+                detalle.precioUnitario = float(data['precioUnitario'])
+            except ValueError:
+                return jsonify({'error': 'El campo precioUnitario debe ser un número decimal.'}), 400
+        if 'precioFinal' in data:
+            try:
+                detalle.precioFinal = float(data['precioFinal'])
+            except ValueError:
+                return jsonify({'error': 'El campo precioFinal debe ser un número decimal.'}), 400
+        if 'importe' in data:
+            try:
+                detalle.importe = float(data['importe'])
+            except ValueError:
+                return jsonify({'error': 'El campo importe debe ser un número decimal.'}), 400
+        if 'importeFinal' in data:
+            try:
+                detalle.importeFinal = float(data['importeFinal'])
+            except ValueError:
+                return jsonify({'error': 'El campo importeFinal debe ser un número decimal.'}), 400
+        db.session.commit()
+        return jsonify({'mensaje': f'Detalle de compra con id {idDetalle} fue modificado exitosamente.'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

@@ -979,6 +979,11 @@ def get_pxp(idProveedor, idProdxProv):
     if producto_x_proveedor is None:
         return {"message": "Producto por proveedor no encontrado"}, 404
     return resultado
+@app.route('/compras/xproveedor/<int:idProveedor>', methods=['GET'])
+def get_productos_del_proveedor(idProveedor):
+    productos_del_proveedor = Productos_x_proveedor.query.filter_by(idProveedor=idProveedor)
+    resultado = productos_x_proveedor_schemas.dump(productos_del_proveedor)
+    return resultado
 @app.route('/compras/productoxproveedor', methods=['GET'])
 def get_pxproveedores():
     try:

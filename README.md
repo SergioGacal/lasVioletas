@@ -24,6 +24,7 @@ Se comienza a desarrollar una nueva versión que permitirá contar con un módul
 El enfoque que permitirá agregar soluciones parciales será por pequeños módulos desde back a front para probar funcionalidades en paralelo y realizar los ajustes necesarios para una mejor usabilidad.
 - 19/8 se implementa con funcionalidad completa la consulta de balanza. La misma tiene un CRUD y cuenta con filtro de novedades y productos concertados. 
 - 22/8 se implementa la entidad productos_x_proveedor que tiene los productos comercializados por cada proveedor así como sus principales características. Esta tabla se usa en conjunto con los formularios de compras/stock.
+- 14/9 se implementa la versión preliminar del formulario de compras, sus tablas relacionadas y métodos.
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

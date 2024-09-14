@@ -1192,7 +1192,18 @@ def agregar_detalle_compra():
         nuevo_detalle = DetalleCompra(idCompra=idCompra,idProveedor=idProveedor,idProducto=idProducto,unidades=unidades,cantidad=cantidad,precioUnitario=precioUnitario,precioFinal=precioFinal,importe=importe,importeFinal=importeFinal)
         db.session.add(nuevo_detalle)
         db.session.commit()
-        return jsonify({'message': 'Detalle de compra agregado exitosamente', 'idDetalle': nuevo_detalle.idDetalle}), 201
+        return jsonify({'message': 'Detalle de compra agregado exitosamente',
+                        'idDetalle': nuevo_detalle.idDetalle,
+                        'idCompra' : idCompra,
+                        'idProveedor': idProveedor,
+                        'idProducto' : idProducto,
+                        'unidades' : unidades,
+                        'cantidad' : cantidad,
+                        'precioUnitario': precioUnitario,
+                        'precioFinal': precioFinal,
+                        'importe': importe,
+                        'importeFinal': importeFinal
+                        }), 201
     except IntegrityError:
         db.session.rollback()
         return jsonify({'error': 'Error de integridad en la base de datos'}), 500

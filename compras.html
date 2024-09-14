@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/compras.css">
+</head>
+
+<body>
+    <div id="app" class="container">
+        <h1>Compras</h1>
+        <button class="btn btn-primary"
+        @click="mostrarFormularioAgregarCompra = !mostrarFormularioAgregarCompra">Agregar</button>
+
+        <form v-if="mostrarFormularioAgregarCompra" class="mt-3" @submit.prevent="agregarCompra">
+            <input type="hidden" v-model="compra.idCompra">
+            <div class="mb-3">
+                <label for="proveedor" class="form-label">Proveedor</label>
+                <select v-model="compra.idProveedor" class="form-select" id="proveedor" required>
+                    <option v-for="proveedor in proveedores" :value="proveedor.idProveedor">
+                        {{ proveedor.nombreProveedor }}
+                    </option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="fechaCompra" class="form-label">Fecha de Compra</label>
+                <input type="date" v-model="compra.fechaCompra" class="form-control" id="fechaCompra">
+            </div>
+            <div class="mb-3">
+                <label for="numFactura" class="form-label">Número de Factura</label>
+                <input type="number" v-model.number="compra.numFactura" class="form-control" id="numFactura"
+                    placeholder="Ingrese el número de factura" min="0">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" v-model="compra.iva" class="form-check-input" id="iva">
+                <label for="iva" class="form-check-label">IVA</label>
+            </div>
+            <div class="mb-3">
+                <label for="descuento" class="form-label">Descuento</label>
+                <input type="range" v-model="compra.descuento" class="form-range" id="descuento" min="0" max="1"
+                    step="0.01">
+                <span>{{ (compra.descuento * 100).toFixed(2) }}%</span>
+            </div>
+            <button type="submit" class="btn btn-success">Guardar Compra</button>
+        </form>
+        <div class="ultimaCompra" v-if="verUltimaCompra" class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Proveedor</th>
+                        <th>Fecha</th>
+                        <th>Factura</th>
+                        <th>IVA</th>
+                        <th>Dto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ ultimaCompra.nombreProveedor }}</td>
+                        <td>{{ ultimaCompra.fechaCompra }}</td>
+                        <td>{{ ultimaCompra.numFactura }}</td>
+                        <td>{{ ultimaCompra.iva ? 'Sí' : 'No' }}</td>
+                        <td>{{ ultimaCompra.descuento }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div v-if="agregarDetalle">
+            <form @submit.prevent="agregarArticulo">
+                <div class="mb-3">
+                    <label for="idProducto" class="form-label">Producto</label>
+                    <select v-model="nuevoDetalle.idProducto" class="form-control" id="idProducto" required>
+                        <option v-for="producto in productosDelProveedor" :key="producto.idProdXProv" :value="producto.idProdXProv">
+                            {{ producto.descripcion }}
+                        </option>
+                    </select>
+                </div>
+               <div class="mb-3">
+                    <label for="unidades" class="form-label">Unidades</label>
+                    <input type="number" v-model.number="nuevoDetalle.unidades" class="form-control" id="unidades"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                    <input type="number" step="0.01" v-model.number="nuevoDetalle.cantidad" class="form-control"
+                        id="cantidad" required>
+                </div>
+                <div class="mb-3">
+                    <label for="precioUnitario" class="form-label">Precio Unitario</label>
+                    <input type="number" step="0.01" v-model.number="nuevoDetalle.precioUnitario" class="form-control"
+                        id="precioUnitario" required>
+                </div>
+                <button type="submit" class="btn btn-success">Agregar Detalle</button>
+                <button type="reset" class="btn btn-danger" @click="agregarDetalle = false">Cerrar Formulario</button>
+            </form>
+        </div>
+
+        <table class="table table-bordered mt-3" v-if="detalleCompra.length">
+            <thead>
+                <tr>
+                    <th>ID Detalle</th>
+                    <th>ID Compra</th>
+                    <th>ID Proveedor</th>
+                    <th>ID Producto</th>
+                    <th>Nombre del Producto</th>
+                    <th>Unidades</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Precio Final</th>
+                    <th>Importe</th>
+                    <th>Importe Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(detalle, index) in detalleCompra" :key="index">
+                    <td>{{ detalle.idDetalle }}</td>
+                    <td>{{ detalle.idCompra }}</td>
+                    <td>{{ detalle.idProveedor }}</td>
+                    <td>{{ detalle.idProducto }}</td>
+                    <td>{{ detalle.nombreProducto }}</td>
+                    <td>{{ detalle.unidades }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.precioUnitario }}</td>
+                    <td>{{ detalle.precioFinal }}</td>
+                    <td>{{ detalle.importe }}</td>
+                    <td>{{ detalle.importeFinal }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="./js/compras.js"></script>
+</body>
+
+</html>

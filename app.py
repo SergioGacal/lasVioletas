@@ -1083,7 +1083,7 @@ def crear_compra():
         nuevaCompra = Compra(idCompra=None, idProveedor=idProveedor, fechaCompra=fechaCompra, numFactura=numFactura, iva=iva, descuento=descuento)
         db.session.add(nuevaCompra)
         db.session.commit()
-        return jsonify({'mensaje': 'Compra agregada'}), 201
+        return jsonify({'mensaje': 'Compra agregada', 'idCompra': nuevaCompra.idCompra}), 201
     except IntegrityError as e:
         if 'foreign key constraint fails' in str(e):
             return jsonify({'error': 'El proveedor no existe. Por favor, asegúrate de que el idProveedor sea válido.'}), 400

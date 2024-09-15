@@ -2,3 +2,10 @@
 .container {
     margin-top: 20px;
 }
+.detalleCompraSeleccionadaCombo {
+    margin-top: 20px;
+}
+
+.detalleCompraSeleccionadaCombo table {
+    margin-bottom: 20px;
+}

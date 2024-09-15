@@ -9,6 +9,7 @@ const app = Vue.createApp({
             verUltimaCompra: false,
             agregarDetalle: false,
             listadoCompras: false,
+            detalleCompraSeleccionadaCombo: false,
             
             proveedores: [],
 
@@ -40,6 +41,10 @@ const app = Vue.createApp({
                 cantidad: null,
                 precioUnitario: null
             },
+            compras : [],
+            compraSeleccionada: null , // para marcar la que elijo del combo.
+            datosCompraSeleccionada: [],
+            detallesComprasSeleccionadas: [],
         };
     },
     methods: {
@@ -172,19 +177,49 @@ const app = Vue.createApp({
                 console.error('Error al agregar detalle:', error);
             });
         },
-        
+        cargarCompras() {
+            fetch(this.url + '/compras')
+                .then(response => response.json())
+                .then(data => {
+                    this.compras = data;
+                })
+                .catch(error => {
+                    console.error('Error al obtener compras:', error);
+                });
+        },
+        cargarDetalleCompraSeleccionada() {
+            if (!this.compraSeleccionada) {
+                console.error('No hay una compra seleccionada.');
+                return;
+            }
+            const compraSeleccionada = this.compras.find(compra => compra.idCompra === this.compraSeleccionada);
+            if (compraSeleccionada) {
+                this.datosCompraSeleccionada = {
+                    idCompra: compraSeleccionada.idCompra,
+                    fechaCompra: compraSeleccionada.fechaCompra,
+                    numFactura: compraSeleccionada.numFactura,
+                    nombreProveedor: compraSeleccionada.proveedorNombre,
+                    descuento: compraSeleccionada.descuento
+                };
+            } else {
+                console.error('No se encontró la compra seleccionada en la lista de compras.');
+            }
+            
+            fetch(this.url + '/compras/detalle/compra/' + this.compraSeleccionada)
+                .then(response => response.json())
+                .then(data => {
+                    this.detallesComprasSeleccionadas = data;
+                    this.detalleCompraSeleccionadaCombo = true;
+                })
+                .catch(error => {
+                    console.error('Error al obtener detalles de la compra:', error);
+                });
+        },
 
     },
     mounted() {
         this.obtenerProveedores();
-    },
-    computed: {
-        detalleConIdCompra() {
-            return {
-                ...this.nuevoDetalle,
-                idCompra: this.idCompra
-            };
-        }
+        this.cargarCompras();
     },
 });
 

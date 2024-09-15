@@ -51,25 +51,25 @@
             <button type="submit" class="btn btn-success">Guardar Compra</button>
         </form>
         <div class="ultimaCompra" v-if="verUltimaCompra" class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Proveedor</th>
-                        <th>Fecha</th>
-                        <th>Factura</th>
-                        <th>IVA</th>
-                        <th>Dto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ ultimaCompra.nombreProveedor }}</td>
-                        <td>{{ ultimaCompra.fechaCompra }}</td>
-                        <td>{{ ultimaCompra.numFactura }}</td>
-                        <td>{{ ultimaCompra.iva ? 'Sí' : 'No' }}</td>
-                        <td>{{ ultimaCompra.descuento }}</td>
-                    </tr>
-                </tbody>
+            <table class="table table-bordered"></table>
+            <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th>Fecha</th>
+                    <th>Factura</th>
+                    <th>IVA</th>
+                    <th>Dto</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ ultimaCompra.nombreProveedor }}</td>
+                    <td>{{ ultimaCompra.fechaCompra }}</td>
+                    <td>{{ ultimaCompra.numFactura }}</td>
+                    <td>{{ ultimaCompra.iva ? 'Sí' : 'No' }}</td>
+                    <td>{{ ultimaCompra.descuento }}</td>
+                </tr>
+            </tbody>
             </table>
         </div>
 
@@ -144,7 +144,79 @@
         <div v-if="listadoCompras" class="listadoCompras">
             <h3>Listado de Compras</h3>
             <p>Seleccione</p>
+            <select v-model="compraSeleccionada" @change="cargarDetalleCompraSeleccionada" class="form-select">
+                <option v-for="kompra in compras" :key="kompra.idCompra" :value="kompra.idCompra">
+                    {{ kompra.idCompra }} - {{ kompra.fechaCompra }} - {{ kompra.numFactura }} - {{
+                    kompra.nombreProveedor }}
+                </option>
+            </select>
+            <div v-if="detalleCompraSeleccionadaCombo" class="detalleCompraSeleccionadaCombo">
+                <!-- Tabla de detalles de la compra seleccionada -->
+                <div v-if="compraSeleccionada">
+                    <h3>Detalle de la Compra Seleccionada</h3>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Proveedor</th>
+                                <th>Fecha</th>
+                                <th>Factura</th>
+                                <th>IVA</th>
+                                <th>Dto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ datosCompraSeleccionada.nombreProveedor }}</td>
+                                <td>{{ datosCompraSeleccionada.fechaCompra }}</td>
+                                <td>{{ datosCompraSeleccionada.numFactura }}</td>
+                                <td>{{ datosCompraSeleccionada.iva ? 'Sí' : 'No' }}</td>
+                                <td>{{ datosCompraSeleccionada.descuento }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tabla de detalles de la compra -->
+                <div v-if="detallesComprasSeleccionadas.length">
+                    <h3>Detalles de la Compra</h3>
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                            <tr>
+                                <th>ID Detalle</th>
+                                <th>ID Compra</th>
+                                <th>ID Proveedor</th>
+                                <th>ID Producto</th>
+                                <th>Nombre del Producto</th>
+                                <th>Unidades</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Precio Final</th>
+                                <th>Importe</th>
+                                <th>Importe Final</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(detalle, index) in detallesComprasSeleccionadas" :key="index">
+                                <td>{{ detalle.idDetalle }}</td>
+                                <td>{{ detalle.idCompra }}</td>
+                                <td>{{ detalle.idProveedor }}</td>
+                                <td>{{ detalle.idProducto }}</td>
+                                <td>{{ detalle.producto.descripcion }}</td>
+                                <td>{{ detalle.unidades }}</td>
+                                <td>{{ detalle.cantidad }}</td>
+                                <td>{{ detalle.precioUnitario }}</td>
+                                <td>{{ detalle.precioFinal }}</td>
+                                <td>{{ detalle.importe }}</td>
+                                <td>{{ detalle.importeFinal }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
         </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>

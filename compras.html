@@ -12,8 +12,12 @@
 <body>
     <div id="app" class="container">
         <h1>Compras</h1>
-        <button class="btn btn-primary"
-        @click="mostrarFormularioAgregarCompra = !mostrarFormularioAgregarCompra">Agregar</button>
+        <button v-if="mostrarBotonAgregarCompra" class="btn btn-primary"
+            @click="mostrarFormularioAgregarCompra = true; mostrarBotonAgregarCompra = false; botonCancelar = true">
+            Agregar</button>
+        <button class="btn btn-primary" @click="listadoCompras = !listadoCompras">Listado</button>
+
+
 
         <form v-if="mostrarFormularioAgregarCompra" class="mt-3" @submit.prevent="agregarCompra">
             <input type="hidden" v-model="compra.idCompra">
@@ -74,12 +78,13 @@
                 <div class="mb-3">
                     <label for="idProducto" class="form-label">Producto</label>
                     <select v-model="nuevoDetalle.idProducto" class="form-control" id="idProducto" required>
-                        <option v-for="producto in productosDelProveedor" :key="producto.idProdXProv" :value="producto.idProdXProv">
+                        <option v-for="producto in productosDelProveedor" :key="producto.idProdXProv"
+                            :value="producto.idProdXProv">
                             {{ producto.descripcion }}
                         </option>
                     </select>
                 </div>
-               <div class="mb-3">
+                <div class="mb-3">
                     <label for="unidades" class="form-label">Unidades</label>
                     <input type="number" v-model.number="nuevoDetalle.unidades" class="form-control" id="unidades"
                         required>
@@ -131,7 +136,15 @@
                 </tr>
             </tbody>
         </table>
-        
+        <div v-if="botonCancelar">
+            <button class="btn btn-danger" @click="resetearPagina">
+                Cancelar
+            </button>
+        </div>
+        <div v-if="listadoCompras" class="listadoCompras">
+            <h3>Listado de Compras</h3>
+            <p>Seleccione</p>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>

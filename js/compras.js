@@ -3,9 +3,12 @@ const app = Vue.createApp({
         return {
             //url:'https://gacalsergio.pythonanywhere.com',
             url: 'http://127.0.0.1:5000',
+            botonCancelar: false,
+            mostrarBotonAgregarCompra: true,
             mostrarFormularioAgregarCompra: false,
             verUltimaCompra: false,
             agregarDetalle: false,
+            listadoCompras: false,
             
             proveedores: [],
 
@@ -40,6 +43,9 @@ const app = Vue.createApp({
         };
     },
     methods: {
+        resetearPagina() {
+            window.location.reload();
+        },
         obtenerProveedores() {
             fetch(this.url + '/proveedores')
                 .then(response => response.json())
@@ -166,6 +172,7 @@ const app = Vue.createApp({
                 console.error('Error al agregar detalle:', error);
             });
         },
+        
 
     },
     mounted() {

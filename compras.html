@@ -147,7 +147,7 @@
             <select v-model="compraSeleccionada" @change="cargarDetalleCompraSeleccionada" class="form-select">
                 <option v-for="kompra in compras" :key="kompra.idCompra" :value="kompra.idCompra">
                     {{ kompra.idCompra }} - {{ kompra.fechaCompra }} - {{ kompra.numFactura }} - {{
-                    kompra.nombreProveedor }}
+                    kompra.proveedorNombre }}
                 </option>
             </select>
             <div v-if="detalleCompraSeleccionadaCombo" class="detalleCompraSeleccionadaCombo">
@@ -169,7 +169,7 @@
                                 <td>{{ datosCompraSeleccionada.nombreProveedor }}</td>
                                 <td>{{ datosCompraSeleccionada.fechaCompra }}</td>
                                 <td>{{ datosCompraSeleccionada.numFactura }}</td>
-                                <td>{{ datosCompraSeleccionada.iva ? 'Sí' : 'No' }}</td>
+                                <td>{{ datosCompraSeleccionada.iva ? 'Si' : 'No'}}</td>
                                 <td>{{ datosCompraSeleccionada.descuento }}</td>
                             </tr>
                         </tbody>

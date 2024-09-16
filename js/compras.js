@@ -1,8 +1,8 @@
 const app = Vue.createApp({
     data() {
         return {
-            //url:'https://gacalsergio.pythonanywhere.com',
-            url: 'http://127.0.0.1:5000',
+            url:'https://gacalsergio.pythonanywhere.com',
+            //url: 'http://127.0.0.1:5000',
             botonCancelar: false,
             mostrarBotonAgregarCompra: true,
             mostrarFormularioAgregarCompra: false,
@@ -199,6 +199,7 @@ const app = Vue.createApp({
                     fechaCompra: compraSeleccionada.fechaCompra,
                     numFactura: compraSeleccionada.numFactura,
                     nombreProveedor: compraSeleccionada.proveedorNombre,
+                    iva: compraSeleccionada.iva,
                     descuento: compraSeleccionada.descuento
                 };
             } else {

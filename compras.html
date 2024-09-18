@@ -122,17 +122,17 @@
             </thead>
             <tbody>
                 <tr v-for="(detalle, index) in detalleCompra" :key="index">
-                    <td>{{ detalle.idDetalle }}</td>
-                    <td>{{ detalle.idCompra }}</td>
-                    <td>{{ detalle.idProveedor }}</td>
-                    <td>{{ detalle.idProducto }}</td>
+                    <td id="derecha">{{ detalle.idDetalle }}</td>
+                    <td id="derecha">{{ detalle.idCompra }}</td>
+                    <td id="derecha">{{ detalle.idProveedor }}</td>
+                    <td id="derecha">{{ detalle.idProducto }}</td>
                     <td>{{ detalle.nombreProducto }}</td>
-                    <td>{{ detalle.unidades }}</td>
-                    <td>{{ detalle.cantidad }}</td>
-                    <td>{{ detalle.precioUnitario }}</td>
-                    <td>{{ detalle.precioFinal }}</td>
-                    <td>{{ detalle.importe }}</td>
-                    <td>{{ detalle.importeFinal }}</td>
+                    <td id="derecha">{{ detalle.unidades }}</td>
+                    <td id="derecha">{{ detalle.cantidad }}</td>
+                    <td id="derecha">{{ formatearNumero(detalle.precioUnitario) }}</td>
+                    <td id="derecha">{{ formatearNumero(detalle.precioFinal) }}</td>
+                    <td id="derecha">{{ formatearNumero(detalle.importe) }}</td>
+                    <td id="derecha">{{ formatearNumero(detalle.importeFinal) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -168,9 +168,9 @@
                             <tr>
                                 <td>{{ datosCompraSeleccionada.nombreProveedor }}</td>
                                 <td>{{ datosCompraSeleccionada.fechaCompra }}</td>
-                                <td>{{ datosCompraSeleccionada.numFactura }}</td>
+                                <td id="derecha">{{ datosCompraSeleccionada.numFactura }}</td>
                                 <td>{{ datosCompraSeleccionada.iva ? 'Si' : 'No'}}</td>
-                                <td>{{ datosCompraSeleccionada.descuento }}</td>
+                                <td id="derecha">{{ datosCompraSeleccionada.descuento }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -197,17 +197,17 @@
                         </thead>
                         <tbody>
                             <tr v-for="(detalle, index) in detallesComprasSeleccionadas" :key="index">
-                                <td>{{ detalle.idDetalle }}</td>
-                                <td>{{ detalle.idCompra }}</td>
-                                <td>{{ detalle.idProveedor }}</td>
-                                <td>{{ detalle.idProducto }}</td>
+                                <td id="derecha">{{ detalle.idDetalle }}</td>
+                                <td id="derecha"> {{ detalle.idCompra }}</td>
+                                <td id="derecha">{{ detalle.idProveedor }}</td>
+                                <td id="derecha">{{ detalle.idProducto }}</td>
                                 <td>{{ detalle.producto.descripcion }}</td>
-                                <td>{{ detalle.unidades }}</td>
-                                <td>{{ detalle.cantidad }}</td>
-                                <td>{{ detalle.precioUnitario }}</td>
-                                <td>{{ detalle.precioFinal }}</td>
-                                <td>{{ detalle.importe }}</td>
-                                <td>{{ detalle.importeFinal }}</td>
+                                <td id="derecha">{{ detalle.unidades }}</td>
+                                <td id="derecha">{{ detalle.cantidad }}</td>
+                                <td id="derecha">{{ formatearNumero(detalle.precioUnitario) }}</td>
+                                <td id="derecha">{{ formatearNumero(detalle.precioFinal) }}</td>
+                                <td id="derecha">{{ formatearNumero(detalle.importe) }}</td>
+                                <td id="derecha"> {{ formatearNumero(detalle.importeFinal) }}</td>
                             </tr>
                         </tbody>
                     </table>

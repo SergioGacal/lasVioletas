@@ -9,3 +9,7 @@
 .detalleCompraSeleccionadaCombo table {
     margin-bottom: 20px;
 }
+
+#derecha {
+    text-align: right;
+}

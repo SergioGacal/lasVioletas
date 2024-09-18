@@ -24,7 +24,7 @@
             <div class="mb-3">
                 <label for="proveedor" class="form-label">Proveedor</label>
                 <select v-model="compra.idProveedor" class="form-select" id="proveedor" required>
-                    <option v-for="proveedor in proveedores" :value="proveedor.idProveedor">
+                    <option v-for="proveedor in proveedores.sort((a, b) => a.nombreProveedor.localeCompare(b.nombreProveedor))" :value="proveedor.idProveedor">
                         {{ proveedor.nombreProveedor }}
                     </option>
                 </select>
@@ -78,12 +78,11 @@
                 <div class="mb-3">
                     <label for="idProducto" class="form-label">Producto</label>
                     <select v-model="nuevoDetalle.idProducto" class="form-control" id="idProducto" required>
-                        <option v-for="producto in productosDelProveedor" :key="producto.idProdXProv"
-                            :value="producto.idProdXProv">
-                            {{ producto.descripcion }}
-                        </option>
+                        <option v-for="producto in productosDelProveedor.sort((a, b) => a.descripcion.localeCompare(b.descripcion))" 
+                            :key="producto.idProdXProv" :value="producto.idProdXProv">{{ producto.descripcion }}</option>
                     </select>
                 </div>
+                
                 <div class="mb-3">
                     <label for="unidades" class="form-label">Unidades</label>
                     <input type="number" v-model.number="nuevoDetalle.unidades" class="form-control" id="unidades"

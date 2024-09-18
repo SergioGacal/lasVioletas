@@ -48,6 +48,17 @@ const app = Vue.createApp({
         };
     },
     methods: {
+        formatearNumero(valor) {
+            const numero = parseFloat(valor);
+            if (isNaN(numero)) {
+                return '';
+            }
+            return numero.toLocaleString('es-LA', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true,
+            });
+        },
         resetearPagina() {
             window.location.reload();
         },
@@ -81,7 +92,6 @@ const app = Vue.createApp({
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Compra guardada'); // BORRAMOS ESTA LINEA DESPUÉS
                 this.ultimaCompra = {
                     idCompra : this.compra.idCompra,
                     idProveedor :this.compra.idProveedor,
@@ -100,8 +110,6 @@ const app = Vue.createApp({
                     numFactura: 0  ,
                 };
                 this.ultimaCompra.idCompra = data.idCompra;
-                console.log('ID de la compra guardada:', this.ultimaCompra.idCompra);
-                console.log(this.ultimaCompra)
                 this.mostrarFormularioAgregarCompra = false;
                 this.verUltimaCompra = true;
                 this.agregarDetalle = true;

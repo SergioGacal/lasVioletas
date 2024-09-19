@@ -215,6 +215,25 @@ class DetalleCompra(db.Model):
         self.importe = importe
         self.importeFinal = importeFinal
 
+class RelacionProductos(db.Model):
+    idBalanza = db.Column(db.Integer, db.ForeignKey('balanza.idBalanza'), primary_key=True)
+    idProducto=db.Column(db.Integer, db.ForeignKey('producto.idProducto'), primary_key=True)
+    idProveedor = db.Column(db.Integer, db.ForeignKey('productos_x_proveedor.idProveedor'), primary_key=True)
+    idProdXProv = db.Column(db.Integer, db.ForeignKey('productos_x_proveedor.idProdXProv'), primary_key=True)
+    margen = db.Column(db.Float)
+    pesoPromedio = db.Column(db.Float)
+    observacion = db.Column(db.String(50), nullable=True)
+    balanza = db.relationship('Balanza', backref='relacion_productos')
+    producto = db.relationship('Producto',backref='relacion_productos')
+    def __init__(self,idBalanza,idProducto,idProveedor,idProdXProv,margen, pesoPromedio,observacion):
+        self.idBalanza = idBalanza
+        self.idProducto =idProducto
+        self.idProveedor = idProveedor
+        self.idProdXProv = idProdXProv
+        self.margen = margen
+        self.pesoPromedio = pesoPromedio
+        self.observacion = observacion
+
 with app.app_context():
     db.create_all()
 
@@ -295,6 +314,16 @@ class DetalleCompraSchema(ma.Schema):
     class Meta:
         fields = ('idDetalle', 'idCompra', 'idProveedor', 'idProducto', 'unidades', 'cantidad', 'precioUnitario', 'precioFinal', 'importe', 'importeFinal', 'compra', 'producto')
 
+class RelacionProductosSchema(ma.Schema):
+    balanza = ma.Nested(BalanzaSchema, only=['nombre1'])
+    producto = ma.Nested(ProductoSchema, only=['descripcion'])
+    proveedor = fields.Method('recuperarNombre')
+    def recuperarNombre(self,obj):
+        proveedor = Proveedor.query.get(obj.idProveedor)
+        return proveedor.nombreProveedor if proveedor else None
+    class Meta:
+        fields = ('idBalanza', 'balanza', 'idProducto', 'producto', 'idProveedor', 'proveedor', 'idProdXProv', 'margen' , 'pesoPromedio', 'observacion')
+
 producto_schema=ProductoSchema()
 productos_schema=ProductoSchema(many=True)
 stock_schema=StockSchema()
@@ -326,6 +355,8 @@ compra_schema = CompraSchema()
 compras_schemas = CompraSchema(many=True)
 detalleCompra_schema = DetalleCompraSchema()
 detalleCompras_schema = DetalleCompraSchema(many=True)
+relacionProducto_schema = RelacionProductosSchema()
+relacionProductos_schema = RelacionProductosSchema(many=True)
 
 @app.route('/',methods=['GET'])
 def home():
@@ -1270,6 +1301,127 @@ def modificar_detalle(idDetalle):
                 return jsonify({'error': 'El campo importeFinal debe ser un número decimal.'}), 400
         db.session.commit()
         return jsonify({'mensaje': f'Detalle de compra con id {idDetalle} fue modificado exitosamente.'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# relacion_productos
+@app.route('/relacion', methods= ['GET'])
+def get_relacion():
+    try:
+        relacion = RelacionProductos.query.all()
+        resultado = relacionProductos_schema.dump(relacion)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/relacion', methods=['POST'])
+def agregar_relacion():
+    try:
+        data = request.get_json()
+        if not all(k in data for k in ('idBalanza','idProducto', 'idProveedor', 'idProdXProv', 'margen','pesoPromedio','observacion')):
+            return jsonify({'error': 'Faltan datos obligatorios'}), 400
+        idBalanza = data['idBalanza']
+        idProducto = data['idProducto']
+        idProveedor = data['idProveedor']
+        idProdXProv = data['idProdXProv']
+        margen = data['margen']
+        pesoPromedio = data['pesoPromedio']
+        observacion = data['observacion']
+        nuevaRelacion = RelacionProductos(idBalanza=idBalanza,idProducto=idProducto,idProveedor=idProveedor,idProdXProv=idProdXProv,margen=margen,pesoPromedio=pesoPromedio,observacion=observacion)
+        db.session.add(nuevaRelacion)
+        db.session.commit()
+        return jsonify({'message': 'Relación agregada exitosamente',
+                        'datos' : data}),201
+    except IntegrityError as e:
+        db.session.rollback()
+        if 'Duplicate entry' in str(e.orig):
+            return jsonify({'error': 'Registro ya existe (clave duplicada)'}), 400
+        else:
+            return jsonify({'error': 'Error de integridad en la base de datos'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/relacion', methods=['DELETE'])
+def borrar_relacion():
+    try:
+        data = request.get_json()
+        if not all(k in data for k in ('idBalanza', 'idProdXProv', 'idProducto', 'idProveedor')):
+            return jsonify({'error': 'Faltan datos obligatorios para borrar registro'}), 400
+        idBalanza1 = data['idBalanza']
+        idProducto1 = data['idProducto']
+        idProveedor1 = data['idProveedor']
+        idProdXProv1 = data['idProdXProv']
+        relacion = RelacionProductos.query.filter_by(
+            idBalanza=idBalanza1,
+            idProducto=idProducto1,
+            idProveedor=idProveedor1,
+            idProdXProv=idProdXProv1
+        ).first()
+        if not relacion:
+            return jsonify({'error': 'Relación no encontrada'}), 404
+        db.session.delete(relacion)
+        db.session.commit()
+        return jsonify({'mensaje': f'Relación {relacion} borrada exitosamente'}), 204
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/relacion/peso', methods=['PUT'])
+def modificar_peso():
+    try:
+        data = request.get_json()
+        if not all(k in data for k in ('idBalanza', 'idProdXProv', 'idProducto', 'idProveedor', 'pesoPromedio')):
+            return jsonify({'error': 'Faltan datos obligatorios para modificar el peso promedio del registro'}), 400
+        idBalanza1 = data['idBalanza']
+        idProducto1 = data['idProducto']
+        idProveedor1 = data['idProveedor']
+        idProdXProv1 = data['idProdXProv']
+        pesoPromedio1 = data['pesoPromedio']
+        relacion = RelacionProductos.query.filter_by(
+            idBalanza=idBalanza1,
+            idProducto=idProducto1,
+            idProveedor=idProveedor1,
+            idProdXProv=idProdXProv1
+        ).first()
+        if not relacion:
+            return jsonify({'error': 'Relación no encontrada'}), 404
+        relacion.pesoPromedio = pesoPromedio1
+        db.session.commit()
+        return jsonify({'mensaje': 'Actualizado con éxito',
+                        'data': {
+                            'idBalanza': idBalanza1,
+                            'idProducto': idProducto1,
+                            'idProveedor': idProveedor1,
+                            'idProdXProv': idProdXProv1,
+                            'pesoPromedio': relacion.pesoPromedio
+                        }}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/relacion/margen', methods=['PUT'])
+def modificar_margen():
+    try:
+        data = request.get_json()
+        if not all(k in data for k in ('idBalanza', 'idProdXProv', 'idProducto', 'idProveedor', 'margen')):
+            return jsonify({'error': 'Faltan datos obligatorios para modificar el margen del registro'}), 400
+        idBalanza1 = data['idBalanza']
+        idProducto1 = data['idProducto']
+        idProveedor1 = data['idProveedor']
+        idProdXProv1 = data['idProdXProv']
+        margen1 = data['margen']
+        relacion = RelacionProductos.query.filter_by(
+            idBalanza=idBalanza1,
+            idProducto=idProducto1,
+            idProveedor=idProveedor1,
+            idProdXProv=idProdXProv1
+        ).first()
+        if not relacion:
+            return jsonify({'error': 'Relación no encontrada'}), 404
+        relacion.margen = margen1
+        db.session.commit()
+        return jsonify({'mensaje': 'Actualizado con éxito',
+                        'data': {
+                            'idBalanza': idBalanza1,
+                            'idProducto': idProducto1,
+                            'idProveedor': idProveedor1,
+                            'idProdXProv': idProdXProv1,
+                            'margen': relacion.margen
+                        }}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

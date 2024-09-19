@@ -25,6 +25,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 - 19/8 se implementa con funcionalidad completa la consulta de balanza. La misma tiene un CRUD y cuenta con filtro de novedades y productos concertados. 
 - 22/8 se implementa la entidad productos_x_proveedor que tiene los productos comercializados por cada proveedor así como sus principales características. Esta tabla se usa en conjunto con los formularios de compras/stock.
 - 14/9 se implementa la versión preliminar del formulario de compras, sus tablas relacionadas y métodos.
+- 19/9 se agrega tabla de relación para vincular balanza, productos, proveedores que permite calcular los márgenes, movimientos de stock y mejorar la valuación.
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

@@ -1023,6 +1023,22 @@ def get_pxproveedores():
         return resultado
     except Exception as e:
         return {"message": str(e)}, 500
+@app.route('/compras/productoxproveedor/consulta', methods=['GET'])
+def get_pxptotales():
+    consulta = """
+    SELECT p.nombreProveedor, COUNT(px.idProdXProv) AS total_productos FROM proveedor p JOIN productos_x_proveedor px ON p.idProveedor = px.idProveedor GROUP BY p.nombreProveedor
+    """
+    try:
+        resultado = db.session.execute(text(consulta))
+        datos = []
+        for renglon in resultado:
+            datos.append({
+                'Nombre Proveedor': renglon[0],
+                'Total': renglon[1]
+            })
+        return jsonify(datos)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 @app.route('/compras/productoxproveedor/<int:idProveedor>/<int:idProdxProv>', methods=['DELETE'])
 def delete_pxp(idProveedor, idProdxProv):
     try:

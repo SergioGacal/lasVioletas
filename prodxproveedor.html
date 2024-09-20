@@ -13,8 +13,9 @@
 
 <body>
     <div id="app">
-        <button @click="toggleList">Listado</button>
         <button @click="toggleAlta">Nuevo</button>
+        <button @click="toggleList">Listado</button>
+        <button @click="toggleTotal">Totales</button>
         <div v-if="showAlta">
             <form @submit.prevent="crearRelacionPxP">
                 <div>
@@ -51,7 +52,22 @@
                 
             </form>
         </div>
-        
+        <div v-if="showTotal">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Proveedor</th>
+                        <th>Totales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in pxpTotales" :key="index">
+                        <td>{{ item['Nombre Proveedor'] }}</td>
+                        <td>{{ item['Total'] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <div v-if="showList">
             <table>
                 <thead>
@@ -72,6 +88,7 @@
                 </tbody>
             </table>
         </div>
+        
     </div>
 </body>
 

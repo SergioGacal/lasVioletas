@@ -4,8 +4,10 @@ const app = Vue.createApp({
             url: 'https://gacalsergio.pythonanywhere.com',
             productos: [],
             proveedores: [],
+            pxpTotales: [],
             showList: false,
             showAlta: false,
+            showTotal: false,
             formData: {
                 idProveedor: '',
                 idProdXProv: '',
@@ -34,7 +36,16 @@ const app = Vue.createApp({
                     console.error("Error fetching proveedores:", error);
                 });
         },
-
+        fetchTotales(){
+            axios.get(`${this.url}/compras/productoxproveedor/consulta`)
+                .then(response => {
+                    this.pxpTotales = response.data;
+                    console.log(this.pxpTotales)
+                })
+                .catch(error => {
+                    console.error("Error fetching totales:", error);
+                });
+        },
         crearRelacionPxP() {
             const data = {
                 idProveedor: this.formData.idProveedor,
@@ -82,6 +93,7 @@ const app = Vue.createApp({
 
         toggleList() {this.showList = !this.showList;},
         toggleAlta() {this.showAlta = !this.showAlta},
+        toggleTotal() {this.showTotal = !this.showTotal},
     },
     computed: {
         productosConProveedores() {
@@ -97,6 +109,7 @@ const app = Vue.createApp({
     mounted() {
         this.fetchProductos();
         this.fetchProveedores();
+        this.fetchTotales();
     }
 });
 app.mount('#app');

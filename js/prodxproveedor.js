@@ -40,7 +40,6 @@ const app = Vue.createApp({
             axios.get(`${this.url}/compras/productoxproveedor/consulta`)
                 .then(response => {
                     this.pxpTotales = response.data;
-                    console.log(this.pxpTotales)
                 })
                 .catch(error => {
                     console.error("Error fetching totales:", error);

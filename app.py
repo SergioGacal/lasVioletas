@@ -300,8 +300,12 @@ class NovedadBalanzaSchema(ma.Schema):
         fields = ("idNovedadBalanza",) 
 
 class Productos_x_proveedorSchema(ma.Schema):
+    proveedor = fields.Method('recuperarNombre')
+    def recuperarNombre(self, obj):
+        proveedor = Proveedor.query.get(obj.idProveedor)
+        return proveedor.nombreProveedor if proveedor else None
     class Meta:
-        fields = ('idProveedor','idProdXProv','descripcion','medicion', 'divideX')
+        fields = ('idProveedor', 'proveedor',  'idProdXProv','descripcion','medicion', 'divideX')
 
 class CompraSchema(ma.Schema):
     proveedorNombre = ma.Function(lambda obj: obj.proveedor.nombreProveedor if obj.proveedor else None)

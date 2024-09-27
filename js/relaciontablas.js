@@ -179,6 +179,9 @@ const app = Vue.createApp({
                 console.error('Error al actualizar el margen:', error);
             });
         },
+        salir(){
+            window.close();
+        },
     },
 
     watch: {

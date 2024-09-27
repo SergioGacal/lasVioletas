@@ -43,7 +43,7 @@
                                 mostrarEdicion ? 'Sin Edicion' : 'Editar' }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" @click.prevent="prueba()">Salir</a>
+                            <a class="nav-link" @click.prevent="salir">Salir</a>
                         </li>
                     </ul>
                 </div>
@@ -122,7 +122,7 @@
                             <th>Producto</th>
                             <th>Proveedor</th>
                             <th>PxP</th>
-                            <th v-if="mostrarTodosLosDatos"></th>Margen</th>
+                            <th v-if="mostrarTodosLosDatos">Margen</th>
                             <th v-if="mostrarTodosLosDatos">Peso</th>
                             <th v-if="mostrarTodosLosDatos">Observaciones</th>
                             <th v-if="mostrarEdicion">Edicion</th>

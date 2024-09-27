@@ -139,16 +139,18 @@
                             <td v-if="mostrarTodosLosDatos">{{item.pesoPromedio}}</td>
                             <td v-if="mostrarTodosLosDatos">{{item.observacion}} </td>
                             <td v-if="mostrarEdicion">
+                                <div class="d-flex align-items-center">
                                 <input type="number" 
                                        class="form-control form-control-sm w-auto" 
                                        :value="item.margen" 
                                        @input="nuevoMargen = $event.target.value" />
-                                <button @click="actualizarMargen(item.idBalanza, item.idProducto, item.idProveedor, item.idProdXProv, nuevoMargen)">
+                                <button @click="actualizarMargen(item.idBalanza, item.idProducto, item.idProveedor, item.idProdXProv, nuevoMargen)" class="btn btn-primary">
                                     Actualizar Margen
                                 </button>
+                                </div>
                             </td>
                             <td v-if="mostrarHabilitarBorrado"><button
-                                    @click.prevent="borrarRelacion(item.idBalanza, item.idProducto, item.idProveedor, item.idProdXProv)">X</button>
+                                    @click.prevent="borrarRelacion(item.idBalanza, item.idProducto, item.idProveedor, item.idProdXProv)"  class="btn btn-danger">X</button>
                             </td>
                         </tr>
                     </tbody>

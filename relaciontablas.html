@@ -28,6 +28,20 @@
                             <a class="nav-link" href="#" @click.prevent="mostrarListado = !mostrarListado">{{
                                 mostrarListado ? 'Cerrar Listado' : 'Listar' }}</a>
                         </li>
+                        <li class="nav-item" v-if="mostrarListado">
+                            <a class="nav-link" href="#"
+                                @click.prevent="mostrarTodosLosDatos = !mostrarTodosLosDatos">{{
+                                mostrarTodosLosDatos ? 'Ocultar' : 'Ver Todo' }}</a>
+                        </li>
+                        <li class="nav-item" v-if="mostrarListado">
+                            <a class="nav-link" href="#"
+                                @click.prevent="mostrarHabilitarBorrado = !mostrarHabilitarBorrado">{{
+                                mostrarHabilitarBorrado ? 'Sin Borrar' : 'Borrar' }}</a>
+                        </li>
+                        <li class="nav-item" v-if="mostrarListado">
+                            <a class="nav-link" href="#" @click.prevent="mostrarEdicion = !mostrarEdicion">{{
+                                mostrarEdicion ? 'Sin Edicion' : 'Editar' }}</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" @click.prevent="prueba()">Salir</a>
                         </li>
@@ -88,36 +102,60 @@
                         <button type="button" class="btn btn-primary w-100" @click="crearNuevaRelacion">Aceptar</button>
                     </div>
                     <div class="col-12 col-md-6 col-lg-4 mb-3">
-                        <button type="button" class="btn btn-secondary w-100" @click="cancelarAltaRelacion">Cancelar</button>
+                        <button type="button" class="btn btn-secondary w-100"
+                            @click="cancelarAltaRelacion">Cancelar</button>
                     </div>
                 </div>
             </form>
-                        
+
         </div>
 
         <div v-if="mostrarListado" class="mostrar">
-            <table class="table table-responsive table-striped">
-                <thead>
-                    <tr>
-                        <th>Balanza</th>
-                        <th>Producto</th>
-                        <th>Proveedor</th>
-                        <th>PxP</th>
-                        <th>Margen</th>
-                        <th>Peso</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in relacionProductos" :key="item.idProdXProv">
-                        <td>{{item.idBalanza}}.{{ item.balanza.nombre1 }}</td>
-                        <td>{{item.idProducto}}.{{item.producto.descripcion}}</td>
-                        <td>{{item.idProveedor}}-{{item.proveedor}}</td>
-                        <td>{{item.idProdXProv}}.{{item.datosPxP.descripcion}} </td>
-                        <td>{{ ((item.margen - 1) * 100).toFixed(2) }}%</td>
-                        <td>{{item.pesoPromedio}}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div v-if="relacionProductos.length === 0">
+                <p>No hay productos relacionados</p>
+            </div>
+            <div v-else>
+                <table class="table table-responsive table-striped">
+                    <thead>
+                        <tr>
+                            <th>Balanza</th>
+                            <th>Producto</th>
+                            <th>Proveedor</th>
+                            <th>PxP</th>
+                            <th v-if="mostrarTodosLosDatos"></th>Margen</th>
+                            <th v-if="mostrarTodosLosDatos">Peso</th>
+                            <th v-if="mostrarTodosLosDatos">Observaciones</th>
+                            <th v-if="mostrarEdicion">Edicion</th>
+                            <th v-if="mostrarHabilitarBorrado">Borrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in relacionProductos" :key="item.idProdXProv">
+                            <td>{{item.idBalanza}}.{{ item.balanza.nombre1 }}</td>
+                            <td>{{item.idProducto}}.{{item.producto.descripcion}}</td>
+                            <td>{{item.idProveedor}}-{{item.proveedor}}</td>
+                            <td>{{item.idProdXProv}}.{{item.datosPxP.descripcion}} </td>
+                            <td v-if="mostrarTodosLosDatos">{{ ((item.margen - 1) * 100).toFixed(2) }}%</td>
+                            <td v-if="mostrarTodosLosDatos">{{item.pesoPromedio}}</td>
+                            <td v-if="mostrarTodosLosDatos">{{item.observacion}} </td>
+                            <td v-if="mostrarEdicion">
+                                <input type="number" 
+                                       class="form-control form-control-sm w-auto" 
+                                       :value="item.margen" 
+                                       @input="nuevoMargen = $event.target.value" />
+                                <button @click="actualizarMargen(item.idBalanza, item.idProducto, item.idProveedor, item.idProdXProv, nuevoMargen)">
+                                    Actualizar Margen
+                                </button>
+                            </td>
+                            <td v-if="mostrarHabilitarBorrado"><button
+                                    @click.prevent="borrarRelacion(item.idBalanza, item.idProducto, item.idProveedor, item.idProdXProv)">X</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
         </div>
 
 

@@ -5,6 +5,9 @@ const app = Vue.createApp({
             url: 'https://gacalsergio.pythonanywhere.com',
             mostrarCrear: false,
             mostrarListado: false,
+            mostrarEdicion: false,
+            mostrarTodosLosDatos: false,
+            mostrarHabilitarBorrado: false,
 
             // Elementos a cargar:
             relacionProductos: [],
@@ -28,12 +31,7 @@ const app = Vue.createApp({
     methods: {
         prueba(){
             console.clear()
-            console.log('Balanza',this.seleccionBalanza);
-            console.log('Producto',this.seleccionProducto);
-            console.log('Proveedor', this.seleccionProveedor);
-            console.log('PxP', this.seleccionPxP);
-            console.log('Margen:', this.seleccionMargen);
-            console.log('Comentario:', this.seleccionObservacion);
+            console.log(this.relacionProductos)
         },
         traerRelacionProductos() {
             fetch(this.url + '/relacion')
@@ -124,6 +122,62 @@ const app = Vue.createApp({
             this.seleccionPxP = '';
             this.seleccionMargen = '';
             this.seleccionObservacion = '';
+        },
+        borrarRelacion(idBalanza, idProducto, idProveedor, idProdXProv) {
+            fetch(this.url + '/relacion', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    idBalanza: idBalanza,
+                    idProducto: idProducto,
+                    idProveedor: idProveedor,
+                    idProdXProv: idProdXProv
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Registro borrado:', data);
+                this.traerRelacionProductos();
+            })
+            .catch(error => {
+                console.error('Error al borrar la relación:', error);
+            });
+        },
+        actualizarMargen(idBalanza1, idProducto1, idProveedor1, idProdXProv1,margen1){
+            console.log(margen1)
+            fetch(this.url + '/relacion/margen', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    idBalanza: idBalanza1,
+                    idProducto: idProducto1,
+                    idProveedor: idProveedor1,
+                    idProdXProv: idProdXProv1,
+                    margen: margen1
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.text();
+            })
+            .then(data => {
+                this.mostrarEdicion = false;
+                this.traerRelacionProductos();
+            })
+            .catch(error => {
+                console.error('Error al actualizar el margen:', error);
+            });
         },
     },
 

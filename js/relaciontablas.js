@@ -4,7 +4,7 @@ const app = Vue.createApp({
         return {
             url: 'https://gacalsergio.pythonanywhere.com',
             mostrarCrear: false,
-            mostrarListado: false,
+            mostrarListado: true,
             mostrarEdicion: false,
             mostrarTodosLosDatos: false,
             mostrarHabilitarBorrado: false,
@@ -99,7 +99,15 @@ const app = Vue.createApp({
                     observacion: this.seleccionObservacion,
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    alert('Error posible registro duplicado')
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.error || 'Error desconocido en la solicitud');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 this.mostrarCrear = false;
                 this.seleccionBalanza = '';
@@ -110,8 +118,13 @@ const app = Vue.createApp({
                 this.seleccionObservacion = '';
                 this.traerRelacionProductos();
             })
-            .catch(error => {
-                console.error('Error al crear la relación:', error);
+            .catch(async (error) => {
+                if (error instanceof Response) {
+                    const errorData = await error.json();
+                    console.error('Error al crear la relación:', errorData.error || 'Error desconocido');
+                } else {
+                    console.error('Error de red o de otro tipo:', error.message);
+                }
             });
         },
         cancelarAltaRelacion(){

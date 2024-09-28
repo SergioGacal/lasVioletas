@@ -19,12 +19,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="#" @click.prevent="mostrarCrear = !mostrarCrear">{{ mostrarCrear ?
                                 'Cancelar Alta' : 'Crear' }}</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item"></li>
                             <a class="nav-link" href="#" @click.prevent="mostrarListado = !mostrarListado">{{
                                 mostrarListado ? 'Cerrar Listado' : 'Listar' }}</a>
                         </li>
@@ -43,9 +43,18 @@
                                 mostrarEdicion ? 'Sin Edicion' : 'Editar' }}</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="#" @click.prevent="mostrarBusqueda = !mostrarBusqueda">{{
+                                mostrarBusqueda ? 'Cerrar Busqueda' : 'Buscar' }}</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" @click.prevent="salir">Salir</a>
                         </li>
                     </ul>
+                    <form v-if="mostrarBusqueda" class="d-flex ms-auto">
+                        <input class="form-control me-2" type="text" placeholder="Buscar" v-model="cuadroBusqueda">
+                        <button class="btn btn-primary" @click.prevent="buscar" type="button">Buscar</button>
+                    </form>
+                    
                 </div>
             </div>
         </nav>
@@ -130,7 +139,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in relacionProductos" :key="item.idProdXProv">
+                        <tr v-for="item in productosFiltrados" :key="item.idProdXProv">
                             <td>{{item.idBalanza}}.{{ item.balanza.nombre1 }}</td>
                             <td>{{item.idProducto}}.{{item.producto.descripcion}}</td>
                             <td>{{item.idProveedor}}-{{item.proveedor}}</td>

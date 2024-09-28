@@ -2,12 +2,16 @@ const app = Vue.createApp({
 
     data() {
         return {
+            
             url: 'https://gacalsergio.pythonanywhere.com',
+
+            // Mostrar y ocultar.
             mostrarCrear: false,
             mostrarListado: true,
             mostrarEdicion: false,
             mostrarTodosLosDatos: false,
             mostrarHabilitarBorrado: false,
+            mostrarBusqueda: false,
 
             // Elementos a cargar:
             relacionProductos: [],
@@ -24,6 +28,10 @@ const app = Vue.createApp({
             seleccionMargen: '',
             seleccionObservacion: '',
 
+            // Para buscar manual
+            cuadroBusqueda: '',
+            clavesBusqueda: [],
+
         }
 
     },
@@ -38,6 +46,7 @@ const app = Vue.createApp({
                 .then(response => response.json())
                 .then(data => {
                     this.relacionProductos = data;
+                    console.log(this.relacionProductos)
                 })
                 .catch(error => {
                     console.error('Error al obtener proveedores:', error);
@@ -192,6 +201,27 @@ const app = Vue.createApp({
                 console.error('Error al actualizar el margen:', error);
             });
         },
+        buscar(){
+            const terminoBusqueda = this.cuadroBusqueda.toLowerCase();
+            this.clavesBusqueda = [];
+            this.relacionProductos.forEach(item => {
+                if (
+                    item.balanza.nombre1.toLowerCase().includes(terminoBusqueda) ||
+                    item.datosPxP.descripcion.toLowerCase().includes(terminoBusqueda) ||
+                    item.producto.descripcion.toLowerCase().includes(terminoBusqueda) ||
+                    item.proveedor.toLowerCase().includes(terminoBusqueda)
+                ) {
+                    this.clavesBusqueda.push({
+                        idBalanza: item.idBalanza,
+                        idProdXProv: item.idProdXProv,
+                        idProducto: item.idProducto,
+                        idProveedor: item.idProveedor
+                    });
+                }
+            });
+            console.clear()
+            console.log(this.clavesBusqueda);
+        },
         salir(){
             window.close();
         },
@@ -203,6 +233,22 @@ const app = Vue.createApp({
                 this.traerProductoXProveedor();
             }
         },
+    },
+    computed: {
+        productosFiltrados() {
+            if (!this.cuadroBusqueda) {
+                return this.relacionProductos;
+            }
+            const busqueda = this.cuadroBusqueda.toLowerCase();
+            return this.relacionProductos.filter(item => {
+                return (
+                    item.balanza.nombre1.toLowerCase().includes(busqueda) ||
+                    item.datosPxP.descripcion.toLowerCase().includes(busqueda) ||
+                    item.producto.descripcion.toLowerCase().includes(busqueda) ||
+                    item.proveedor.toLowerCase().includes(busqueda)
+                );
+            });
+        }
     },
 
     mounted() {

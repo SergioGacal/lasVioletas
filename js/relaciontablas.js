@@ -46,7 +46,6 @@ const app = Vue.createApp({
                 .then(response => response.json())
                 .then(data => {
                     this.relacionProductos = data;
-                    console.log(this.relacionProductos)
                 })
                 .catch(error => {
                     console.error('Error al obtener proveedores:', error);
@@ -219,8 +218,6 @@ const app = Vue.createApp({
                     });
                 }
             });
-            console.clear()
-            console.log(this.clavesBusqueda);
         },
         salir(){
             window.close();

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
+from sqlalchemy import text, func
 from flask_marshmallow import Marshmallow
 from marshmallow import Schema, fields
 from datetime import datetime
@@ -9,6 +9,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from sqlalchemy.exc import IntegrityError
 from decimal import Decimal
+import requests
 
 app=Flask(__name__)
 CORS(app)
@@ -197,6 +198,10 @@ class DetalleCompra(db.Model):
     precioFinal = db.Column(db.Numeric(10, 2))
     importe = db.Column(db.Numeric(10, 2))
     importeFinal = db.Column(db.Numeric(10, 2))
+    precioBalanzaActual = db.Column(db.Integer)
+    precioBalanzaSugerido = db.Column(db.Integer)
+    pesoPromedioActual = db.Column(db.Float)
+    pesoPromedioNuevo = db.Column(db.Float)
     
     compra = db.relationship('Compra', backref=db.backref('detalles', lazy=True))
     producto = db.relationship('Productos_x_proveedor', primaryjoin=(
@@ -204,7 +209,7 @@ class DetalleCompra(db.Model):
         (idProducto == Productos_x_proveedor.idProdXProv)
     ), backref=db.backref('detalles', lazy=True))
 
-    def __init__(self, idCompra, idProveedor, idProducto, unidades, cantidad, precioUnitario, precioFinal, importe, importeFinal):
+    def __init__(self, idCompra, idProveedor, idProducto, unidades, cantidad, precioUnitario, precioFinal, importe, importeFinal, precioBalanzaActual, precioBalanzaSugerido, pesoPromedioActual,pesoPromedioNuevo):
         self.idCompra = idCompra
         self.idProveedor = idProveedor
         self.idProducto = idProducto
@@ -214,6 +219,10 @@ class DetalleCompra(db.Model):
         self.precioFinal = precioFinal
         self.importe = importe
         self.importeFinal = importeFinal
+        self.precioBalanzaActual = precioBalanzaActual
+        self.precioBalanzaSugerido = precioBalanzaSugerido
+        self.pesoPromedioActual = pesoPromedioActual
+        self.pesoPromedioNuevo = pesoPromedioNuevo
 
 class RelacionProductos(db.Model):
     idBalanza = db.Column(db.Integer, db.ForeignKey('balanza.idBalanza'), primary_key=True)
@@ -316,7 +325,7 @@ class DetalleCompraSchema(ma.Schema):
     compra = ma.Nested(CompraSchema, only=['idCompra'])
     producto = ma.Nested(Productos_x_proveedorSchema, only=['idProdXProv', 'descripcion'])  # Ajusta según los campos necesarios
     class Meta:
-        fields = ('idDetalle', 'idCompra', 'idProveedor', 'idProducto', 'unidades', 'cantidad', 'precioUnitario', 'precioFinal', 'importe', 'importeFinal', 'compra', 'producto')
+        fields = ('idDetalle', 'idCompra', 'idProveedor', 'idProducto', 'unidades', 'cantidad', 'precioUnitario', 'precioFinal', 'importe', 'importeFinal', 'compra', 'producto', 'precioBalanzaActual', 'precioBalanzaSugerido', 'pesoPromedioActual','pesoPromedioNuevo')
 
 class RelacionProductosSchema(ma.Schema):
     balanza = ma.Nested(BalanzaSchema, only=['nombre1'])
@@ -698,8 +707,6 @@ def borrar_productoproveedor(idProducto, idProveedor):
         return jsonify({"message": "Relación ProductoProveedor borrada correctamente."}),200
     else:
         return jsonify({"message": "No se encontró la relación ProductoProveedor para borrar."}), 404
-
-# endpoints
 
 # MedioPago
 
@@ -1239,6 +1246,25 @@ def agregar_detalle_compra():
         precioFinal = data.get('precioFinal')
         importe = data.get('importe')
         importeFinal = data.get('importeFinal')
+        relacion = db.session.query(RelacionProductos).filter_by(idProdXProv=idProducto, idProveedor=idProveedor).first()
+        if not relacion:
+            print('Relacion no encontrada')
+        else:
+            idBalanza = relacion.idBalanza
+            margen = relacion.margen
+            productoDeProductos = relacion.idProducto
+            balanzaBusco = db.session.query(Balanza).filter_by(idBalanza=idBalanza).first()
+            precioBalanza = balanzaBusco.precio
+            pesoPromedioActual = relacion.pesoPromedio
+        # Peso promedio, cálculo
+        resultados_previos = db.session.query(
+            func.sum(DetalleCompra.unidades).label('total_unidades'),
+            func.sum(DetalleCompra.cantidad).label('total_cantidad')
+        ).filter_by(idProveedor=idProveedor, idProducto=idProducto).first()
+        total_unidades = float(resultados_previos.total_unidades or 0)
+        total_cantidad = float(resultados_previos.total_cantidad or 0)
+        calcular_peso_promedio_nuevo = lambda unidades_actuales, cantidad_actual: (total_cantidad + float(cantidad_actual)) / (total_unidades + float(unidades_actuales))
+        pesoPromedioNuevo = calcular_peso_promedio_nuevo(unidades, cantidad)
 
         compra = db.session.get(Compra, idCompra)
         if not compra:
@@ -1253,11 +1279,23 @@ def agregar_detalle_compra():
         divideX = float(divideX)
 
         precioFinal = float((precioUnitario * iva) - ((precioUnitario * iva) * float(descuento))) / divideX
+        precioBalanzaSugerido = margen * precioFinal
         importe  = cantidad * precioUnitario
         importeFinal = cantidad * precioFinal
-        nuevo_detalle = DetalleCompra(idCompra=idCompra,idProveedor=idProveedor,idProducto=idProducto,unidades=unidades,cantidad=cantidad,precioUnitario=precioUnitario,precioFinal=precioFinal,importe=importe,importeFinal=importeFinal)
+
+        nuevo_detalle = DetalleCompra(idCompra=idCompra,idProveedor=idProveedor,idProducto=idProducto,unidades=unidades,cantidad=cantidad,precioUnitario=precioUnitario,precioFinal=precioFinal,importe=importe,importeFinal=importeFinal, precioBalanzaActual=precioBalanza, precioBalanzaSugerido=int(precioBalanzaSugerido),pesoPromedioActual=pesoPromedioActual,pesoPromedioNuevo=pesoPromedioNuevo)
         db.session.add(nuevo_detalle)
         db.session.commit()
+
+        json_data = {
+            'idBalanza': idBalanza,
+            'idProducto': productoDeProductos,
+            'idProveedor': idProveedor,
+            'idProdXProv': idProducto,
+            'pesoPromedio': pesoPromedioNuevo}       
+        response = requests.put('http://localhost:5000/relacion/peso', json=json_data)
+        if response.status_code != 200:
+            return jsonify({'error': 'Error actualizando el peso promedio'}), 500
         return jsonify({'message': 'Detalle de compra agregado exitosamente',
                         'idDetalle': nuevo_detalle.idDetalle,
                         'idCompra' : idCompra,
@@ -1268,7 +1306,11 @@ def agregar_detalle_compra():
                         'precioUnitario': precioUnitario,
                         'precioFinal': precioFinal,
                         'importe': importe,
-                        'importeFinal': importeFinal
+                        'importeFinal': importeFinal,
+                        'precioBalanzaActual' : precioBalanza,
+                        'precioBalanzaSugerido' : precioBalanzaSugerido,
+                        'pesoPromedioActual' : pesoPromedioActual,
+                        'pesoPromedioNuevo' : pesoPromedioNuevo
                         }), 201
     except IntegrityError:
         db.session.rollback()

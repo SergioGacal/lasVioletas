@@ -4,6 +4,7 @@ const app = Vue.createApp({
         return {
             
             url: 'https://gacalsergio.pythonanywhere.com',
+            //url: 'http://127.0.0.1:5000',
 
             // Mostrar y ocultar.
             mostrarCrear: false,
@@ -28,8 +29,9 @@ const app = Vue.createApp({
             seleccionMargen: '',
             seleccionObservacion: '',
 
-            // Para buscar manual
+            // Para buscar combo o manual:
             cuadroBusqueda: '',
+            proveedorSeleccionado: '',
             clavesBusqueda: [],
 
         }
@@ -233,20 +235,19 @@ const app = Vue.createApp({
     },
     computed: {
         productosFiltrados() {
-            if (!this.cuadroBusqueda) {
-                return this.relacionProductos;
-            }
-            const busqueda = this.cuadroBusqueda.toLowerCase();
+            const busqueda = this.cuadroBusqueda ? this.cuadroBusqueda.toLowerCase() : '';
+            const proveedorFiltrado = this.proveedorSeleccionado;
             return this.relacionProductos.filter(item => {
-                return (
+                const matchesBusqueda = (
                     item.balanza.nombre1.toLowerCase().includes(busqueda) ||
                     item.datosPxP.descripcion.toLowerCase().includes(busqueda) ||
                     item.producto.descripcion.toLowerCase().includes(busqueda) ||
-                    item.proveedor.toLowerCase().includes(busqueda)
-                );
+                    item.proveedor.toLowerCase().includes(busqueda));
+                const matchesProveedor = proveedorFiltrado ? item.idProveedor === proveedorFiltrado : true;
+                return matchesBusqueda && matchesProveedor;
             });
-        }
-    },
+        },
+    },    
 
     mounted() {
         this.traerRelacionProductos();

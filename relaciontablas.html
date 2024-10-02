@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Las Violetas - Relación de Productos</title>
+    <link rel="icon" type="image/png" href="./img/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/relaciontablas.css">
 </head>
@@ -51,7 +52,13 @@
                         </li>
                     </ul>
                     <form v-if="mostrarBusqueda" class="d-flex ms-auto">
-                        <input class="form-control me-2" type="text" placeholder="Buscar" v-model="cuadroBusqueda">
+                        <select v-model="proveedorSeleccionado" class="form-control">
+                            <option value="">Seleccione un proveedor</option>
+                            <option v-for="proveedor in proveedores" :key="proveedor.idProveedor" :value="proveedor.idProveedor">
+                                {{ proveedor.nombreProveedor }}
+                            </option>
+                        </select>
+                       <input class="form-control me-2" type="text" placeholder="Buscar" v-model="cuadroBusqueda">
                         <button class="btn btn-primary" @click.prevent="buscar" type="button">Buscar</button>
                     </form>
                     

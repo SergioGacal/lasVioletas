@@ -1,5 +1,6 @@
 #app {
     height: 100vh;
+    width: 100%;
 }
 
 .container {
@@ -18,7 +19,6 @@
 .nuevaCompra {
     background-color: lightblue;
     overflow-y: auto;
-    flex: 1; 
     padding: 1%;
 }
 .FormAltaCompra{

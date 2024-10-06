@@ -6,8 +6,11 @@ const app = Vue.createApp({
             url: 'http://127.0.0.1:5000',
 
             // Mostrar ocultar botones y secciones
-            nuevaCompra : false,
-            elegirCompra : true,
+            nuevaCompra : true, // después cambiar
+            nuevoDetalleCompra : false,
+
+
+            elegirCompra : false,
             borrarCompra : false,
             edicionCompra: false,
 
@@ -19,7 +22,7 @@ const app = Vue.createApp({
             sumaFactura: 0,
             detalleFactura: [],
             detallecompraSeleccionada: [],
-            
+
         };
         
     },

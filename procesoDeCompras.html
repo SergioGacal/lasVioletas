@@ -38,10 +38,15 @@
             <div class="nuevaCompra" v-if="nuevaCompra">
                 <h3>Nueva Compra</h3>
                 <div class="FormAltaCompra">
-                    <p>FormAltaCompra</p>
+                    <p>idProveedor</p>
+                    <p>fechaCompra</p>
+                    <p>numFactura</p>
+                    <p>iva</p>
+                    <p>descuento</p>
+                    <p>Boton cancelar - Boton Aceptar</p>
                 </div>
 
-                <div class="FormAltadetalleCompra">
+                <div v-if="nuevoDetalleCompra" class="FormAltadetalleCompra">
                     <p>FormAltadetalleCompra</p>
                 </div>
 

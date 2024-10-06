@@ -9,6 +9,7 @@ const app = Vue.createApp({
             nuevaCompra : false,
             elegirCompra : true,
             borrarCompra : false,
+            edicionCompra: false,
 
             // Detalle de Compras:
             compras : [],
@@ -18,6 +19,7 @@ const app = Vue.createApp({
             sumaFactura: 0,
             detalleFactura: [],
             detallecompraSeleccionada: [],
+            idsABorrar: [],
 
         };
         
@@ -64,21 +66,85 @@ const app = Vue.createApp({
                 })
                 .then(data => {
                     this.detallecompraSeleccionada = data;
-                    console.log(this.detallecompraSeleccionada);
+                    //console.log(this.detallecompraSeleccionada);
                     this.sumaFactura = this.detallecompraSeleccionada.reduce((acc, item) => {
                         return acc + parseFloat(item.importeFinal || 0);
                     }, 0);    
-                    console.log(this.sumaFactura);
+                    //console.log(this.sumaFactura);
                 })
                 .catch(error => {console.error(error.message);}
             );
         },
-        funcionborrarCompra(){
-            console.log('compra borrada',this.compraSeleccionada)
+        funcionborrarCompra() {
+            let numerito = this.compraSeleccionada; // Guardar el id a borrar y después usarlo
+            if (this.detallecompraSeleccionada.length > 0) {
+                const promesasBorrado = this.detallecompraSeleccionada.map(detalle => {
+                    return fetch(this.url + '/compra/detalle/' + detalle.idDetalle, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al borrar el detalle de compra ' + detalle.idDetalle);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(data.resultado);
+                    })
+                    .catch(error => {
+                        console.error('Error al borrar el detalle:', error);
+                    });
+                });
+                Promise.all(promesasBorrado)
+                    .then(() => {
+                        return fetch(this.url + '/compra/' + numerito, {
+                            method: 'DELETE'
+                        });
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al borrar la compra');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        this.resetearCompra();
+                        this.cargarCompras();
+                    })
+                    .catch(error => {
+                        console.error('Error al borrar la compra:', error);
+                    });
+        
+            } else {
+                // Si no hay registros, proceder directamente a borrar la compra
+                fetch(this.url + '/compra/' + numerito, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al borrar la compra');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.resetearCompra();
+                    this.cargarCompras();
+                    //console.log(data.resultado);
+                })
+                .catch(error => {
+                    console.error('Error al borrar la compra:', error);
+                });
+            }
+        },
+        funcionEditarCompra(){
+            console.log('compra editada', this.compraSeleccionada),
+            this.edicionCompra = false
         },
         resetearCompra() {
             console.clear()
             this.compraSeleccionada=null, 
+            this.edicionCompra=false,
+            this.borrarCompra=false,
             this.sumaFactura = 0,
             this.detalleFactura = []
             this.detallecompraSeleccionada = []

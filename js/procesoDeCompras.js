@@ -19,8 +19,7 @@ const app = Vue.createApp({
             sumaFactura: 0,
             detalleFactura: [],
             detallecompraSeleccionada: [],
-            idsABorrar: [],
-
+            
         };
         
     },

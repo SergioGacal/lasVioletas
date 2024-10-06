@@ -1,23 +1,39 @@
+#app {
+    height: 100vh;
+}
+
 .container {
     background-color: greenyellow;
-    margin: 2%;
-    padding: 1%;
 }
 .encabezado {
     background-color: gray;
-    padding-bottom: 1%;
-    padding-left: 1%;
+    padding: 1%;
 }
 .cuerpo {
-    background-color: blueviolet;
-    padding-bottom: 1%;
-    padding-left: 1%;
+    flex: 1;
+    overflow: hidden;    
+    background-color: red;
+    padding: 1%;
 }
 .nuevaCompra {
-    background-color: yellow;
+    background-color: lightblue;
+    overflow-y: auto;
+    flex: 1; 
+    padding: 1%;
+}
+.FormAltaCompra{
+    background-color: brown;
+    padding: 1%;
+}
+.FormAltadetalleCompra{
+    background-color: gray;
+    padding: 1%;
 }
 .elegirCompra {
     background-color: orange;
+    overflow-y: auto;
+    flex: 1; 
+    padding: 1%;
 }
 .seleccionDeCompra {
     background-color: aqua;
@@ -28,7 +44,7 @@
     padding: 1%;
 }
 .pie {
-    background-color: magenta;
+    background-color: gray;
     padding-bottom: 1%;
     padding-left: 1%;
 }

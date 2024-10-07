@@ -7,12 +7,44 @@ const app = Vue.createApp({
 
             // Mostrar ocultar botones y secciones
             nuevaCompra : true, // después cambiar
+            nuevaFacturaCompra: true,
+
+
             nuevoDetalleCompra : false,
 
 
             elegirCompra : false,
             borrarCompra : false,
             edicionCompra: false,
+
+            // Alta de factura
+            compra: {
+                idCompra: null,
+                idProveedor: '',
+                nombreProveedor: '',
+                fechaCompra: new Date().toISOString().split('T')[0],  // Fecha actual
+                numFactura: 0,
+                iva: false,
+                descuento: 0,
+            },
+            ultimaCompra: {
+                idCompra: null,
+                idProveedor: null,
+                nombreProveedor: null,
+                fechaCompra: null,
+                numFactura: null,
+                iva: null,
+                descuento: null,
+            },
+            // Alta de detalle de compra:
+            nuevoDetalle: {
+                idCompra: null,
+                idProducto: null,
+                unidades: null,
+                cantidad: null,
+                precioUnitario: null
+            },
+
 
             // Detalle de Compras:
             compras : [],
@@ -22,6 +54,12 @@ const app = Vue.createApp({
             sumaFactura: 0,
             detalleFactura: [],
             detallecompraSeleccionada: [],
+
+            
+
+            // Otras variables:
+            proveedores : [],
+            productosDelProveedor: [], // para la nueva compra
 
         };
         
@@ -37,6 +75,17 @@ const app = Vue.createApp({
                 maximumFractionDigits: 2,
                 useGrouping: true,
             });
+        },
+        cargarProveedores(){
+            fetch(this.url + '/proveedores')
+                .then(response => response.json())
+                .then(data => {
+                    this.proveedores = data;
+                    //console.log(this.proveedores)
+                })
+                .catch(error => {
+                    console.error('Error al cargar los proveedores:',error);
+                });
         },
         cargarCompras() {
             fetch(this.url + '/compras')
@@ -151,13 +200,78 @@ const app = Vue.createApp({
             this.detalleFactura = []
             this.detallecompraSeleccionada = []
         },
+        cancelarAltaCompra(){
+            this.nuevaCompra = false,
+            this.compra.idCompra = null,
+            this.compra.idProveedor = '',
+            this.compra.nombreProveedor = '',
+            this.compra.fechaCompra = new Date().toISOString().split('T')[0],
+            this.compra.numFactura = 0,
+            this.compra.iva = false,
+            this.compra.descuento = 0
+        },
+        confirmarAltaCompra(){
+            fetch(this.url + '/compra', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.compra)
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.ultimaCompra = {
+                    idCompra : this.compra.idCompra,
+                    idProveedor :this.compra.idProveedor,
+                    nombreProveedor: this.proveedores.find(proveedor => proveedor.idProveedor === this.compra.idProveedor)?.nombreProveedor || 'No disponible',
+                    fechaCompra : this.compra.fechaCompra,
+                    iva : this.compra.iva,
+                    descuento : this.compra.descuento,
+                    numFactura : this.compra.numFactura,
+                };
+                this.compra = {
+                    idCompra: null,
+                    idProveedor: '',
+                    fechaCompra: new Date().toISOString().split('T')[0],
+                    iva: false,
+                    descuento: null,
+                    numFactura: 0  ,
+                };
+                this.cargarCompras();
+                this.ultimaCompra.idCompra = data.idCompra;
+                this.nuevaFacturaCompra = false;
+                this.nuevoDetalleCompra = true;
+                this.traerProductosDelProveedor(this.ultimaCompra.idProveedor);
+            })
+            .catch(error => {
+                console.error('Error al guardar la compra:', error);
+            });
+        },
+        traerProductosDelProveedor(idProveedor) {
+            fetch(`${this.url}/compras/xproveedor/${idProveedor}`)
+                .then(response => response.json())
+                .then(data => {
+                    this.productosDelProveedor = data;
+                })
+                .catch(error => {
+                    console.error('Error al obtener productos del proveedor:', error);
+                });
+        },
+
+
+
+
+
+
+
         salir(){
             console.clear()
             console.log('Chau a todos')
         },
     },
     mounted() {
-        this.cargarCompras()
+        this.cargarCompras();
+        this.cargarProveedores();
     },
 });
 

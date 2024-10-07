@@ -25,8 +25,13 @@
     background-color: brown;
     padding: 1%;
 }
+.ultimaCompra{
+    background-color: blue;
+    padding: 1%;
+    color: white;
+}
 .FormAltadetalleCompra{
-    background-color: gray;
+    background-color: yellowgreen;
     padding: 1%;
 }
 .elegirCompra {

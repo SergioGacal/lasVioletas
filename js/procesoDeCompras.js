@@ -44,6 +44,7 @@ const app = Vue.createApp({
                 cantidad: null,
                 precioUnitario: null
             },
+            detalleCompra: [], // Acá acumulo el detalle_compra a medida que los voy agregando.
 
 
             // Detalle de Compras:
@@ -257,12 +258,72 @@ const app = Vue.createApp({
                     console.error('Error al obtener productos del proveedor:', error);
                 });
         },
-
-
-
-
-
-
+        agregarArticulo() {
+            const detalleCompra = {
+                idCompra: this.ultimaCompra.idCompra,
+                idProveedor: this.ultimaCompra.idProveedor,
+                idProducto: this.nuevoDetalle.idProducto,
+                unidades: this.nuevoDetalle.unidades,
+                cantidad: this.nuevoDetalle.cantidad,
+                precioUnitario: this.nuevoDetalle.precioUnitario
+            };
+        
+            // Primero, agrega el detalle de compra
+            fetch(this.url + '/compra/agrega_detalle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(detalleCompra)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Detalle de compra agregado exitosamente:', data);
+        
+                // Luego, obtén la descripción del producto usando idProveedor e idProducto
+                return fetch(`${this.url}/compras/productoxproveedor/${data.idProveedor}/${data.idProducto}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => { throw new Error(text) });
+                        }
+                        return response.json();
+                    })
+                    .then(productData => {
+                        // Agrega el detalle con el nombre del producto al array detalleCompra
+                        this.detalleCompra.push({
+                            idDetalle: data.idDetalle,
+                            idCompra: data.idCompra,
+                            idProveedor: data.idProveedor,
+                            idProducto: data.idProducto,
+                            nombreProducto: productData.descripcion, // Nombre del producto
+                            unidades: data.unidades,
+                            cantidad: data.cantidad,
+                            precioUnitario: data.precioUnitario,
+                            precioFinal: data.precioFinal,
+                            importe: data.importe,
+                            importeFinal: data.importeFinal
+                        });
+                        
+                        // Limpiar el formulario de nuevoDetalle
+                        this.nuevoDetalle = {
+                            idProducto: null,
+                            unidades: null,
+                            cantidad: null,
+                            precioUnitario: null
+                        };
+                        
+                        console.log('Detalles acumulados:', this.detalleCompra);
+                    });
+            })
+            .catch(error => {
+                console.error('Error al agregar detalle:', error);
+            });
+        },
 
         salir(){
             console.clear()

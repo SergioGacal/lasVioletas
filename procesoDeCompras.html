@@ -38,7 +38,7 @@
             <div class="nuevaCompra" v-if="nuevaCompra">
                 <h3>Nueva Compra</h3>
                 <div class="FormAltaCompra" v-if="nuevaFacturaCompra">
-                    <form @submit.prevent="confirmarAltaCompra">
+                    <form @submit.prevent="confirmarAltaCompra">  <!-- Alta Factura -->
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="proveedor" class="form-label">Proveedor</label>
@@ -74,18 +74,41 @@
                         </div>
                     </form>
                 </div>
-                <div class="ultimaCompra" v-if="!nuevaFacturaCompra">
-                    <p> {{ultimaCompra.idCompra}} - {{ultimaCompra.idProveedor}} - {{ultimaCompra.nombreProveedor}}  -- {{ultimaCompra.fechaCompra}} --- {{ultimaCompra.numFactura}} IVA : {{ultimaCompra.iva}} dto: {{ultimaCompra.descuento}} </p>
+                <div class="ultimaCompra" v-if="!nuevaFacturaCompra"> <!-- Factura Cargada -->
+                    <table class="table table-bordered table-hover w-100">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Id Compra</th>
+                                <th>Id Proveedor</th>
+                                <th>Nombre Proveedor</th>
+                                <th>Fecha Compra</th>
+                                <th>Factura</th>
+                                <th>IVA</th>
+                                <th>Descuento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ultimaCompra.idCompra}}</td>
+                                <td>{{ultimaCompra.idProveedor}}</td>
+                                <td>{{ultimaCompra.nombreProveedor}}</td>
+                                <td>{{ultimaCompra.fechaCompra}}</td>
+                                <td>{{ultimaCompra.numFactura}}</td>
+                                <td>{{ultimaCompra.iva}}</td>
+                                <td>{{ultimaCompra.descuento}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
                 </div>
 
-                <div class="FormAltadetalleCompra" v-if="nuevoDetalleCompra">
-                    <form @submit.prevent="salir">
+                <div class="formAltadetalleCompra" v-if="nuevoDetalleCompra"> <!-- Detalle Factura -->
+                    <form @submit.prevent="agregarArticulo">
                         <div class="d-flex flex-wrap">
                             <div class="col-md-3 mb-3">                               
                                 <label for="idProducto" class="form-label">Producto</label>
                                 <select v-model="nuevoDetalle.idProducto" class="form-control" id="idProducto" required>
-                                    <option v-for="producto in productosDelProveedor" 
-                                        :key="producto.idProdXProv" :value="producto.idProdXProv"> {{producto.idProdXProv}} {{ producto.descripcion }}</option>
+                                    <option v-for="producto in productosDelProveedor" :key="producto.idProdXProv" :value="producto.idProdXProv"> {{producto.idProdXProv}}-{{ producto.descripcion }}</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
@@ -95,8 +118,7 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="cantidad" class="form-label">Cantidad</label>
-                                <input type="number" step="0.01" v-model.number="nuevoDetalle.cantidad" class="form-control"
-                                    id="cantidad" required>
+                                <input type="number" v-model.number="nuevoDetalle.cantidad" class="form-control" id="cantidad" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="precioUnitario" class="form-label">Precio Unitario</label>
@@ -108,6 +130,41 @@
                             <button type="submit" class="btn btn-primary">Aceptar</button>
                         </div>
                     </form>
+                </div>
+
+                <div class="detalleCompraEnProceso table table-bordered mt-3" v-if="detalleCompra.length">
+                    <table class="table table-bordered mt-3" v-if="detalleCompra.length">
+                        <thead>
+                            <tr>
+                                <th>ID Detalle</th>
+                                <th>ID Compra</th>
+                                <th>ID Proveedor</th>
+                                <th>ID Producto</th>
+                                <th>Nombre del Producto</th>
+                                <th>Unidades</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Precio Final</th>
+                                <th>Importe</th>
+                                <th>Importe Final</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(detalle, index) in detalleCompra" :key="index">
+                                <td class="text-end">{{ detalle.idDetalle }}</td>
+                                <td class="text-end">{{ detalle.idCompra }}</td>
+                                <td class="text-end">{{ detalle.idProveedor }}</td>
+                                <td class="text-end">{{ detalle.idProducto }}</td>
+                                <td>{{ detalle.nombreProducto }}</td>
+                                <td class="text-end">{{ detalle.unidades }}</td>
+                                <td class="text-end">{{ detalle.cantidad }}</td>
+                                <td class="text-end">{{ formatearNumero(detalle.precioUnitario) }}</td>
+                                <td class="text-end">{{ formatearNumero(detalle.precioFinal) }}</td>
+                                <td class="text-end">{{ formatearNumero(detalle.importe) }}</td>
+                                <td class="text-end">{{ formatearNumero(detalle.importeFinal) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 
                 

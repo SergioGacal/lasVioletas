@@ -30,10 +30,11 @@
     padding: 1%;
     color: white;
 }
-.FormAltadetalleCompra{
+.formAltadetalleCompra{
     background-color: yellowgreen;
     padding: 1%;
 }
+.detalleCompraEnProceso
 .elegirCompra {
     background-color: orange;
     overflow-y: auto;

@@ -181,7 +181,7 @@
                         <option v-for="compra in compras.sort((a, b) => b.idCompra - a.idCompra)" :key="compra.idCompra" :value="compra.idCompra">
                             {{compra.idCompra}} - {{compra.fechaCompra}} - {{compra.numFactura}} - {{compra.proveedorNombre}}</option>
                     </select>
-                                    </div>
+                </div>
                 <div class="compraSeleccionada"v-if="compraSeleccionada" >  <!-- Cuando elijo una compra -->
                     <button @click="resetearCompra()" type="button" class="btn btn-danger">Reset</button>
                     <button type="button" class="btn btn-warning">Editar</button>
@@ -213,17 +213,26 @@
                                     <td class="text-end">{{ detalleFactura.idCompra }}</td>
 
                                     <td v-if="!edicionCompra" >{{ detalleFactura.proveedorNombre }}</td>
-                                    <td v-if="edicionCompra && detallecompraSeleccionada.length" >{{ detalleFactura.proveedorNombre }}</td>
-                                    <td v-if="edicionCompra && !detallecompraSeleccionada.length" ><select v-model="edicionFactura.idProveedor" class="form-select" id="proveedor"><option v-for="proveedor in proveedores.sort((a, b) => a.nombreProveedor.localeCompare(b.nombreProveedor))" :value="proveedor.idProveedor"> {{ proveedor.nombreProveedor }}</option></select></td>
+                                    <td v-if="edicionCompra && detallecompraSeleccionada.length">{{ detalleFactura.proveedorNombre }}</td>
+                                    <td v-if="edicionCompra && !detallecompraSeleccionada.length"><select v-model="edicionFactura.idProveedor" class="form-select" id="proveedor"><option v-for="proveedor in proveedores.sort((a, b) => a.nombreProveedor.localeCompare(b.nombreProveedor))" :value="proveedor.idProveedor"> {{ proveedor.nombreProveedor }}</option></select></td>
                                     
                                     <td v-if="!edicionCompra" class="text-end">{{ detalleFactura.numFactura }}</td>
                                     <td v-if="edicionCompra" class="text-end"> <input class="form-control" type="number" v-model="edicionFactura.numFactura" :placeholder="detalleFactura.numFactura"></td>
 
                                     <td v-if="!edicionCompra" class="text-center">{{ detalleFactura.fechaCompra }}</td>
                                     <td v-if="edicionCompra" class="text-center"> <input class="form-control" type="date" v-model="edicionFactura.fechaCompra"></td>
-                                    
-                                    <td class="text-center">{{ detalleFactura.iva ? 'Sí' : 'No' }}</td>
-                                    <td class="text-end">{{ detalleFactura.descuento }}</td>
+
+                                    <td v-if="!edicionCompra" class="text-center">{{ detalleFactura.iva ? 'Sí' : 'No' }}</td>
+                                    <td v-if="edicionCompra && detallecompraSeleccionada.length" >{{ detalleFactura.iva ? 'Sí' : 'No' }}</td>
+                                    <td v-if="edicionCompra && !detallecompraSeleccionada.length"><select v-model="edicionFactura.iva" class="form-select" id="iva"><option :value="1">Sí</option><option :value="0">No</option></select></td>
+
+                                    <td v-if="!edicionCompra" class="text-end">{{ detalleFactura.descuento }}</td>
+                                    <td v-if="edicionCompra && detallecompraSeleccionada.length" class="text-end">{{ detalleFactura.descuento }}</td>
+                                    <td v-if="edicionCompra && !detallecompraSeleccionada.length" class="text-end"><input class="form-control" type="number" v-model="edicionFactura.descuento" :placeholder="detalleFactura.descuento" min="0" max="1" step="0.01"></td>
+
+
+
+
                                     <td class="text-end">{{ detallecompraSeleccionada.length ? detallecompraSeleccionada.length : 0 }}</td>
                                     <td class="text-end">{{ formatearNumero(sumaFactura) }}</td>
                                     <td class="text-center" v-if="borrarCompra"><button @click.prevent="funcionborrarCompra" class="btn btn-danger" >X</button></td>

@@ -49,7 +49,7 @@ const app = Vue.createApp({
             compras : [],
 
             // Compra Seleccionada y demás:
-            compraSeleccionada: null,
+            compraSeleccionada: null, // este es el id de la compra seleccionada.
             sumaFactura: 0,
             detalleFactura: [],
             detallecompraSeleccionada: [],
@@ -58,12 +58,12 @@ const app = Vue.createApp({
             // Edición de compra:
             edicionFactura: {
                 idCompra: this.idCompra,
-                idProveedor: '',
+                idProveedor: null,
                 nombreProveedor: null,
-                fechaCompra : '',
+                fechaCompra : null,
                 numFactura : null,
-                iva : '',
-                descuento : ''
+                iva : null,
+                descuento : null
             },
 
 
@@ -100,6 +100,7 @@ const app = Vue.createApp({
                 });
         },
         cargarCompras() {
+            this.compras = []
             fetch(this.url + '/compras')
                 .then(response => response.json())
                 .then(data => {
@@ -199,28 +200,87 @@ const app = Vue.createApp({
                 });
             }
         },
-        funcionEditarCompra(){
-            console.log('compra editada', this.compraSeleccionada),
-            console.log('Num fact', this.edicionFactura.numFactura),
-            console.log('fecha',this.edicionFactura.fechaCompra),
-            console.log('nombre proveedor', this.edicionFactura.idProveedor),
-            this.edicionCompra = false,
+        funcionEditarCompra() {
+            console.log('compra editada', this.compraSeleccionada);
+            this.edicionCompra = false;
+        
+            // Creamos el objeto 'modificacion' solo con los valores no nulos
+            const modificacion = {
+                idProveedor: this.edicionFactura.idProveedor !== null ? this.edicionFactura.idProveedor : this.detalleFactura.idProveedor,
+                numFactura: this.edicionFactura.numFactura !== null ? this.edicionFactura.numFactura : this.detalleFactura.numFactura,
+                fechaCompra: this.edicionFactura.fechaCompra !== null ? this.edicionFactura.fechaCompra : this.detalleFactura.fechaCompra,
+                iva: this.edicionFactura.iva !== null ? this.edicionFactura.iva : this.detalleFactura.iva,
+                descuento: this.edicionFactura.descuento !== null ? this.edicionFactura.descuento : this.detalleFactura.descuento
+            };
+        
+            // Actualizamos los valores de detalleFactura si es necesario
+            if (this.edicionFactura.idProveedor !== null) {
+                this.detalleFactura.proveedorNombre = this.proveedores.find(proveedor => proveedor.idProveedor === this.edicionFactura.idProveedor)?.nombreProveedor || 'No disponible';
+            } else {
+                console.log('No cambió proveedorNombre');
+            }
+        
+            if (this.edicionFactura.numFactura !== null) {
+                this.detalleFactura.numFactura = this.edicionFactura.numFactura;
+            } else {
+                console.log('No cambió numFactura');
+            }
+        
+            if (this.edicionFactura.fechaCompra !== null) {
+                this.detalleFactura.fechaCompra = this.edicionFactura.fechaCompra;
+            } else {
+                console.log('No cambió fechaCompra');
+            }
+        
+            if (this.edicionFactura.idProveedor !== null) {
+                this.detalleFactura.idProveedor = this.edicionFactura.idProveedor;
+            } else {
+                console.log('No cambió idProveedor');
+            }
+        
+            if (this.edicionFactura.iva !== null) {
+                this.detalleFactura.iva = this.edicionFactura.iva;
+            } else {
+                console.log('No cambió iva');
+            }
+        
+            if (this.edicionFactura.descuento !== null) {
+                this.detalleFactura.descuento = this.edicionFactura.descuento;
+            } else {
+                console.log('No cambió descuento');
+            }
+        
+            // Envío de la actualización de la compra
+            fetch(this.url + '/compra/' + this.compraSeleccionada, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(modificacion)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al actualizar la compra');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Compra actualizada:', data);
+            })
+            .catch(error => {
+                console.error('Hubo un error en la actualización:', error);
+            });
+        
+            // Reseteo del formulario de edición
+            this.edicionFactura.numFactura = null;
+            this.edicionFactura.fechaCompra = null;
+            this.edicionFactura.idProveedor = null;
+            this.edicionFactura.nombreProveedor = null;
+            this.edicionFactura.iva = null;
+            this.edicionFactura.descuento = null;
 
-            // falta el proceso de actualización, pero...
-            this.detalleFactura.numFactura = this.edicionFactura.numFactura,
-            this.detalleFactura.fechaCompra = this.edicionFactura.fechaCompra,
-            this.detalleFactura.idProveedor = this.edicionFactura.idProveedor,
-            this.detalleFactura.proveedorNombre = this.proveedores.find(proveedor => proveedor.idProveedor === this.edicionFactura.idProveedor)?.nombreProveedor || 'No disponible',
-            console.log(this.detalleFactura.proveedorNombre),
-            this.edicionFactura.numFactura = null,
-            this.edicionFactura.fechaCompra = null,
-            this.edicionFactura.idProveedor = null,
-            this.edicionFactura.nombreProveedor = null
-
-            
-
-
-
+            this.cargarCompras(); // para actualizar los cambios en el combo
+            this.compras = [...this.compras]; // Esto forzaría la actualización del array en Vue
 
         },
         resetearCompra() {

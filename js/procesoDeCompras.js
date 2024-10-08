@@ -6,14 +6,12 @@ const app = Vue.createApp({
             url: 'http://127.0.0.1:5000',
 
             // Mostrar ocultar botones y secciones
-            nuevaCompra : true, // después cambiar
+            nuevaCompra : false,
             nuevaFacturaCompra: true,
+            nuevoDetalleCompra : false, // muestro la factura cargada
 
 
-            nuevoDetalleCompra : false,
-
-
-            elegirCompra : false,
+            elegirCompra : true, // probando
             borrarCompra : false,
             edicionCompra: false,
 
@@ -55,6 +53,19 @@ const app = Vue.createApp({
             sumaFactura: 0,
             detalleFactura: [],
             detallecompraSeleccionada: [],
+
+
+            // Edición de compra:
+            edicionFactura: {
+                idCompra: this.idCompra,
+                idProveedor: '',
+                nombreProveedor: null,
+                fechaCompra : '',
+                numFactura : null,
+                iva : '',
+                descuento : ''
+            },
+
 
             
 
@@ -141,7 +152,7 @@ const app = Vue.createApp({
                         return response.json();
                     })
                     .then(data => {
-                        console.log(data.resultado);
+                        //console.log(data.resultado);
                     })
                     .catch(error => {
                         console.error('Error al borrar el detalle:', error);
@@ -190,7 +201,27 @@ const app = Vue.createApp({
         },
         funcionEditarCompra(){
             console.log('compra editada', this.compraSeleccionada),
-            this.edicionCompra = false
+            console.log('Num fact', this.edicionFactura.numFactura),
+            console.log('fecha',this.edicionFactura.fechaCompra),
+            console.log('nombre proveedor', this.edicionFactura.idProveedor),
+            this.edicionCompra = false,
+
+            // falta el proceso de actualización, pero...
+            this.detalleFactura.numFactura = this.edicionFactura.numFactura,
+            this.detalleFactura.fechaCompra = this.edicionFactura.fechaCompra,
+            this.detalleFactura.idProveedor = this.edicionFactura.idProveedor,
+            this.detalleFactura.proveedorNombre = this.proveedores.find(proveedor => proveedor.idProveedor === this.edicionFactura.idProveedor)?.nombreProveedor || 'No disponible',
+            console.log(this.detalleFactura.proveedorNombre),
+            this.edicionFactura.numFactura = null,
+            this.edicionFactura.fechaCompra = null,
+            this.edicionFactura.idProveedor = null,
+            this.edicionFactura.nombreProveedor = null
+
+            
+
+
+
+
         },
         resetearCompra() {
             console.clear()
@@ -283,9 +314,7 @@ const app = Vue.createApp({
                 return response.json();
             })
             .then(data => {
-                console.log('Detalle de compra agregado exitosamente:', data);
-        
-                // Luego, obtén la descripción del producto usando idProveedor e idProducto
+                //console.log('Detalle de compra agregado exitosamente:', data);
                 return fetch(`${this.url}/compras/productoxproveedor/${data.idProveedor}/${data.idProducto}`)
                     .then(response => {
                         if (!response.ok) {
@@ -317,13 +346,27 @@ const app = Vue.createApp({
                             precioUnitario: null
                         };
                         
-                        console.log('Detalles acumulados:', this.detalleCompra);
+                        //console.log('Detalles acumulados:', this.detalleCompra);
                     });
             })
             .catch(error => {
                 console.error('Error al agregar detalle:', error);
             });
         },
+        finalizarCompra(){
+            this.nuevaCompra = false,
+            this.nuevaFacturaCompra = true,
+            this.nuevoDetalleCompra = false,
+            this.detalleCompra = [],
+            this.ultimaCompra.idCompra = null,
+            this.ultimaCompra.idProveedor = null,
+            this.ultimaCompra.nombreProveedor = null,
+            this.ultimaCompra.fechaCompra = null,
+            this.ultimaCompra.numFactura = null,
+            this.ultimaCompra.iva = null,
+            this.ultimaCompra.descuento = null
+        },
+
 
         salir(){
             console.clear()

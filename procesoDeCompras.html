@@ -35,7 +35,7 @@
           <div class="cuerpo h-100 d-flex flex-column justify-content">
             <h1>Compras</h1>
 
-            <div class="nuevaCompra" v-if="nuevaCompra">
+            <div class="nuevaCompra" v-if="nuevaCompra"> <!-- Nueva compra -->
                 <h3>Nueva Compra</h3>
                 <div class="FormAltaCompra" v-if="nuevaFacturaCompra">
                     <form @submit.prevent="confirmarAltaCompra">  <!-- Alta Factura -->
@@ -118,7 +118,7 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="cantidad" class="form-label">Cantidad</label>
-                                <input type="number" v-model.number="nuevoDetalle.cantidad" class="form-control" id="cantidad" required>
+                                <input type="number" v-model.number="nuevoDetalle.cantidad" class="form-control" id="cantidad" step="any" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="precioUnitario" class="form-label">Precio Unitario</label>
@@ -128,11 +128,12 @@
                         </div>
                         <div class="d-flex justify-content-end mt-3">
                             <button type="submit" class="btn btn-primary">Aceptar</button>
+                            <button type="button" class="btn btn-secondary" @click="finalizarCompra">Finalizar</button>
                         </div>
                     </form>
                 </div>
 
-                <div class="detalleCompraEnProceso table table-bordered mt-3" v-if="detalleCompra.length">
+                <div class="detalleCompraEnProceso table table-bordered mt-3" v-if="detalleCompra.length"> <!-- Detalle Compra en proceso -->
                     <table class="table table-bordered mt-3" v-if="detalleCompra.length">
                         <thead>
                             <tr>
@@ -172,15 +173,16 @@
 
             </div>
 
-            <div class="elegirCompra"v-if="elegirCompra">
+            <div class="elegirCompra"v-if="elegirCompra"> <!-- elección de compra -->
                 <h3>Listado de Compras</h3>
-                <div class="seleccionDeCompra" v-if="!compraSeleccionada">
+                <div class="seleccionDeCompra" v-if="!compraSeleccionada"> <!-- Combo seleccion de compra -->
                     <p>Seleccione:</p>
                     <select v-model="compraSeleccionada" @change="cargarDetalleCompraSeleccionada" class="form-select">
-                        <option v-for="compra in compras" :key="compra.idCompra" :value="compra.idCompra"> {{compra.idCompra}} -{{compra.fechaCompra}} - {{compra.numFactura}} - {{compra.proveedorNombre}} </option>
+                        <option v-for="compra in compras.sort((a, b) => b.idCompra - a.idCompra)" :key="compra.idCompra" :value="compra.idCompra">
+                            {{compra.idCompra}} - {{compra.fechaCompra}} - {{compra.numFactura}} - {{compra.proveedorNombre}}</option>
                     </select>
-                </div>
-                <div class="compraSeleccionada"v-if="compraSeleccionada" >
+                                    </div>
+                <div class="compraSeleccionada"v-if="compraSeleccionada" >  <!-- Cuando elijo una compra -->
                     <button @click="resetearCompra()" type="button" class="btn btn-danger">Reset</button>
                     <button type="button" class="btn btn-warning">Editar</button>
                     <button type="button" class="btn btn-danger">Borrar</button>
@@ -209,9 +211,17 @@
                             <tbody>
                                 <tr>
                                     <td class="text-end">{{ detalleFactura.idCompra }}</td>
-                                    <td>{{ detalleFactura.proveedorNombre }}</td>
-                                    <td class="text-end">{{ detalleFactura.numFactura }}</td>
-                                    <td class="text-center">{{ detalleFactura.fechaCompra }}</td>
+
+                                    <td v-if="!edicionCompra" >{{ detalleFactura.proveedorNombre }}</td>
+                                    <td v-if="edicionCompra && detallecompraSeleccionada.length" >{{ detalleFactura.proveedorNombre }}</td>
+                                    <td v-if="edicionCompra && !detallecompraSeleccionada.length" ><select v-model="edicionFactura.idProveedor" class="form-select" id="proveedor"><option v-for="proveedor in proveedores.sort((a, b) => a.nombreProveedor.localeCompare(b.nombreProveedor))" :value="proveedor.idProveedor"> {{ proveedor.nombreProveedor }}</option></select></td>
+                                    
+                                    <td v-if="!edicionCompra" class="text-end">{{ detalleFactura.numFactura }}</td>
+                                    <td v-if="edicionCompra" class="text-end"> <input class="form-control" type="number" v-model="edicionFactura.numFactura" :placeholder="detalleFactura.numFactura"></td>
+
+                                    <td v-if="!edicionCompra" class="text-center">{{ detalleFactura.fechaCompra }}</td>
+                                    <td v-if="edicionCompra" class="text-center"> <input class="form-control" type="date" v-model="edicionFactura.fechaCompra"></td>
+                                    
                                     <td class="text-center">{{ detalleFactura.iva ? 'Sí' : 'No' }}</td>
                                     <td class="text-end">{{ detalleFactura.descuento }}</td>
                                     <td class="text-end">{{ detallecompraSeleccionada.length ? detallecompraSeleccionada.length : 0 }}</td>

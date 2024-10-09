@@ -13,8 +13,8 @@
 <body>
     <div id="app" class="container vh-100 d-flex flex-column">
 
-        <div class="encabezado">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="encabezado bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark">
               <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuEncabezado" aria-controls="menuEncabezado" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
@@ -22,18 +22,19 @@
                 <div class="collapse navbar-collapse" id="menuEncabezado">
                   <div class="navbar-nav">
                     <button type="button" class="btn btn-primary me-2" @click="nuevaCompra = !nuevaCompra">{{ nuevaCompra  ? 'Cancelar Alta' : 'Nueva Compra' }}</button>
-                    <button type="button" class="btn btn-primary me-2" @click="elegirCompra = !elegirCompra">{{ elegirCompra  ? 'Cerrar Combo' : 'Ver Combo Compras' }}</button>
+                    <button type="button" class="btn btn-primary me-2" @click="elegirCompra = !elegirCompra, resetearCompra()">{{ elegirCompra  ? 'Cerrar Combo' : 'Ver Combo Compras' }}</button>
                     <button v-if="compraSeleccionada" type="button" class="btn btn-warning me-2" @click="edicionCompra = !edicionCompra">{{edicionCompra ? 'Cancelar Edición':'Editar'}} </button>
                     <button v-if="compraSeleccionada" type="button" class="btn btn-danger me-2" @click="borrarCompra = !borrarCompra">{{borrarCompra ? 'Cancelar Borrado' : 'Borrar Compra'}}</button>
                     <button type="button" class="btn btn-success" @click.prevent="salir">Salir</button>
-                  </div>
                 </div>
+            </div>
+            <img class="logo d-none d-sm-block" src="./img/logo2.png" alt="Las Violetas" style="float: right; max-width: 100px; height: auto;">
               </div>
             </nav>
           </div>
 
           <div class="cuerpo h-100 d-flex flex-column justify-content">
-            <h1>Compras</h1>
+            <!-- <h1>Compras</h1> -->
 
             <div class="nuevaCompra" v-if="nuevaCompra"> <!-- Nueva compra -->
                 <h3>Nueva Compra</h3>
@@ -319,8 +320,7 @@
         </div>
 
         <div class="pie">
-            Pie
-        </div>
+       </div>
 
 
     </div>

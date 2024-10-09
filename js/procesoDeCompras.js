@@ -14,6 +14,8 @@ const app = Vue.createApp({
             elegirCompra : true, // probando
             borrarCompra : false,
             edicionCompra: false,
+            borrarDetalleCompra : false,
+            edicionDetalleCompra: false,
 
             // Alta de factura
             compra: {
@@ -200,10 +202,7 @@ const app = Vue.createApp({
                 });
             }
         },
-        funcionEditarCompra() {
-            console.log('compra editada', this.compraSeleccionada);
-            this.edicionCompra = false;
-        
+        funcionEditarCompra() { // Falta optimizar
             // Creamos el objeto 'modificacion' solo con los valores no nulos
             const modificacion = {
                 idProveedor: this.edicionFactura.idProveedor !== null ? this.edicionFactura.idProveedor : this.detalleFactura.idProveedor,
@@ -220,37 +219,12 @@ const app = Vue.createApp({
                 console.log('No cambió proveedorNombre');
             }
         
-            if (this.edicionFactura.numFactura !== null) {
-                this.detalleFactura.numFactura = this.edicionFactura.numFactura;
-            } else {
-                console.log('No cambió numFactura');
-            }
-        
-            if (this.edicionFactura.fechaCompra !== null) {
-                this.detalleFactura.fechaCompra = this.edicionFactura.fechaCompra;
-            } else {
-                console.log('No cambió fechaCompra');
-            }
-        
-            if (this.edicionFactura.idProveedor !== null) {
-                this.detalleFactura.idProveedor = this.edicionFactura.idProveedor;
-            } else {
-                console.log('No cambió idProveedor');
-            }
-        
-            if (this.edicionFactura.iva !== null) {
-                this.detalleFactura.iva = this.edicionFactura.iva;
-            } else {
-                console.log('No cambió iva');
-            }
-        
-            if (this.edicionFactura.descuento !== null) {
-                this.detalleFactura.descuento = this.edicionFactura.descuento;
-            } else {
-                console.log('No cambió descuento');
-            }
-        
-            // Envío de la actualización de la compra
+            if (this.edicionFactura.numFactura !== null) {this.detalleFactura.numFactura = this.edicionFactura.numFactura;}
+            if (this.edicionFactura.fechaCompra !== null) {this.detalleFactura.fechaCompra = this.edicionFactura.fechaCompra;}
+            if (this.edicionFactura.idProveedor !== null) {this.detalleFactura.idProveedor = this.edicionFactura.idProveedor;}
+            if (this.edicionFactura.iva !== null) {this.detalleFactura.iva = this.edicionFactura.iva;}
+            if (this.edicionFactura.descuento !== null) {this.detalleFactura.descuento = this.edicionFactura.descuento;}
+
             fetch(this.url + '/compra/' + this.compraSeleccionada, {
                 method: 'PUT',
                 headers: {
@@ -265,7 +239,7 @@ const app = Vue.createApp({
                 return response.json();
             })
             .then(data => {
-                console.log('Compra actualizada:', data);
+                //console.log('Compra actualizada:', data);
             })
             .catch(error => {
                 console.error('Hubo un error en la actualización:', error);
@@ -279,10 +253,36 @@ const app = Vue.createApp({
             this.edicionFactura.iva = null;
             this.edicionFactura.descuento = null;
 
+            this.edicionCompra = false;
+ 
             this.cargarCompras(); // para actualizar los cambios en el combo
             this.compras = [...this.compras]; // Esto forzaría la actualización del array en Vue
 
         },
+        funcionborrarDetalleCompra(idBorrar){
+            let numerito = idBorrar;
+            fetch(this.url + '/compra/detalle/' + numerito, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al borrar el detalle de compra ' + numerito);
+                }
+                return response.json();
+            })
+            .then(data => {
+                //console.log('Borrada',numerito);
+                this.detallecompraSeleccionada = this.detallecompraSeleccionada.filter(detalle => detalle.idDetalle !== numerito);
+                //console.log('detalle compra',this.detallecompraSeleccionada)
+                this.sumaFactura = this.detallecompraSeleccionada.reduce((acc, item) => {
+                    return acc + parseFloat(item.importeFinal || 0);
+                }, 0);    
+           })
+            .catch(error => {
+                console.error('Error al borrar el detalle:', error);
+            });
+        },
+        funcionEditarDetalleCompra(){console.log('Editado')},
         resetearCompra() {
             console.clear()
             this.compraSeleccionada=null, 
@@ -291,6 +291,8 @@ const app = Vue.createApp({
             this.sumaFactura = 0,
             this.detalleFactura = []
             this.detallecompraSeleccionada = []
+            this.borrarDetalleCompra = false,
+            this.edicionDetalleCompra = false
         },
         cancelarAltaCompra(){
             this.nuevaCompra = false,

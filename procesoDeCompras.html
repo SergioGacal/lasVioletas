@@ -183,29 +183,30 @@
                     </select>
                 </div>
                 <div class="compraSeleccionada"v-if="compraSeleccionada" >  <!-- Cuando elijo una compra -->
-                    <button @click="resetearCompra()" type="button" class="btn btn-danger">Reset</button>
-                    <button type="button" class="btn btn-warning">Editar</button>
-                    <button type="button" class="btn btn-danger">Borrar</button>
+                    <button @click="resetearCompra()" type="button" class="btn btn-dark">Reset</button>
+                    <button type="button" class="btn btn-success">Agregar</button>
+                    <button v-if="detallecompraSeleccionada.length" type="button" class="btn btn-warning"@click="edicionDetalleCompra = !edicionDetalleCompra">{{edicionDetalleCompra ? 'Cancelar Edición':'Editar'}} </button>
+                    <button v-if="detallecompraSeleccionada.length" type="button" class="btn btn-danger" @click="borrarDetalleCompra = !borrarDetalleCompra">{{borrarDetalleCompra ? 'Cancelar Borrar':'Borrar'}} </button>
                     
                     <div class="table-responsive">
                         <table class="table table-bordered"> <!-- compra -->
                             <thead class="table-light">
                                 <tr>
-                                    <th>ID Compra</th>
+                                    <th>Id</th>
                                     <th v-if="!edicionCompra">Proveedor</th>
-                                    <th v-else>{{ detallecompraSeleccionada.length > 0 ? 'Proveedor(no)' : 'Proveedor(si)' }}</th>
+                                    <th v-else>{{ detallecompraSeleccionada.length > 0 ? 'Proveedor' : 'Proveedor' }}</th>
                                     <th v-if="!edicionCompra">Factura</th>
-                                    <th v-if="edicionCompra">Factura(e)</th>
+                                    <th v-if="edicionCompra">Factura</th>
                                     <th v-if="!edicionCompra">Fecha</th>
-                                    <th v-if="edicionCompra">Fecha(e)</th>
+                                    <th v-if="edicionCompra">Fecha</th>
                                     <th v-if="!edicionCompra">IVA</th>
-                                    <th v-else>{{ detallecompraSeleccionada.length > 0 ? 'IVA(no)' : 'IVA(si)' }}</th>
+                                    <th v-else>{{ detallecompraSeleccionada.length > 0 ? 'IVA' : 'IVA' }}</th>
                                     <th v-if="!edicionCompra">Descuento</th>
-                                    <th v-else>{{ detallecompraSeleccionada.length > 0 ? 'Descuento(no)' : 'Descuento(si)' }}</th>
+                                    <th v-else>{{ detallecompraSeleccionada.length > 0 ? 'Descuento' : 'Descuento' }}</th>
                                     <th>Productos</th>
                                     <th>Total</th>
                                     <th v-if="borrarCompra">Borrar</th>
-                                    <th v-if="edicionCompra">Confirma Edición</th>
+                                    <th v-if="edicionCompra">Edición</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -235,7 +236,8 @@
 
                                     <td class="text-end">{{ detallecompraSeleccionada.length ? detallecompraSeleccionada.length : 0 }}</td>
                                     <td class="text-end">{{ formatearNumero(sumaFactura) }}</td>
-                                    <td class="text-center" v-if="borrarCompra"><button @click.prevent="funcionborrarCompra" class="btn btn-danger" >X</button></td>
+                                    <!-- Botones -->
+                                    <td class="text-center" v-if="borrarCompra"><button @click.prevent="funcionborrarCompra" class="btn btn-danger" >B</button></td>
                                     <td class="text-center" v-if="edicionCompra"><button @click.prevent="funcionEditarCompra" class="btn btn-warning">E</button></td>
                                 </tr>
                             </tbody>
@@ -253,6 +255,8 @@
                                     <th>Peso</th>
                                     <th>Balanza</th>
                                     <th>Sugerido</th>
+                                    <th v-if="edicionDetalleCompra">Edicion</th>
+                                    <th v-if="borrarDetalleCompra">Borrar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -266,7 +270,9 @@
                                     <td class="text-end">{{ formatearNumero(detalle.importeFinal) }}</td>
                                     <td class="text-end">{{ formatearNumero(detalle.pesoPromedioNuevo) }}</td>
                                     <td :class="{'bg-danger': detalle.precioBalanzaActual < detalle.precioBalanzaSugerido}" class="text-end">{{ formatearNumero(detalle.precioBalanzaActual) }}</td>
-                                   <td class="text-end">{{ formatearNumero(detalle.precioBalanzaSugerido) }}</td>
+                                    <td class="text-end">{{ formatearNumero(detalle.precioBalanzaSugerido) }}</td>
+                                    <td class="text-center" v-if="borrarDetalleCompra"><button @click.prevent="funcionborrarDetalleCompra(detalle.idDetalle)" class="btn btn-danger" >B</button></td>
+                                    <td class="text-center" v-if="edicionDetalleCompra"><button @click.prevent="funcionEditarDetalleCompra" class="btn btn-warning">E</button></td>
                                 </tr>
                             </tbody>
                         </table>

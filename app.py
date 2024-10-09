@@ -1293,7 +1293,7 @@ def agregar_detalle_compra():
             'idProveedor': idProveedor,
             'idProdXProv': idProducto,
             'pesoPromedio': pesoPromedioNuevo}       
-        response = requests.put('http://localhost:5000/relacion/peso', json=json_data)
+        response = requests.put('https://gacalsergio.pythonanywhere.com/relacion/peso', json=json_data)
         if response.status_code != 200:
             return jsonify({'error': 'Error actualizando el peso promedio'}), 500
         return jsonify({'message': 'Detalle de compra agregado exitosamente',

@@ -14,6 +14,7 @@ const app = Vue.createApp({
             elegirCompra : true, // probando
             borrarCompra : false,
             edicionCompra: false,
+            agregarDetalleCompra: false,
             borrarDetalleCompra : false,
             edicionDetalleCompra: false,
 
@@ -45,6 +46,15 @@ const app = Vue.createApp({
                 precioUnitario: null
             },
             detalleCompra: [], // Acá acumulo el detalle_compra a medida que los voy agregando.
+
+            // Alta de detalle de compra posterior desde el boton agregar
+            nuevoDetallePosterior: {
+                idCompra: null,
+                idProducto: null,
+                unidades: null,
+                cantidad: null,
+                precioUnitario: null
+            },
 
 
             // Detalle de Compras:
@@ -213,12 +223,7 @@ const app = Vue.createApp({
             };
         
             // Actualizamos los valores de detalleFactura si es necesario
-            if (this.edicionFactura.idProveedor !== null) {
-                this.detalleFactura.proveedorNombre = this.proveedores.find(proveedor => proveedor.idProveedor === this.edicionFactura.idProveedor)?.nombreProveedor || 'No disponible';
-            } else {
-                console.log('No cambió proveedorNombre');
-            }
-        
+            if (this.edicionFactura.idProveedor !== null) {this.detalleFactura.proveedorNombre = this.proveedores.find(proveedor => proveedor.idProveedor === this.edicionFactura.idProveedor)?.nombreProveedor || 'No disponible';}       
             if (this.edicionFactura.numFactura !== null) {this.detalleFactura.numFactura = this.edicionFactura.numFactura;}
             if (this.edicionFactura.fechaCompra !== null) {this.detalleFactura.fechaCompra = this.edicionFactura.fechaCompra;}
             if (this.edicionFactura.idProveedor !== null) {this.detalleFactura.idProveedor = this.edicionFactura.idProveedor;}
@@ -282,7 +287,6 @@ const app = Vue.createApp({
                 console.error('Error al borrar el detalle:', error);
             });
         },
-        funcionEditarDetalleCompra(){console.log('Editado')},
         resetearCompra() {
             console.clear()
             this.compraSeleccionada=null, 
@@ -391,7 +395,6 @@ const app = Vue.createApp({
                             idCompra: data.idCompra,
                             idProveedor: data.idProveedor,
                             idProducto: data.idProducto,
-                            nombreProducto: productData.descripcion, // Nombre del producto
                             unidades: data.unidades,
                             cantidad: data.cantidad,
                             precioUnitario: data.precioUnitario,
@@ -415,6 +418,46 @@ const app = Vue.createApp({
                 console.error('Error al agregar detalle:', error);
             });
         },
+        agregarArticuloDespues(idCompraElegida, idProveedorElegido) {
+            const nuevoDetallePosteriorJson = {
+                idCompra: idCompraElegida,
+                idProveedor: idProveedorElegido,
+                idProducto: this.nuevoDetallePosterior.idProducto,
+                unidades: this.nuevoDetallePosterior.unidades,
+                cantidad: this.nuevoDetallePosterior.cantidad,
+                precioUnitario: this.nuevoDetallePosterior.precioUnitario
+            };
+            fetch(this.url + '/compra/agrega_detalle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(nuevoDetallePosteriorJson)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                this.detallecompraSeleccionada = []; // borro detalles acumulados de la pantalla
+                this.cargarDetalleCompraSeleccionada();
+
+                // Blanqueo de form.
+                this.nuevoDetallePosterior = {
+                    idCompra: null,
+                    idProducto: null,
+                    unidades: null,
+                    cantidad: null,
+                    precioUnitario: null
+                };
+               //console.log('Detalles acumulados después de cargar:', this.detallecompraSeleccionada);
+            })
+            .catch(error => {
+                console.error('Error al agregar detalle:', error);
+            });
+        },
         finalizarCompra(){
             this.nuevaCompra = false,
             this.nuevaFacturaCompra = true,
@@ -428,11 +471,8 @@ const app = Vue.createApp({
             this.ultimaCompra.iva = null,
             this.ultimaCompra.descuento = null
         },
-
-
         salir(){
-            console.clear()
-            console.log('Chau a todos')
+            window.close();
         },
     },
     mounted() {

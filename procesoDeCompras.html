@@ -102,7 +102,7 @@
                     
                 </div>
 
-                <div class="formAltadetalleCompra" v-if="nuevoDetalleCompra"> <!-- Detalle Factura -->
+                <div class="formAltadetalleCompra" v-if="nuevoDetalleCompra"> <!-- Alta de Detalle Factura -->
                     <form @submit.prevent="agregarArticulo">
                         <div class="d-flex flex-wrap">
                             <div class="col-md-3 mb-3">                               
@@ -184,8 +184,7 @@
                 </div>
                 <div class="compraSeleccionada"v-if="compraSeleccionada" >  <!-- Cuando elijo una compra -->
                     <button @click="resetearCompra()" type="button" class="btn btn-dark">Reset</button>
-                    <button type="button" class="btn btn-success">Agregar</button>
-                    <button v-if="detallecompraSeleccionada.length" type="button" class="btn btn-warning"@click="edicionDetalleCompra = !edicionDetalleCompra">{{edicionDetalleCompra ? 'Cancelar Edición':'Editar'}} </button>
+                    <button type="button" class="btn btn-success" @click="agregarDetalleCompra = !agregarDetalleCompra, traerProductosDelProveedor(detalleFactura.idProveedor)">{{agregarDetalleCompra ? 'Cancelar Alta':'Agregar'}} </button>
                     <button v-if="detallecompraSeleccionada.length" type="button" class="btn btn-danger" @click="borrarDetalleCompra = !borrarDetalleCompra">{{borrarDetalleCompra ? 'Cancelar Borrar':'Borrar'}} </button>
                     
                     <div class="table-responsive">
@@ -242,6 +241,40 @@
                                 </tr>
                             </tbody>
                         </table>
+
+                        <div v-if="agregarDetalleCompra" class="formAgregarDetalleCompra"> <!-- Agregar detalle de compra desde el listado-->
+                            <form @submit.prevent="agregarArticuloDespues(detalleFactura.idCompra,detalleFactura.idProveedor)">
+                                <div class="d-flex flex-wrap">
+                                    <div class="col-md-3 mb-3">                               
+                                        <label for="idProducto" class="form-label">Producto</label>
+                                        <select v-model="nuevoDetallePosterior.idProducto" class="form-control" id="idProducto" required>
+                                            <option v-for="producto in productosDelProveedor" :key="producto.idProdXProv" :value="producto.idProdXProv"> {{producto.idProdXProv}}-{{ producto.descripcion }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="unidades" class="form-label">Unidades</label>
+                                        <input type="number" v-model.number="nuevoDetallePosterior.unidades" class="form-control" id="unidades"
+                                            required>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="cantidad" class="form-label">Cantidad</label>
+                                        <input type="number" v-model.number="nuevoDetallePosterior.cantidad" class="form-control" id="cantidad" step="any" required>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="precioUnitario" class="form-label">Precio Unitario</label>
+                                        <input type="number" step="0.01" v-model.number="nuevoDetallePosterior.precioUnitario" class="form-control"
+                                            id="precioUnitario" required>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end mt-3">
+                                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                                    <button type="button" class="btn btn-secondary" @click="agregarDetalleCompra = false">Finalizar</button>
+                                </div>
+                            </form>
+
+
+                        </div>
+
                         <table v-if="detallecompraSeleccionada && detallecompraSeleccionada.length" class="table table-bordered"> <!-- detalle -->
                             <thead class="table-light">
                                 <tr>
@@ -255,7 +288,6 @@
                                     <th>Peso</th>
                                     <th>Balanza</th>
                                     <th>Sugerido</th>
-                                    <th v-if="edicionDetalleCompra">Edicion</th>
                                     <th v-if="borrarDetalleCompra">Borrar</th>
                                 </tr>
                             </thead>
@@ -272,7 +304,6 @@
                                     <td :class="{'bg-danger': detalle.precioBalanzaActual < detalle.precioBalanzaSugerido}" class="text-end">{{ formatearNumero(detalle.precioBalanzaActual) }}</td>
                                     <td class="text-end">{{ formatearNumero(detalle.precioBalanzaSugerido) }}</td>
                                     <td class="text-center" v-if="borrarDetalleCompra"><button @click.prevent="funcionborrarDetalleCompra(detalle.idDetalle)" class="btn btn-danger" >B</button></td>
-                                    <td class="text-center" v-if="edicionDetalleCompra"><button @click.prevent="funcionEditarDetalleCompra" class="btn btn-warning">E</button></td>
                                 </tr>
                             </tbody>
                         </table>

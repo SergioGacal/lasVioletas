@@ -34,7 +34,11 @@
     background-color: yellowgreen;
     padding: 1%;
 }
-.detalleCompraEnProceso
+.detalleCompraEnProceso {
+    background-color: black;
+    color: white;
+    padding: 1%;
+}
 .elegirCompra {
     background-color: orange;
     overflow-y: auto;
@@ -48,6 +52,9 @@
 .compraSeleccionada{
     background-color: violet;
     padding: 1%;
+}
+.formAgregarDetalleCompra {
+    background-color: green;
 }
 .pie {
     background-color: gray;

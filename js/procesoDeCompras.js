@@ -415,68 +415,68 @@ const app = Vue.createApp({
                     console.error('Error al obtener productos del proveedor:', error);
                 });
         },
-        agregarArticulo() {
-            const detalleCompra = {
-                idCompra: this.ultimaCompra.idCompra,
-                idProveedor: this.ultimaCompra.idProveedor,
-                idProducto: this.nuevoDetalle.idProducto,
-                unidades: this.nuevoDetalle.unidades,
-                cantidad: this.nuevoDetalle.cantidad,
-                precioUnitario: this.nuevoDetalle.precioUnitario
-            };
+        async agregarArticulo() {
+            try {
+                const idBalanza = this.buscarRelacionProductoIdBalanza(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto);
+                const precioFinal = this.nuevoDetalle.precioUnitario * (this.ultimaCompra.iva === 0 ? 1.21 : 1) * (1 - this.ultimaCompra.descuento);
+                const margen = this.buscarRelacionProductoMargen(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto);
+                const pesoPromedioNuevo = await this.buscarUnidadesKilos(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto, this.nuevoDetalle.unidades, this.nuevoDetalle.cantidad);
+                
+                const detalleCompraAgregada = {
+                    idCompra: this.ultimaCompra.idCompra,
+                    idProveedor: this.ultimaCompra.idProveedor,
+                    idProducto: this.nuevoDetalle.idProducto,
+                    unidades: this.nuevoDetalle.unidades,
+                    cantidad: this.nuevoDetalle.cantidad,
+                    precioUnitario: this.nuevoDetalle.precioUnitario,
+                    precioFinal: precioFinal,
+                    importe: this.nuevoDetalle.cantidad * this.nuevoDetalle.precioUnitario,
+                    importeFinal: this.nuevoDetalle.cantidad * precioFinal,
+                    precioBalanzaActual: this.buscarPrecio(idBalanza),
+                    precioBalanzaSugerido: margen * precioFinal,
+                    pesoPromedioActual: this.buscarPesoPromedio(idBalanza),
+                    pesoPromedioNuevo: pesoPromedioNuevo,
+                };
         
-            // Primero, agrega el detalle de compra
-            fetch(this.url + '/compra/agrega_detalle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(detalleCompra)
-            })
-            .then(response => {
+                const response = await fetch(this.url + '/compra/agrega_detalle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(detalleCompraAgregada)
+                });
+        
                 if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
+                    const text = await response.text();
+                    throw new Error(text);
                 }
-                return response.json();
-            })
-            .then(data => {
-                //console.log('Detalle de compra agregado exitosamente:', data);
-                return fetch(`${this.url}/compras/productoxproveedor/${data.idProveedor}/${data.idProducto}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.text().then(text => { throw new Error(text) });
-                        }
-                        return response.json();
-                    })
-                    .then(productData => {
-                        // Agrega el detalle con el nombre del producto al array detalleCompra
-                        this.detalleCompra.push({
-                            idDetalle: data.idDetalle,
-                            idCompra: data.idCompra,
-                            idProveedor: data.idProveedor,
-                            idProducto: data.idProducto,
-                            unidades: data.unidades,
-                            cantidad: data.cantidad,
-                            precioUnitario: data.precioUnitario,
-                            precioFinal: data.precioFinal,
-                            importe: data.importe,
-                            importeFinal: data.importeFinal
-                        });
-                        
-                        // Limpiar el formulario de nuevoDetalle
-                        this.nuevoDetalle = {
-                            idProducto: null,
-                            unidades: null,
-                            cantidad: null,
-                            precioUnitario: null
-                        };
-                        
-                        //console.log('Detalles acumulados:', this.detalleCompra);
-                    });
-            })
-            .catch(error => {
-                console.error('Error al agregar detalle:', error);
-            });
+        
+                const nuevaData = await response.json();
+
+                this.detalleCompra.push({
+                    idDetalle: nuevaData.data.idDetalle,
+                    idCompra: nuevaData.data.idCompra,
+                    idProveedor: nuevaData.data.idProveedor,
+                    idProducto: nuevaData.data.idProducto,
+                    nombreProducto: nuevaData.data.producto.descripcion,
+                    unidades: nuevaData.data.unidades,
+                    cantidad: nuevaData.data.cantidad,
+                    precioUnitario: nuevaData.data.precioUnitario,
+                    precioFinal: nuevaData.data.precioFinal,
+                    importe: nuevaData.data.importe,
+                    importeFinal: nuevaData.data.importeFinal
+                });
+                console.log(this.detalleCompra)
+        
+                // Blanqueo de los campos del formulario para agregar detalle de compra:
+                this.nuevoDetalle.idProducto = null;
+                this.nuevoDetalle.unidades = null;
+                this.nuevoDetalle.cantidad = null;
+                this.nuevoDetalle.precioUnitario = null;
+        
+            } catch (error) {
+                console.error('Error al agregar artículo:', error);
+            }
         },
         async agregarArticuloDespues(idCompraElegida, idProveedorElegido, ivaElegido, descuentoElegido) {
             try {
@@ -484,7 +484,7 @@ const app = Vue.createApp({
                 const margen = this.buscarRelacionProductoMargen(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
                 const precioUnitario = this.nuevoDetallePosterior.precioUnitario;
                 const cantidad = this.nuevoDetallePosterior.cantidad;
-                const precioFinal = precioUnitario * (ivaElegido === 1 ? 1.21 : 1) * (1 - descuentoElegido);
+                const precioFinal = precioUnitario * (ivaElegido === false ? 1.21 : 1) * (1 - descuentoElegido);
                 const pesoPromedioNuevo = await this.buscarUnidadesKilos(idProveedorElegido, this.nuevoDetallePosterior.idProducto, this.nuevoDetallePosterior.unidades, this.nuevoDetallePosterior.cantidad);
         
                 const nuevoDetallePosteriorJson = {

@@ -3,7 +3,7 @@ const app = Vue.createApp({
         return {
             // URL's
             url:'https://gacalsergio.pythonanywhere.com',
-            //url: 'http://127.0.0.1:5000',
+            url: 'http://127.0.0.1:5000',
 
             // Mostrar ocultar botones y secciones
             nuevaCompra : false,
@@ -84,6 +84,9 @@ const app = Vue.createApp({
             // Otras variables:
             proveedores : [],
             productosDelProveedor: [], // para la nueva compra
+            balanza : [], // guardamos info de balanza: concertado,idBalanza,nombre1,nombre2, precio
+            relacionProductos : [],
+
 
         };
         
@@ -109,6 +112,63 @@ const app = Vue.createApp({
                 })
                 .catch(error => {
                     console.error('Error al cargar los proveedores:',error);
+                });
+        },
+        cargarBalanza(){
+            fetch(this.url + '/balanza')
+                .then(response => response.json())
+                .then(data =>{
+                    this.balanza = data;
+                    //console.log(this.balanza)
+                })
+                .catch(error => {
+                    console.error('Error al cargar la balanza:',error);
+                });
+        },
+        cargarRelacionProductos(){
+            fetch(this.url + '/relacion')
+                .then(response => response.json())
+                .then(data =>{
+                    this.relacionProductos = data;
+                    //console.log(this.relacionProductos)
+                })
+                .catch(error => {
+                    console.error('Error al cargar la relacion_productos:',error);
+                });
+        },
+        buscarRelacionProductoIdBalanza(idProveedor, idProdXProv) {
+            const relacion = this.relacionProductos.find(item => item.idProveedor === idProveedor && item.idProdXProv === idProdXProv);
+            return relacion ? relacion.idBalanza : null;
+        },
+        buscarRelacionProductoMargen(idProveedor, idProdXProv) {
+            const relacion = this.relacionProductos.find(item => item.idProveedor === idProveedor && item.idProdXProv === idProdXProv);
+            return relacion ? relacion.margen : null;
+        },
+        buscarPesoPromedio(idBalanza) {
+            const relacion = this.relacionProductos.find(item => item.idBalanza === idBalanza);
+            return relacion ? relacion.pesoPromedio : null; 
+        },
+        buscarPrecio(idBalanza) {
+            const relacion = this.balanza.find(item => item.idBalanza === idBalanza);
+            return relacion ? relacion.precio : null; 
+        },
+        buscarUnidadesKilos(idProveedor, idProducto, unidades, cantidad) {
+            return fetch(this.url + '/compras/detalle')
+                .then(response => response.json())
+                .then(data => {
+                    const registrosFiltrados = data.filter(item => 
+                        item.idProveedor === idProveedor && item.idProducto === idProducto
+                    );
+                    const totalUnidades = registrosFiltrados.reduce((acc, item) => acc + Number(item.unidades), 0) || 0;
+                    const totalCantidad = registrosFiltrados.reduce((acc, item) => acc + Number(item.cantidad), 0) || 0; 
+                    const pesoPromedioNuevo = totalUnidades > 0 
+                        ? ((totalCantidad + cantidad) / (totalUnidades + unidades)).toFixed(2) 
+                        : 0;
+                    return parseFloat(pesoPromedioNuevo); 
+                })
+                .catch(error => {
+                    console.error('Error al cargar datos:', error);
+                    return 0;
                 });
         },
         cargarCompras() {
@@ -418,32 +478,48 @@ const app = Vue.createApp({
                 console.error('Error al agregar detalle:', error);
             });
         },
-        agregarArticuloDespues(idCompraElegida, idProveedorElegido) {
-            const nuevoDetallePosteriorJson = {
-                idCompra: idCompraElegida,
-                idProveedor: idProveedorElegido,
-                idProducto: this.nuevoDetallePosterior.idProducto,
-                unidades: this.nuevoDetallePosterior.unidades,
-                cantidad: this.nuevoDetallePosterior.cantidad,
-                precioUnitario: this.nuevoDetallePosterior.precioUnitario
-            };
-            fetch(this.url + '/compra/agrega_detalle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(nuevoDetallePosteriorJson)
-            })
-            .then(response => {
+        async agregarArticuloDespues(idCompraElegida, idProveedorElegido, ivaElegido, descuentoElegido) {
+            try {
+                const idBalanza = this.buscarRelacionProductoIdBalanza(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
+                const margen = this.buscarRelacionProductoMargen(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
+                const precioUnitario = this.nuevoDetallePosterior.precioUnitario;
+                const cantidad = this.nuevoDetallePosterior.cantidad;
+                const precioFinal = precioUnitario * (ivaElegido === 1 ? 1.21 : 1) * (1 - descuentoElegido);
+                const pesoPromedioNuevo = await this.buscarUnidadesKilos(idProveedorElegido, this.nuevoDetallePosterior.idProducto, this.nuevoDetallePosterior.unidades, this.nuevoDetallePosterior.cantidad);
+        
+                const nuevoDetallePosteriorJson = {
+                    idCompra: idCompraElegida,
+                    idProveedor: idProveedorElegido,
+                    idProducto: this.nuevoDetallePosterior.idProducto,
+                    unidades: this.nuevoDetallePosterior.unidades,
+                    cantidad: cantidad,
+                    precioUnitario: precioUnitario,
+                    precioFinal: precioFinal,
+                    importe: cantidad * precioUnitario,
+                    importeFinal: cantidad * precioFinal,
+                    precioBalanzaActual: this.buscarPrecio(idBalanza),
+                    precioBalanzaSugerido: margen * precioFinal,
+                    pesoPromedioActual: this.buscarPesoPromedio(idBalanza),
+                    pesoPromedioNuevo: pesoPromedioNuevo
+                };
+        
+                const response = await fetch(this.url + '/compra/agrega_detalle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(nuevoDetallePosteriorJson)
+                });
+        
                 if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
+                    const text = await response.text();
+                    throw new Error(text);
                 }
-                return response.json();
-            })
-            .then(data => {
+        
+                const data = await response.json();
                 this.detallecompraSeleccionada = []; // borro detalles acumulados de la pantalla
                 this.cargarDetalleCompraSeleccionada();
-
+        
                 // Blanqueo de form.
                 this.nuevoDetallePosterior = {
                     idCompra: null,
@@ -452,11 +528,11 @@ const app = Vue.createApp({
                     cantidad: null,
                     precioUnitario: null
                 };
-               //console.log('Detalles acumulados después de cargar:', this.detallecompraSeleccionada);
-            })
-            .catch(error => {
+        
+                console.log('Detalles acumulados después de cargar:', this.detallecompraSeleccionada);
+            } catch (error) {
                 console.error('Error al agregar detalle:', error);
-            });
+            }
         },
         finalizarCompra(){
             this.nuevaCompra = false,
@@ -478,6 +554,8 @@ const app = Vue.createApp({
     mounted() {
         this.cargarCompras();
         this.cargarProveedores();
+        this.cargarBalanza();
+        this.cargarRelacionProductos();
     },
 });
 

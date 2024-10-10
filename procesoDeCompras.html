@@ -244,7 +244,7 @@
                         </table>
 
                         <div v-if="agregarDetalleCompra" class="formAgregarDetalleCompra"> <!-- Agregar detalle de compra desde el listado-->
-                            <form @submit.prevent="agregarArticuloDespues(detalleFactura.idCompra,detalleFactura.idProveedor)">
+                            <form @submit.prevent="agregarArticuloDespues(detalleFactura.idCompra,detalleFactura.idProveedor,detalleFactura.iva,detalleFactura.descuento)">
                                 <div class="d-flex flex-wrap">
                                     <div class="col-md-3 mb-3">                               
                                         <label for="idProducto" class="form-label">Producto</label>

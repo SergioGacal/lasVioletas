@@ -3,7 +3,7 @@ const app = Vue.createApp({
         return {
             // URL's
             url:'https://gacalsergio.pythonanywhere.com',
-            //url: 'http://127.0.0.1:5000',
+            url: 'http://127.0.0.1:5000',
 
             // Mostrar ocultar botones y secciones
             nuevaCompra : false,
@@ -169,6 +169,16 @@ const app = Vue.createApp({
                 .catch(error => {
                     console.error('Error al cargar datos:', error);
                     return 0;
+                });
+        },
+        buscarDivideX(idProveedor, idProducto) {
+            return fetch(this.url + '/compras/productoxproveedor/' + idProveedor + '/' + idProducto)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.idProveedor === idProveedor && data.idProdXProv === idProducto) {
+                        return parseFloat(data.divideX) || 1;
+                    }
+                    return 1;
                 });
         },
         cargarCompras() {
@@ -419,9 +429,9 @@ const app = Vue.createApp({
             try {
                 const idBalanza = this.buscarRelacionProductoIdBalanza(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto);
                 const precioFinal = this.nuevoDetalle.precioUnitario * (this.ultimaCompra.iva === 0 ? 1.21 : 1) * (1 - this.ultimaCompra.descuento);
-                const margen = this.buscarRelacionProductoMargen(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto);
+                const margen = await this.buscarRelacionProductoMargen(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto);
+                const divideX = await this.buscarDivideX(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto);
                 const pesoPromedioNuevo = await this.buscarUnidadesKilos(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto, this.nuevoDetalle.unidades, this.nuevoDetalle.cantidad);
-                
                 const detalleCompraAgregada = {
                     idCompra: this.ultimaCompra.idCompra,
                     idProveedor: this.ultimaCompra.idProveedor,
@@ -433,7 +443,7 @@ const app = Vue.createApp({
                     importe: this.nuevoDetalle.cantidad * this.nuevoDetalle.precioUnitario,
                     importeFinal: this.nuevoDetalle.cantidad * precioFinal,
                     precioBalanzaActual: this.buscarPrecio(idBalanza),
-                    precioBalanzaSugerido: margen * precioFinal,
+                    precioBalanzaSugerido: (margen * precioFinal) / divideX,
                     pesoPromedioActual: this.buscarPesoPromedio(idBalanza),
                     pesoPromedioNuevo: pesoPromedioNuevo,
                 };
@@ -466,7 +476,7 @@ const app = Vue.createApp({
                     importe: nuevaData.data.importe,
                     importeFinal: nuevaData.data.importeFinal
                 });
-                console.log(this.detalleCompra)
+                //console.log(this.detalleCompra)
         
                 // Blanqueo de los campos del formulario para agregar detalle de compra:
                 this.nuevoDetalle.idProducto = null;
@@ -481,7 +491,8 @@ const app = Vue.createApp({
         async agregarArticuloDespues(idCompraElegida, idProveedorElegido, ivaElegido, descuentoElegido) {
             try {
                 const idBalanza = this.buscarRelacionProductoIdBalanza(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
-                const margen = this.buscarRelacionProductoMargen(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
+                const margen = await this.buscarRelacionProductoMargen(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
+                const divideX = await this.buscarDivideX(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
                 const precioUnitario = this.nuevoDetallePosterior.precioUnitario;
                 const cantidad = this.nuevoDetallePosterior.cantidad;
                 const precioFinal = precioUnitario * (ivaElegido === false ? 1.21 : 1) * (1 - descuentoElegido);
@@ -498,7 +509,7 @@ const app = Vue.createApp({
                     importe: cantidad * precioUnitario,
                     importeFinal: cantidad * precioFinal,
                     precioBalanzaActual: this.buscarPrecio(idBalanza),
-                    precioBalanzaSugerido: margen * precioFinal,
+                    precioBalanzaSugerido: (margen * precioFinal) / divideX,
                     pesoPromedioActual: this.buscarPesoPromedio(idBalanza),
                     pesoPromedioNuevo: pesoPromedioNuevo
                 };
@@ -529,7 +540,7 @@ const app = Vue.createApp({
                     precioUnitario: null
                 };
         
-                console.log('Detalles acumulados después de cargar:', this.detallecompraSeleccionada);
+                //console.log('Detalles acumulados después de cargar:', this.detallecompraSeleccionada);
             } catch (error) {
                 console.error('Error al agregar detalle:', error);
             }

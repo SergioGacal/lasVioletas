@@ -26,6 +26,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 - 22/8 se implementa la entidad productos_x_proveedor que tiene los productos comercializados por cada proveedor así como sus principales características. Esta tabla se usa en conjunto con los formularios de compras/stock.
 - 14/9 se implementa la versión preliminar del formulario de compras, sus tablas relacionadas y métodos.
 - 19/9 se agrega tabla de relación para vincular balanza, productos, proveedores que permite calcular los márgenes, movimientos de stock y mejorar la valuación.
+- 10/10 se implementa versión 2 del formulario para registrar las compras.
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

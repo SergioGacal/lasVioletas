@@ -3,7 +3,7 @@ const app = Vue.createApp({
         return {
             // URL's
             url:'https://gacalsergio.pythonanywhere.com',
-            url: 'http://127.0.0.1:5000',
+            //url: 'http://127.0.0.1:5000',
 
             // Mostrar ocultar botones y secciones
             nuevaCompra : false,

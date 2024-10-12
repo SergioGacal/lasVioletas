@@ -11,7 +11,7 @@ const app = Vue.createApp({
             nuevoDetalleCompra : false, // muestro la factura cargada
 
 
-            elegirCompra : true, // probando
+            elegirCompra : false,
             borrarCompra : false,
             edicionCompra: false,
             agregarDetalleCompra: false,

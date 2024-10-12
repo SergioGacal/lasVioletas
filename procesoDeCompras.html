@@ -76,8 +76,8 @@
                     </form>
                 </div>
                 <div class="ultimaCompra" v-if="!nuevaFacturaCompra"> <!-- Factura Cargada -->
-                    <table class="table table-bordered table-hover w-100">
-                        <thead class="thead-light">
+                    <table class="table table-bordered table-hover w-100 table-dark">
+                        <thead class="thead-dark">
                             <tr>
                                 <th>Id Compra</th>
                                 <th>Id Proveedor</th>
@@ -135,8 +135,8 @@
                 </div>
 
                 <div class="detalleCompraEnProceso table table-bordered mt-3" v-if="detalleCompra.length"> <!-- Detalle Compra en proceso -->
-                    <table class="table table-bordered mt-3" v-if="detalleCompra.length">
-                        <thead>
+                    <table class="table table-bordered mt-3 table-dark" v-if="detalleCompra.length">
+                        <thead class="thead-dark">
                             <tr>
                                 <th>ID Detalle</th>
                                 <th>ID Compra</th>
@@ -189,8 +189,8 @@
                     <button v-if="detallecompraSeleccionada.length" type="button" class="btn btn-danger" @click="borrarDetalleCompra = !borrarDetalleCompra">{{borrarDetalleCompra ? 'Cancelar Borrar':'Borrar'}} </button>
                     
                     <div class="table-responsive">
-                        <table class="table table-bordered"> <!-- compra -->
-                            <thead class="table-light">
+                        <table class="table table-bordered table-dark"> <!-- compra -->
+                            <thead class="thead-dark">
                                 <tr>
                                     <th>Id</th>
                                     <th v-if="!edicionCompra">Proveedor</th>
@@ -276,8 +276,8 @@
 
                         </div>
 
-                        <table v-if="detallecompraSeleccionada && detallecompraSeleccionada.length" class="table table-bordered"> <!-- detalle -->
-                            <thead class="table-light">
+                        <table v-if="detallecompraSeleccionada && detallecompraSeleccionada.length" class="table table-bordered table-dark"> <!-- detalle -->
+                            <thead class="thead-dark">
                                 <tr>
                                     <th>Producto</th>
                                     <th>Unidades</th>

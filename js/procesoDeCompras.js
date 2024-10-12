@@ -92,6 +92,75 @@ const app = Vue.createApp({
         
     },
     methods: {
+        logsDeVariables(){
+            console.log("---- ESTADO DE VARIABLES PRINCIPALES ----");
+
+            // Estado de los flags para mostrar/ocultar secciones
+            console.log("nuevaCompra:", this.nuevaCompra);
+            console.log("nuevaFacturaCompra:", this.nuevaFacturaCompra);
+            console.log("nuevoDetalleCompra:", this.nuevoDetalleCompra);
+            console.log("elegirCompra:", this.elegirCompra);
+            console.log("borrarCompra:", this.borrarCompra);
+            console.log("edicionCompra:", this.edicionCompra);
+            console.log("agregarDetalleCompra:", this.agregarDetalleCompra);
+            console.log("borrarDetalleCompra:", this.borrarDetalleCompra);
+            console.log("edicionDetalleCompra:", this.edicionDetalleCompra);
+
+            // Estado de la compra actual
+            console.log("Compra actual (compra):", this.compra);
+            console.log("idCompra:", this.compra.idCompra);
+            console.log("idProveedor (compra):", this.compra.idProveedor);
+            console.log("nombreProveedor (compra):", this.compra.nombreProveedor);
+            console.log("fechaCompra:", this.compra.fechaCompra);
+            console.log("numFactura (compra):", this.compra.numFactura);
+            console.log("iva (compra):", this.compra.iva);
+            console.log("descuento (compra):", this.compra.descuento);
+
+            // Última compra guardada
+            console.log("Última compra (ultimaCompra):", this.ultimaCompra);
+            console.log("idCompra (ultimaCompra):", this.ultimaCompra.idCompra);
+            console.log("idProveedor (ultimaCompra):", this.ultimaCompra.idProveedor);
+            console.log("nombreProveedor (ultimaCompra):", this.ultimaCompra.nombreProveedor);
+            console.log("fechaCompra (ultimaCompra):", this.ultimaCompra.fechaCompra);
+            console.log("numFactura (ultimaCompra):", this.ultimaCompra.numFactura);
+            console.log("iva (ultimaCompra):", this.ultimaCompra.iva);
+            console.log("descuento (ultimaCompra):", this.ultimaCompra.descuento);
+
+            // Estado del nuevo detalle de compra
+            console.log("Nuevo detalle de compra (nuevoDetalle):", this.nuevoDetalle);
+            console.log("idCompra (nuevoDetalle):", this.nuevoDetalle.idCompra);
+            console.log("idProducto (nuevoDetalle):", this.nuevoDetalle.idProducto);
+            console.log("unidades (nuevoDetalle):", this.nuevoDetalle.unidades);
+            console.log("cantidad (nuevoDetalle):", this.nuevoDetalle.cantidad);
+            console.log("precioUnitario (nuevoDetalle):", this.nuevoDetalle.precioUnitario);
+
+            // Detalle de compra posterior desde botón agregar
+            console.log("Nuevo detalle posterior (nuevoDetallePosterior):", this.nuevoDetallePosterior);
+            console.log("idCompra (nuevoDetallePosterior):", this.nuevoDetallePosterior.idCompra);
+            console.log("idProducto (nuevoDetallePosterior):", this.nuevoDetallePosterior.idProducto);
+            console.log("unidades (nuevoDetallePosterior):", this.nuevoDetallePosterior.unidades);
+            console.log("cantidad (nuevoDetallePosterior):", this.nuevoDetallePosterior.cantidad);
+            console.log("precioUnitario (nuevoDetallePosterior):", this.nuevoDetallePosterior.precioUnitario);
+
+            // Detalle de compras acumuladas
+            console.log("Detalle de compra (detalleCompra):", this.detalleCompra);
+
+            // Detalle de compra seleccionada
+            console.log("Compra seleccionada (compraSeleccionada):", this.compraSeleccionada);
+            console.log("Suma factura (sumaFactura):", this.sumaFactura);
+            console.log("Detalle factura (detalleFactura):", this.detalleFactura);
+            console.log("Detalle compra seleccionada (detallecompraSeleccionada):", this.detallecompraSeleccionada);
+
+            // Edición de factura
+            console.log("Edición de factura (edicionFactura):", this.edicionFactura);
+
+            // Estado de otras variables
+            //console.log("Proveedores (proveedores):", this.proveedores);
+            //console.log("Productos del proveedor (productosDelProveedor):", this.productosDelProveedor);
+            //console.log("Balanza (balanza):", this.balanza);
+            //console.log("Relación productos (relacionProductos):", this.relacionProductos);
+
+        },
         formatearNumero(valor) {
             const numero = parseFloat(valor);
             if (isNaN(numero)) {
@@ -379,6 +448,7 @@ const app = Vue.createApp({
             this.compra.descuento = 0
         },
         confirmarAltaCompra(){
+            //console.log('Datos de la compra antes de enviar (JSON):', JSON.stringify(this.compra));
             fetch(this.url + '/compra', {
                 method: 'POST',
                 headers: {
@@ -550,6 +620,24 @@ const app = Vue.createApp({
             this.nuevaFacturaCompra = true,
             this.nuevoDetalleCompra = false,
             this.detalleCompra = [],
+            this.compra = {
+                idCompra: null,
+                idProveedor: '',
+                nombreProveedor: '',
+                fechaCompra: new Date().toISOString().split('T')[0],  // Fecha actual
+                numFactura: 0,
+                iva: false,
+                descuento: 0,
+            },
+            this.ultimaCompra = {
+                idCompra: null,
+                idProveedor: null,
+                nombreProveedor: null,
+                fechaCompra: null,
+                numFactura: null,
+                iva: null,
+                descuento: null,
+            },
             this.ultimaCompra.idCompra = null,
             this.ultimaCompra.idProveedor = null,
             this.ultimaCompra.nombreProveedor = null,
@@ -557,6 +645,8 @@ const app = Vue.createApp({
             this.ultimaCompra.numFactura = null,
             this.ultimaCompra.iva = null,
             this.ultimaCompra.descuento = null
+            //console.clear(),
+            //this.logsDeVariables()
         },
         salir(){
             window.close();

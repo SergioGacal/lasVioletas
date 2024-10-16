@@ -517,7 +517,9 @@ const app = Vue.createApp({
                     pesoPromedioActual: this.buscarPesoPromedio(idBalanza),
                     pesoPromedioNuevo: pesoPromedioNuevo,
                 };
-        
+                //console.log(detalleCompraAgregada.pesoPromedioNuevo,'nuevo peso')
+                //console.log(detalleCompraAgregada.pesoPromedioActual,'peso anterior')
+                
                 const response = await fetch(this.url + '/compra/agrega_detalle', {
                     method: 'POST',
                     headers: {

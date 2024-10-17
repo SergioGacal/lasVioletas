@@ -250,7 +250,9 @@ const app = Vue.createApp({
                 .then(response => response.json())
                 .then(data => {
                     if (data.idProveedor === idProveedor && data.idProdXProv === idProducto) {
-                        return parseFloat(data.divideX) || 1;
+                        if (data.medicion === 'unidad') {
+                            return parseFloat(data.divideX) || 1;
+                        }
                     }
                     return 1;
                 });

@@ -209,6 +209,11 @@ const app = Vue.createApp({
             const relacion = this.relacionProductos.find(item => item.idProveedor === idProveedor && item.idProdXProv === idProdXProv);
             return relacion ? relacion.idBalanza : null;
         },
+        buscarRelacionProductoProductoDeProductos(idProveedor,idProdXProv){
+            const relacion = this.relacionProductos.find(item => item.idProveedor === idProveedor && item.idProdXProv === idProdXProv);
+            //console.log('relacion traida producto:',relacion.idProducto)
+            return relacion ? relacion.idProducto : null;
+        },
         buscarRelacionProductoMargen(idProveedor, idProdXProv) {
             const relacion = this.relacionProductos.find(item => item.idProveedor === idProveedor && item.idProdXProv === idProdXProv);
             return relacion ? relacion.margen : null;
@@ -249,6 +254,36 @@ const app = Vue.createApp({
                     }
                     return 1;
                 });
+        },
+        actualizarPesoPromedio(idBalanza, idProducto, idProveedor, idProdXProv, pesoPromedio) {
+            const data = {
+                idBalanza: idBalanza,
+                idProdXProv: idProdXProv,
+                idProducto: idProducto,
+                idProveedor: idProveedor,
+                pesoPromedio: pesoPromedio
+            };
+           fetch(this.url + '/relacion/peso', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.error || 'Error al actualizar el peso promedio');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                //console.log('Respuesta del servidor:', data);
+            })
+            .catch(error => {
+                console.error('Error al actualizar el peso promedio:', error);
+            });
         },
         cargarCompras() {
             this.compras = []
@@ -497,6 +532,7 @@ const app = Vue.createApp({
         },
         async agregarArticulo() {
             try {
+                const idProductoDeProductos = this.buscarRelacionProductoProductoDeProductos(this.ultimaCompra.idProveedor,this.nuevoDetalle.idProducto);
                 const idBalanza = this.buscarRelacionProductoIdBalanza(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto);
                 const precioFinal = this.nuevoDetalle.precioUnitario * (this.ultimaCompra.iva === 0 ? 1.21 : 1) * (1 - this.ultimaCompra.descuento);
                 const margen = await this.buscarRelacionProductoMargen(this.ultimaCompra.idProveedor, this.nuevoDetalle.idProducto);
@@ -548,7 +584,8 @@ const app = Vue.createApp({
                     importe: nuevaData.data.importe,
                     importeFinal: nuevaData.data.importeFinal
                 });
-                //console.log(this.detalleCompra)
+                //console.log(idBalanza, idProductoDeProductos, this.ultimaCompra.idProveedor, detalleCompraAgregada.idProducto, pesoPromedioNuevo)
+                this.actualizarPesoPromedio(idBalanza, idProductoDeProductos, this.ultimaCompra.idProveedor, detalleCompraAgregada.idProducto, pesoPromedioNuevo)
         
                 // Blanqueo de los campos del formulario para agregar detalle de compra:
                 this.nuevoDetalle.idProducto = null;
@@ -562,6 +599,7 @@ const app = Vue.createApp({
         },
         async agregarArticuloDespues(idCompraElegida, idProveedorElegido, ivaElegido, descuentoElegido) {
             try {
+                const idProductoDeProductos = this.buscarRelacionProductoProductoDeProductos(idProveedorElegido,this.nuevoDetallePosterior.idProducto);
                 const idBalanza = this.buscarRelacionProductoIdBalanza(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
                 const margen = await this.buscarRelacionProductoMargen(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
                 const divideX = await this.buscarDivideX(idProveedorElegido, this.nuevoDetallePosterior.idProducto);
@@ -569,7 +607,6 @@ const app = Vue.createApp({
                 const cantidad = this.nuevoDetallePosterior.cantidad;
                 const precioFinal = precioUnitario * (ivaElegido === false ? 1.21 : 1) * (1 - descuentoElegido);
                 const pesoPromedioNuevo = await this.buscarUnidadesKilos(idProveedorElegido, this.nuevoDetallePosterior.idProducto, this.nuevoDetallePosterior.unidades, this.nuevoDetallePosterior.cantidad);
-        
                 const nuevoDetallePosteriorJson = {
                     idCompra: idCompraElegida,
                     idProveedor: idProveedorElegido,
@@ -585,6 +622,7 @@ const app = Vue.createApp({
                     pesoPromedioActual: this.buscarPesoPromedio(idBalanza),
                     pesoPromedioNuevo: pesoPromedioNuevo
                 };
+                this.actualizarPesoPromedio(idBalanza, idProductoDeProductos, idProveedorElegido, this.nuevoDetallePosterior.idProducto, pesoPromedioNuevo)
         
                 const response = await fetch(this.url + '/compra/agrega_detalle', {
                     method: 'POST',

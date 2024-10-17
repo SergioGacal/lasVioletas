@@ -31,7 +31,6 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 
 ## Octubre 2024
 - 10/10 se implementa versión 2 del formulario para registrar las compras.
-- Pendiente actualizar el peso promedio de cada artículo en tabla relacion_productos. Cuando se cambió el endpoint de alta de registro para realizar las funciones en js no se agregó una función asincrónica para actualizar con el numero valor.
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

@@ -1238,6 +1238,14 @@ def get_registro_compra(idDetalle):
         return jsonify(resultado),200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+@app.route('/compras/xbalanza/<int:idBalanza>', methods=['GET']) # x idBalanza
+def get_registro_balanza(idBalanza):
+    detalles = DetalleCompra.query.all()
+    result = detalleCompras_schema.dump(detalles)
+    compras_filtradas = [compra for compra in result if compra.get('balanza') and compra['balanza'].get('idBalanza') == idBalanza]
+    if not compras_filtradas:
+        return {"message": "No se encontraron compras para esa balanza"}, 404
+    return {"compras": compras_filtradas}, 200
 @app.route('/compra/agrega_detalle', methods=['POST'])
 def agregar_detalle_compra():
     try:

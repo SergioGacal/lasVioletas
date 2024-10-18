@@ -323,12 +323,19 @@ class CompraSchema(ma.Schema):
 
 class DetalleCompraSchema(ma.Schema):
     compra = ma.Nested(CompraSchema, only=['idCompra'])
-    producto = ma.Nested(Productos_x_proveedorSchema, only=['idProdXProv', 'descripcion'])  # Ajusta según los campos necesarios
+    producto = ma.Nested(Productos_x_proveedorSchema, only=['idProdXProv', 'descripcion'])
+    balanza = fields.Method("datosBalanza")
     class Meta:
-        fields = ('idDetalle', 'idCompra', 'idProveedor', 'idProducto', 'unidades', 'cantidad', 'precioUnitario', 'precioFinal', 'importe', 'importeFinal', 'compra', 'producto', 'precioBalanzaActual', 'precioBalanzaSugerido', 'pesoPromedioActual','pesoPromedioNuevo')
+        fields = ('idDetalle', 'idCompra', 'idProveedor', 'idProducto', 'unidades', 'cantidad', 'precioUnitario', 'precioFinal', 'importe', 'importeFinal', 'compra', 'producto', 'balanza', 'precioBalanzaActual', 'precioBalanzaSugerido', 'pesoPromedioActual', 'pesoPromedioNuevo')
+    def datosBalanza(self, obj):
+        relacion_producto = RelacionProductos.query.filter_by(idProveedor=obj.idProveedor,idProdXProv=obj.idProducto).first()
+        if relacion_producto:
+            if relacion_producto.balanza:
+                return {'idBalanza': relacion_producto.balanza.idBalanza,'nombre1': relacion_producto.balanza.nombre1}
+        return None
 
 class RelacionProductosSchema(ma.Schema):
-    balanza = ma.Nested(BalanzaSchema, only=['nombre1'])
+    balanza = ma.Nested(BalanzaSchema, only=['nombre1', 'idBalanza'])
     producto = ma.Nested(ProductoSchema, only=['descripcion'])
     proveedor = fields.Method('recuperarNombre')
     datosPxP = fields.Method('agregarDatosPxP')

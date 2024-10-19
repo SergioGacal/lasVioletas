@@ -38,8 +38,8 @@ const app = Vue.createApp({
                 tipoProveedor: '',
                 observacion: '',
             },
-            filtroFechaStock: '',
-            filtroProveedor: '',
+            filtroFechaStock: '', // Se usa en comprar.html para filtro x fecha
+            filtroProveedor: '', // Se usa en comprar.html para filtro x proveedor
             stocksFiltradosPorProveedor: '',
             nuevaFechaStock: '',
             fechaBorrarStock: '',
@@ -755,7 +755,7 @@ const app = Vue.createApp({
                 fechasUnicas.push(this.nuevaFechaStock);
             }
             const ultimas5Fechas = fechasUnicas.sort().reverse().slice(0, 5);
-            console.log("fechas unicas " + fechasUnicas.sort());
+            //console.log("fechas unicas " + fechasUnicas.sort());
             return ultimas5Fechas
             /* return fechasUnicas.sort(); */ /* así estaba antes se modifica el 26/04/2024 */
         },

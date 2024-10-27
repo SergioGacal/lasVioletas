@@ -735,6 +735,9 @@ const app = Vue.createApp({
             }
             return date; // Devuelve la fecha sin cambios si no está en el formato esperado
         },
+        recargarPagina(){
+            window.location.reload()
+        },
 
 
     },

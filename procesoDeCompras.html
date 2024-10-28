@@ -179,8 +179,8 @@
                 <div class="seleccionDeCompra" v-if="!compraSeleccionada"> <!-- Combo seleccion de compra -->
                     <p>Seleccione:</p>
                     <select v-model="compraSeleccionada" @change="cargarDetalleCompraSeleccionada" class="form-select">
-                        <option v-for="compra in compras.sort((a, b) => b.idCompra - a.idCompra)" :key="compra.idCompra" :value="compra.idCompra">
-                            {{compra.idCompra}} - {{compra.fechaCompra}} - {{compra.numFactura}} - {{compra.proveedorNombre}}</option>
+                        <option v-for="compra in compras.sort((a, b) => new Date(b.fechaCompra) - new Date(a.fechaCompra))" :key="compra.idCompra" :value="compra.idCompra">
+                            {{compra.fechaCompra}} - {{compra.proveedorNombre}} - {{compra.numFactura}}</option>
                     </select>
                 </div>
                 <div class="compraSeleccionada"v-if="compraSeleccionada" >  <!-- Cuando elijo una compra -->

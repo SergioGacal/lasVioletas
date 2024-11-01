@@ -32,6 +32,9 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 ## Octubre 2024
 - 10/10 se implementa versión 2 del formulario para registrar las compras.
 
+## Noviembre 2024
+- 
+
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.
 - **HTML/CSS**: Lenguajes de marcado y estilos utilizados para estructurar y diseñar la interfaz de usuario.

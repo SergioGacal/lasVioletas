@@ -81,7 +81,7 @@
                 <tbody>
                     <tr v-for="producto in productosConProveedores" :key="producto.idProdXProv">
                         <td>{{ producto.nombreProveedor }}</td>
-                        <td>{{ producto.descripcion }}</td>
+                        <td>{{producto.idProdXProv}} - {{ producto.descripcion }}</td>
                         <td>{{ producto.medicion }}</td>
                         <td>{{ producto.divideX }}</td>
                     </tr>

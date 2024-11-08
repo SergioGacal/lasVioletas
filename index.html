@@ -17,33 +17,19 @@
         </div>
 
         <div class="panel">
-            <button v-bind:class="{ 'fondo': verProveedores }" class="botonVioleta" @click="mostrarOcultarProveedores">
-                <span></span><span></span><span></span><span></span> {{ verProveedores ? 'Ocultar Proveedores' :
-                'Proveedores' }}
-            </button>
+            <button v-bind:class="{ 'fondo': verProveedores }" class="botonVioleta" @click="mostrarOcultarProveedores"><span></span><span></span><span></span><span></span> {{ verProveedores ? 'Ocultar Proveedores' : 'Proveedores' }}</button>
+            <button v-bind:class="{ 'fondo': verProductos }" class="botonVioleta" @click="mostrarOcultarProductos"><span></span><span></span><span></span><span></span>{{verProductos ? 'Ocultar Productos' : 'Productos'}}</button>
+            <button v-bind:class="{ 'fondo': verStock }" class="botonVioleta" @click="mostrarOcultarStock"><span></span><span></span><span></span><span></span>{{verStock ? 'Ocultar Stock' : 'Stock'}} </button>
+            <button v-bind:class="{ 'fondo': verImportes }" class="botonVioleta" @click="mostrarOcultarImportes"><span></span><span></span><span></span><span></span>{{verImportes ? 'Ocultar Importes' : 'Importes'}}</button>
+            <button class="botonVioleta" onclick="window.open('https://gacalsergio.pythonanywhere.com/', '_blank')"><span></span><span></span><span></span><span></span>Servidor Local</button>
+            <button class="botonVioleta" onclick="window.open('menu.html', '_blank')"><span></span><span></span><span></span><span></span>Menú</button>
+            
+            <!-- <button class="botonVioleta" onclick="window.open('celular.html', '_blank')"><span></span><span></span><span></span><span></span>Celular</button> -->
+            <!-- <button class="botonVioleta" onclick="window.open('comprar.html', '_blank')"><span></span><span></span><span></span><span></span>Comprar</button> -->
+            <!-- <button class="botonVioleta" onclick="window.open('gastos.html', '_blank')"><span></span><span></span><span></span><span></span>Gastos</button> -->
+            <!-- <button class="botonVioleta" onclick="window.open('balanza.html', '_blank')"><span></span><span></span><span></span><span></span>Balanza</button> -->
 
-            <button v-bind:class="{ 'fondo': verProductos }" class="botonVioleta" @click="mostrarOcultarProductos">
-                <span></span><span></span><span></span><span></span>{{verProductos ? 'Ocultar Productos' : 'Productos'}}
-            </button>
-            <button v-bind:class="{ 'fondo': verStock }" class="botonVioleta" @click="mostrarOcultarStock">
-                <span></span><span></span><span></span><span></span>{{verStock ? 'Ocultar Stock' : 'Stock'}} </button>
-            <button v-bind:class="{ 'fondo': verImportes }" class="botonVioleta" @click="mostrarOcultarImportes">
-                <span></span><span></span><span></span><span></span>{{verImportes ? 'Ocultar Importes' :
-                'Importes'}}</button>
-            <button class="botonVioleta"
-                onclick="window.open('https://gacalsergio.pythonanywhere.com/', '_blank')"><span></span><span></span><span></span><span></span>Servidor
-                Local</button>
-            <button class="botonVioleta"
-                onclick="window.open('celular.html', '_blank')"><span></span><span></span><span></span><span></span>Celular</button>
-            <button class="botonVioleta"
-                onclick="window.open('comprar.html', '_blank')"><span></span><span></span><span></span><span></span>Comprar</button>                
-            <button class="botonVioleta"
-                onclick="window.open('gastos.html', '_blank')"><span></span><span></span><span></span><span></span>Gastos</button>                
-            <button class="botonVioleta"
-                onclick="window.open('balanza.html', '_blank')"><span></span><span></span><span></span><span></span>Balanza</button>                
-                <button class="botonVioleta"
-                onclick="window.open('menu.html', '_blank')"><span></span><span></span><span></span><span></span>Menú</button>                
-            </div>
+        </div>
 
         <div class="proveedores" v-if="verProveedores">
             <h2>Proveedores</h2>

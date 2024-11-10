@@ -34,6 +34,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 
 ## Noviembre 2024
 - Se prepara nueva versión del formulario de compras.
+- Corrección del menú principal. Se removieron los íconos que están en el menú mobile.
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

@@ -87,6 +87,9 @@ const app = Vue.createApp({
                 }
             });
         },
+        salir(){
+            window.close();
+        },
         
 
 

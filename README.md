@@ -35,7 +35,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 ## Noviembre 2024
 - Se prepara nueva versión del formulario de compras.
 - Corrección del menú principal. Se removieron los íconos que están en el menú mobile.
-- Se incorpora al menú "ultima compra" que indica el último precio de cada producto.
+- Se sube endopoint que genera/reemplaza entidad ultimaCompra que agrupa el último producto para cada item de balanza. 
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

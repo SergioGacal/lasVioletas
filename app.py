@@ -1455,5 +1455,45 @@ def modificar_margen():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# ultimoPrecio
+@app.route('/actualizar_precio', methods=['GET'])
+def actualizar_precio():
+    try:
+        drop_query = "DROP TABLE IF EXISTS ultimoPrecio;"
+        db.session.execute(text(drop_query))
+        db.session.commit()
+        create_query = """
+        CREATE TABLE ultimoPrecio AS
+        SELECT 
+            dc.idDetalle,
+            dc.precioFinal,
+            dc.pesoPromedioNuevo,
+            rp.idBalanza,
+            rp.idProducto,
+            rp.idProveedor,
+            rp.idProdXProv,
+            c.fechaCompra
+        FROM detalle_compra dc
+        JOIN relacion_productos rp 
+            ON dc.idProveedor = rp.idProveedor 
+            AND dc.idProducto = rp.idProdXProv
+        JOIN compra c
+            ON dc.idCompra = c.idCompra
+        WHERE c.fechaCompra = (
+              SELECT MAX(c2.fechaCompra)
+              FROM compra c2
+              JOIN detalle_compra dc2 ON c2.idCompra = dc2.idCompra
+              WHERE dc2.idProducto = dc.idProducto
+                AND dc2.idProveedor = dc.idProveedor
+          )
+        ORDER BY rp.idBalanza, c.fechaCompra DESC;
+        """
+        db.session.execute(text(create_query))
+        db.session.commit()  # Confirmar la creación de la nueva tabla
+        return jsonify({'message': 'Tabla `ultimoPrecio` actualizada correctamente.'}), 200
+    except Exception as e:
+        app.logger.error(f"Error al ejecutar la consulta: {str(e)}")
+        return jsonify({'message': 'Hubo un error al procesar la solicitud.'}), 500
+
 if __name__=='__main__':  
     app.run(debug=True, port=5000) 

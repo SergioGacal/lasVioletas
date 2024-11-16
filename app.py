@@ -243,6 +243,26 @@ class RelacionProductos(db.Model):
         self.pesoPromedio = pesoPromedio
         self.observacion = observacion
 
+class UltimoPrecio(db.Model):
+    __tablename__ = 'ultimoPrecio'
+    idDetalle = db.Column(db.Integer, primary_key=True)
+    precioFinal = db.Column(db.Numeric)
+    pesoPromedioNuevo = db.Column(db.Float)
+    idProducto = db.Column(db.Integer)
+    idProveedor = db.Column(db.Integer)
+    idProdXProv = db.Column(db.Integer)
+    fechaCompra = db.Column(db.Date)
+    idBalanza = db.Column(db.Integer)
+    def __init__(self, idDetalle, precioFinal, pesoPromedioNuevo, idProducto, idProveedor, idProdXProv, fechaCompra, idBalanza, nombre1):
+        self.idDetalle = idDetalle
+        self.precioFinal = precioFinal
+        self.pesoPromedioNuevo = pesoPromedioNuevo
+        self.idProducto = idProducto
+        self.idProveedor = idProveedor
+        self.idProdXProv = idProdXProv
+        self.fechaCompra = fechaCompra
+        self.idBalanza = idBalanza
+
 with app.app_context():
     db.create_all()
 
@@ -354,6 +374,40 @@ class RelacionProductosSchema(ma.Schema):
     class Meta:
         fields = ('idBalanza','balanza', 'idProducto', 'producto', 'idProveedor', 'proveedor', 'idProdXProv','margen', 'pesoPromedio', 'observacion', 'datosPxP',)
 
+class UltimoPrecioSchema(Schema):
+    idDetalle = fields.Int()
+    precioFinal = fields.Decimal()
+    pesoPromedioNuevo = fields.Float()
+    idProducto = fields.Int()
+    producto = fields.Method('recuperarProducto')
+    idProveedor = fields.Int()
+    proveedor = fields.Method('recuperarProveedor')
+    idProdXProv = fields.Int()
+    datosPxP = fields.Method('agregarDatosPxP')
+    fechaCompra = fields.Date()
+    idBalanza = fields.Int()
+    balanza = fields.Method('recuperaBalanza')
+    def recuperarProducto(self,obj):
+        producto = Producto.query.get(obj.idProducto)
+        return producto.descripcion if producto else None
+    def recuperarProveedor(self,obj):
+        proveedor = Proveedor.query.get(obj.idProveedor)
+        return proveedor.nombreProveedor if proveedor else None
+    def recuperaBalanza(self, obj):
+        nombre = Balanza.query.get(obj.idBalanza)
+        return nombre.nombre1 if nombre else None
+    def agregarDatosPxP(self, obj):
+        datos = Productos_x_proveedor.query.filter_by(idProveedor=obj.idProveedor, idProdXProv=obj.idProdXProv).first()
+        if datos:
+            return {
+                'descripcion': datos.descripcion,
+                'medicion': datos.medicion,
+                'divideX': datos.divideX
+            }
+        return None
+    class Meta:
+        fields = ('idDetalle','precioFinal','pesoPromedioNuevo','idProducto','producto','idProveedor', 'proveedor', 'idProdXProv','fechaCompra','idBalanza','balanza', 'datosPxP')
+
 producto_schema=ProductoSchema()
 productos_schema=ProductoSchema(many=True)
 stock_schema=StockSchema()
@@ -387,6 +441,8 @@ detalleCompra_schema = DetalleCompraSchema()
 detalleCompras_schema = DetalleCompraSchema(many=True)
 relacionProducto_schema = RelacionProductosSchema()
 relacionProductos_schema = RelacionProductosSchema(many=True)
+ultimoPrecio_schema=UltimoPrecioSchema()
+ultimosPrecios_schema=UltimoPrecioSchema(many=True)
 
 @app.route('/',methods=['GET'])
 def home():
@@ -399,22 +455,8 @@ def home():
     <title>Document</title>
 </head>
 <body>
-
-    <h1>Menú</h1>
-    <h2>Endpoints</h2>
-
-    <h3>get</h3>
-
-
-
-    <h3>delete</h3>
-
-    <h3>post</h3>
-
-    <h3>put</h3>
-
-
-
+    <h1>LasVioletas 2.0</h1>
+    <h2>Servidor ok</h2>
 </body>
 </html>
 '''
@@ -1494,6 +1536,12 @@ def actualizar_precio():
     except Exception as e:
         app.logger.error(f"Error al ejecutar la consulta: {str(e)}")
         return jsonify({'message': 'Hubo un error al procesar la solicitud.'}), 500
+@app.route('/ultimo_precio', methods=['GET'])
+def mostrar_ultimoPrecio():
+    ultimoPrecio = UltimoPrecio.query.all()
+    resultado = ultimosPrecios_schema.dump(ultimoPrecio)
+    return jsonify(resultado)
+
 
 if __name__=='__main__':  
     app.run(debug=True, port=5000) 

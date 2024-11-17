@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Violetas - Ultimo Precio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/ultimoprecio.css">
+    <link rel="icon" type="image/png" href="./img/ultimoprecio.jpeg">
+</head>
+<body>
+    <div id="app" class="container vh-100 d-flex flex-column">
+        <div class="encabezado bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuEncabezado" aria-controls="menuEncabezado" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                      </button>
+                      <div class="collapse navbar-collapse" id="menuEncabezado">
+                        <div class="navbar-nav">
+                            <button type="button" class="btn btn-primary me-2" @click="comboSeleccion = !comboSeleccion; balanzaSeleccionada = comboSeleccion ? balanzaSeleccionada : null"> {{ comboSeleccion ? 'Cerrar' : 'Elegir' }}</button>
+                            <button type="button" class="btn btn-primary me-2">Actualizar</button>
+                            <button type="button" class="btn btn-success" @click.prevent="salir">Salir</button>
+                        </div>
+                      </div>
+                      <!-- <img class="logo d-none d-sm-block ms-auto" src="./img/logo2.png" alt="Las Violetas" style="max-width: 100px; height: auto;"> -->
+                </div>
+            </nav>
+        </div>
+        <div class="cuerpo">
+            <div class="comboSeleccion" v-if="comboSeleccion">
+                <p>Seleccione</p>
+                <select v-model="balanzaSeleccionada">
+                    <option v-for="balanzaSeleccionada in balanza" :key="balanzaSeleccionada.idBalanza" :value="balanzaSeleccionada.idBalanza"> {{balanzaSeleccionada.idBalanza}} - {{balanzaSeleccionada.nombre1}} </option>
+                </select>
+            </div>
+
+            <p v-if="balanzaSeleccionada" > Mi elección... {{balanzaSeleccionada}} </p>
+            <p v-if="balanzaSeleccionada" >registros... {{ultimaCompra.length}} </p>
+
+            <h4  v-if="progresoCarga !=100">Cargando...</h4>
+            <div v-if="progresoCarga !=100" class="progress">
+                <div class="progress-bar" role="progressbar" :aria-valuenow="progresoCarga" aria-valuemin="0" aria-valuemax="100" :style="{ width: progresoCarga + '%', height: '100px' }">{{ progresoCarga }}%</div>
+              </div>
+
+        </div>
+        <div class="pie">
+            lasVioletas2024
+        </div>
+
+
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="./js/ultimoprecio.js"></script>
+</body>
+
+</html>

@@ -10,22 +10,12 @@ const app = Vue.createApp({
             balanza: [],
 
             // variables
-            progresoCarga: 0,
             comboSeleccion: false,
             balanzaSeleccionada: null,
 
         };
     },
     methods: {
-        cargando() {
-            const intervalo = setInterval(() => {
-              if (this.progresoCarga < 100) {
-                this.progresoCarga += 1;
-              } else {
-                clearInterval(intervalo);
-              }
-            }, 150);
-          },
         cargarDatosUltimasCompras(){
             fetch(this.url + '/ultimo_precio')
                 .then(response => response.json())
@@ -48,6 +38,29 @@ const app = Vue.createApp({
                     console.error('Ocurrio un error al cargar la balanza', error);
                 });
         },
+        formatearNumero(valor) {
+            const numero = parseFloat(valor);
+            if (isNaN(numero)) {
+                return '';
+            }
+            return numero.toLocaleString('es-LA', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true,
+            });
+        },
+        actualizar() {
+            fetch(this.url + '/actualizar_precio')
+              .then(response => response.json())
+              .then(data => {
+                alert("Respuesta OK: " + JSON.stringify(data));
+                this.cargarDatosUltimasCompras();
+              })
+              .catch(error => {
+                console.error('Ocurrió un error al actualizar', error);
+                alert("Ocurrió un error al actualizar.");
+              });
+          },
         salir(){
             window.close();
         },
@@ -55,7 +68,6 @@ const app = Vue.createApp({
     mounted() {
         this.cargarDatosUltimasCompras();
         this.cargarBalanza();
-        this.cargando();
     }
 });
 

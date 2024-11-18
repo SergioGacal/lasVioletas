@@ -20,7 +20,7 @@
                       <div class="collapse navbar-collapse" id="menuEncabezado">
                         <div class="navbar-nav">
                             <button type="button" class="btn btn-primary me-2" @click="comboSeleccion = !comboSeleccion; balanzaSeleccionada = comboSeleccion ? balanzaSeleccionada : null"> {{ comboSeleccion ? 'Cerrar' : 'Elegir' }}</button>
-                            <button type="button" class="btn btn-primary me-2">Actualizar</button>
+                            <button type="button" class="btn btn-primary me-2" @click="actualizar">Actualizar</button>
                             <button type="button" class="btn btn-success" @click.prevent="salir">Salir</button>
                         </div>
                       </div>
@@ -33,16 +33,37 @@
                 <p>Seleccione</p>
                 <select v-model="balanzaSeleccionada">
                     <option v-for="balanzaSeleccionada in balanza" :key="balanzaSeleccionada.idBalanza" :value="balanzaSeleccionada.idBalanza"> {{balanzaSeleccionada.idBalanza}} - {{balanzaSeleccionada.nombre1}} </option>
-                </select>
+                </select><hr>
+            </div>
+            <div v-if="balanzaSeleccionada" class="datosSeleccion">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-dark">
+                        <thead class="thead-dark">
+                          <tr>
+                            <th>Fecha de Compra</th>
+                            <th>Proveedor</th>
+                            <th>Producto</th>
+                            <th>Precio Final</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <template v-if="ultimaCompra.filter(c => c.idBalanza === balanzaSeleccionada).length">
+                              <tr v-for="compra in ultimaCompra.filter(c => c.idBalanza === balanzaSeleccionada)" :key="compra.idDetalle">
+                                <td>{{ compra.fechaCompra }}</td>
+                                <td>{{ compra.proveedor }}</td>
+                                <td>{{ compra.datosPxP.descripcion }}</td>
+                                <td class="text-end">{{ formatearNumero(compra.precioFinal) }}</td>
+                              </tr>
+                            </template>
+                            <tr v-else>
+                              <td colspan="4" class="text-center">No hay resultados para mostrar.</td>
+                            </tr>
+                          </tbody>
+                     </table>
+                </div>
+
             </div>
 
-            <p v-if="balanzaSeleccionada" > Mi elección... {{balanzaSeleccionada}} </p>
-            <p v-if="balanzaSeleccionada" >registros... {{ultimaCompra.length}} </p>
-
-            <h4  v-if="progresoCarga !=100">Cargando...</h4>
-            <div v-if="progresoCarga !=100" class="progress">
-                <div class="progress-bar" role="progressbar" :aria-valuenow="progresoCarga" aria-valuemin="0" aria-valuemax="100" :style="{ width: progresoCarga + '%', height: '100px' }">{{ progresoCarga }}%</div>
-              </div>
 
         </div>
         <div class="pie">

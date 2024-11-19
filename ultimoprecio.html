@@ -24,16 +24,19 @@
                             <button type="button" class="btn btn-success" @click.prevent="salir">Salir</button>
                         </div>
                       </div>
-                      <!-- <img class="logo d-none d-sm-block ms-auto" src="./img/logo2.png" alt="Las Violetas" style="max-width: 100px; height: auto;"> -->
                 </div>
             </nav>
         </div>
         <div class="cuerpo">
-            <div class="comboSeleccion" v-if="comboSeleccion">
-                <p>Seleccione</p>
+            <div class="comboSeleccion" v-if="comboSeleccion"> <!-- activo al seleccionar "Elegir" -->
+                
+                <p>Seleccione Balanza</p>
                 <select v-model="balanzaSeleccionada">
-                    <option v-for="balanzaSeleccionada in balanza" :key="balanzaSeleccionada.idBalanza" :value="balanzaSeleccionada.idBalanza"> {{balanzaSeleccionada.idBalanza}} - {{balanzaSeleccionada.nombre1}} </option>
+                    <option v-for="balanzaSeleccionada in balanza" :key="balanzaSeleccionada.idBalanza" :value="balanzaSeleccionada.idBalanza"> {{balanzaSeleccionada.idBalanza}} - {{balanzaSeleccionada.nombre1}} - $ {{balanzaSeleccionada.precio}} </option>
                 </select><hr>
+            </div>
+            <div v-if="balanzaSeleccionada" class="datosBalanza">
+                <button type="button" class="btn btn-dark" @click="balanzaSeleccionada = null">Reset</button><hr>
             </div>
             <div v-if="balanzaSeleccionada" class="datosSeleccion">
                 <div class="table-responsive">

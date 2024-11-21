@@ -37,6 +37,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 - Corrección del menú principal. Se removieron los íconos que están en el menú mobile.
 - Se sube endopoint que genera/reemplaza entidad ultimaCompra que agrupa el último producto para cada item de balanza. 
 
+
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.
 - **HTML/CSS**: Lenguajes de marcado y estilos utilizados para estructurar y diseñar la interfaz de usuario.

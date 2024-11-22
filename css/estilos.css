@@ -28,7 +28,7 @@ h1 {
     padding: 0;
     background-color:black;
     text-align: center;
-    color:   pink;
+    color:   #09cc0e;
     font-size: 3rem;
 }
 
@@ -40,7 +40,7 @@ th,
 td {
     padding: 8px;
     text-align: left;
-    border-bottom: 1px solid pink;
+    border-bottom: 1px solid #09cc0e;
 }
 .imagen4x4 {
     height: 80px;
@@ -51,7 +51,7 @@ td {
 
 
 .fondo{
-    background-color: pink;
+    background-color: #09cc0e;
 }
 
 .botonVioleta {
@@ -68,9 +68,9 @@ td {
     margin-right: 50px;
 }
 .botonVioleta:hover {
-    background: pink;
+    background: #09cc0e;
     color: brown;
-    box-shadow: 0 0 5px pink, 0 0 25px pink, 0 0 50px pink, 0 0 100px pink;
+    box-shadow: 0 0 5px #09cc0e, 0 0 25px #09cc0e, 0 0 50px #09cc0e, 0 0 100px #09cc0e;
     -webkit-box-reflect: below 1px linear-gradient(transparent);
 }
 

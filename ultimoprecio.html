@@ -14,17 +14,15 @@
         <div class="encabezado bg-dark">
             <nav class="navbar navbar-expand-lg navbar-dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Ultimo Precio</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuEncabezado" aria-controls="menuEncabezado" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                      </button>
-                      <div class="collapse navbar-collapse" id="menuEncabezado">
+                    <a class="navbar-brand d-lg-none">Ultimo Precio</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuEncabezado" aria-controls="menuEncabezado" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="menuEncabezado">
                         <div class="navbar-nav">
-                            <button type="button" class="btn btn-primary me-2" @click="comboSeleccion = !comboSeleccion; balanzaSeleccionada = comboSeleccion ? balanzaSeleccionada : null"> {{ comboSeleccion ? 'Cerrar' : 'Elegir' }}</button>
+                            <button type="button" class="btn btn-primary me-2" @click="comboSeleccion = !comboSeleccion; balanzaSeleccionada = comboSeleccion ? balanzaSeleccionada : null">{{ comboSeleccion ? 'Cerrar' : 'Elegir' }}</button>
                             <button type="button" class="btn btn-primary me-2" @click="actualizar">Actualizar</button>
                             <button type="button" class="btn btn-success" @click.prevent="salir">Salir</button>
                         </div>
-                      </div>
+                    </div>
                 </div>
             </nav>
         </div>

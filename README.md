@@ -41,7 +41,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.
-- **HTML/CSS**: Lenguajes de marcado y estilos utilizados para estructurar y diseñar la interfaz de usuario.
+- **HTML/CSS**: Lenguajes de marcado y estilos utilizados para estructurar y diseñar la interfaz de usuario. Se agregó bootstrap en algunas interfaces.
 - **JavaScript**: Lenguaje de programación utilizado para la lógica del cliente.
 - **MySQL**: Sistema de gestión de bases de datos relacional utilizado para almacenar los datos del proyecto.
 - **PythonAnywhere**: Plataforma de alojamiento web utilizada para ejecutar el backend del proyecto.

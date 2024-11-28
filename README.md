@@ -36,7 +36,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 - Se prepara nueva versión del formulario de compras.
 - Corrección del menú principal. Se removieron los íconos que están en el menú mobile.
 - Se sube endopoint que genera/reemplaza entidad ultimaCompra que agrupa el último producto para cada item de balanza. 
-- Se actualiza en el endpoint de ultimaCompra un botón para tomar el precio de las últimas compras.
+- Se actualiza en el endpoint de ultimaCompra para tomar el precio de las últimas compras.
 
 
 ## Tecnologías Utilizadas

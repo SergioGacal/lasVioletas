@@ -15,7 +15,7 @@ SELECT
     pxp.medicion AS Medicion,
     pxp.divideX AS 'Divide X',
     ROUND(CASE 
-        WHEN pxp.medicion = 'unidad' THEN (up.precioFinal / pxp.divideX) * s.cantidad
+        WHEN pxp.medicion = 'unidad' THEN up.precioFinal * s.cantidad
         WHEN pxp.medicion = 'kilo' THEN up.precioFinal * up.pesoPromedioNuevo * s.cantidad
         ELSE 0
     END, 2) AS Valuacion2
@@ -54,7 +54,7 @@ SELECT
     up.pesoPromedioNuevo AS 'Peso Promedio',
     s.cantidad AS Cantidad,
     ROUND(CASE 
-        WHEN pxp.medicion = 'unidad' THEN (up.precioFinal / pxp.divideX) * s.cantidad
+        WHEN pxp.medicion = 'unidad' THEN up.precioFinal * s.cantidad
         WHEN pxp.medicion = 'kilo' THEN up.precioFinal * up.pesoPromedioNuevo * s.cantidad
         ELSE 0
     END, 2) AS Valuacion
@@ -77,6 +77,6 @@ LEFT JOIN
     productos_x_proveedor pxp ON pxp.idProdXProv = up.idProdXProv
                                AND pxp.idProveedor = up.idProveedor
 WHERE 
-    s.fecha = '2024-11-24'
+    s.fecha = (SELECT MAX(fecha) FROM stock)
 ORDER BY 
     s.idProducto;

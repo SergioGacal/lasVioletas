@@ -9,8 +9,75 @@
     <link rel="stylesheet" href="./css/ultimoprecio.css">
     <link rel="icon" type="image/png" href="./img/valuacion.jpeg">
 </head>
-<body>
-    <h1>Valuacion de Stock</h1>
 
-    <h4>...en desarrollo</h4>
+<body>
+    <div id="app" class="container vh-100 d-flex flex-column">
+        <div class="encabezado bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand d-lg-none">Ultimo Precio</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#menuEncabezado" aria-controls="menuEncabezado" aria-expanded="false"
+                        aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="menuEncabezado">
+                        <div class="navbar-nav">
+                            <button type="button" class="btn btn-primary me-2" @click="verDatos = !verDatos">{{ verDatos ? 'Cerrar' : 'Consultar' }}</button>
+                            <button type="button" class="btn btn-primary me-2" @click="todosLosDatos = !todosLosDatos">{{ todosLosDatos ? 'Resumen' : '+ Datos' }}</button>
+                            <button type="button" class="btn btn-success" @click.prevent="salir">Salir</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="cuerpo">
+            <div v-if="verDatos">
+                <p><span class="text-white">Fecha de Stock: </span> <span class="fw-bold">{{ new Date(ultimaValuacion[0]?.Fecha).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }}</span></p>
+                <p><span class="text-white">Valuación: </span> <span class="fw-bold">$ {{ formatearNumero(ultimaValuacion.reduce((sum, producto) => sum + (producto.Valuacion || 0), 0) )}}</span></p>
+                <div class="table-responsive">
+                    <div class="table table-bordered table-dark">
+                        <table class="table table-bordered table-dark">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th class="text-center">Producto</th>
+                                    <th class="text-center" v-if="todosLosDatos">Cantidad</th>
+                                    <th class="text-center" v-if="todosLosDatos">Fecha Precio</th>
+                                    <th class="text-center" v-if="todosLosDatos">Precio Final</th>
+                                    <th class="text-center" v-if="todosLosDatos">Peso Promedio</th>
+                                    <th class="text-center">Valuación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="producto in ultimaValuacion" :key="producto.id">
+                                    <td>{{ producto.id }} - {{ producto.Descripcion }}</td>
+                                    <td v-if="todosLosDatos" class="text-end">{{ producto.Cantidad }}</td>
+                                    <td v-if="todosLosDatos" class="text-center">{{ producto.Fecha.split(' ')[1] + '/' + producto.Fecha.split(' ')[2] + '/' + producto.Fecha.split(' ')[3] }}</td>
+                                    <td v-if="todosLosDatos" class="text-end">{{ formatearNumero(producto['Precio Final'] )}}</td>
+                                    <td class="text-end" v-if="todosLosDatos">{{ formatearNumero(producto['Peso Promedio']) }}</td>
+                                    <td class="text-end">{{ formatearNumero(producto.Valuacion) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+        </div>
+
+        <div class="pie">
+            lasVioletas2024
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="./js/valuacion.js"></script>
 </body>
+
+</html>

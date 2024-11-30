@@ -1542,6 +1542,56 @@ def mostrar_ultimoPrecio():
     resultado = ultimosPrecios_schema.dump(ultimoPrecio)
     return jsonify(resultado)
 
+#valuacion
+@app.route('/valuacion', methods=['GET'])
+def ultimaValuacion():
+    try:
+        consulta = """
+        SELECT 
+            s.fecha AS Fecha,
+            s.idProducto AS id,
+            p.descripcion AS Descripcion,
+            up.fechaCompra AS 'Fecha Cotizacion',
+            up.precioFinal AS 'Precio Final',
+            up.pesoPromedioNuevo AS 'Peso Promedio',
+            s.cantidad AS Cantidad,
+            ROUND(CASE 
+                WHEN pxp.medicion = 'unidad' THEN up.precioFinal * s.cantidad
+                WHEN pxp.medicion = 'kilo' THEN up.precioFinal * up.pesoPromedioNuevo * s.cantidad
+                ELSE 0
+            END, 2) AS Valuacion
+        FROM 
+            stock s
+        JOIN 
+            producto p ON s.idProducto = p.idProducto
+        JOIN 
+            ultimoPrecio up ON s.idProducto = up.idProducto
+        JOIN 
+            (SELECT 
+                idProducto, 
+                MAX(fechaCompra) AS fechaCotizacion
+            FROM 
+                ultimoPrecio
+            GROUP BY 
+                idProducto) sub ON up.idProducto = sub.idProducto 
+                                AND up.fechaCompra = sub.fechaCotizacion
+        LEFT JOIN 
+            productos_x_proveedor pxp ON pxp.idProdXProv = up.idProdXProv
+                                    AND pxp.idProveedor = up.idProveedor
+        WHERE 
+            s.fecha = (SELECT MAX(fecha) FROM stock)
+        ORDER BY 
+            s.idProducto;
+        """
+        
+        resultado = db.session.execute(text(consulta))
+        columnas = resultado.keys()
+        resultados_json = [dict(zip(columnas, row)) for row in resultado]
+        return jsonify(resultados_json), 200
+    
+    except Exception as e:
+        app.logger.error(f"Error al ejecutar la consulta: {str(e)}")
+        return jsonify({'message': 'Hubo un error al procesar la solicitud.'}), 500
 
 if __name__=='__main__':  
     app.run(debug=True, port=5000) 

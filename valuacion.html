@@ -32,7 +32,7 @@
 
         <div class="cuerpo">
             <div v-if="verDatos">
-                <p><span class="text-white">Fecha de Stock: </span> <span class="fw-bold">{{ new Date(ultimaValuacion[0]?.Fecha).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }}</span></p>
+                <p><span class="text-white">Fecha de Stock: </span> <span class="fw-bold">{{ new Date(ultimaValuacion[0]?.Fecha).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }) }}</span></p>
                 <p><span class="text-white">Valuación: </span> <span class="fw-bold">$ {{ formatearNumero(ultimaValuacion.reduce((sum, producto) => sum + (producto.Valuacion || 0), 0) )}}</span></p>
                 <div class="table-responsive">
                     <div class="table table-bordered table-dark">
@@ -51,7 +51,7 @@
                                 <tr v-for="producto in ultimaValuacion.filter(producto => parseFloat(producto.Valuacion) > 0)" :key="producto.id">
                                     <td>{{ producto.id }} - {{ producto.Descripcion }}</td>
                                     <td v-if="todosLosDatos" class="text-end">{{ producto.Cantidad }}</td>
-                                    <td v-if="todosLosDatos" class="text-center">{{ producto.Fecha.split(' ')[1] + '/' + producto.Fecha.split(' ')[2] + '/' + producto.Fecha.split(' ')[3] }}</td>
+                                    <td v-if="todosLosDatos" class="text-center">{{ new Date(producto['Fecha Cotizacion']).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric',timeZone: 'UTC' }) }} </td>
                                     <td v-if="todosLosDatos" class="text-end">{{ formatearNumero(producto['Precio Final'] )}}</td>
                                     <td class="text-end" v-if="todosLosDatos">{{ formatearNumero(producto['Peso Promedio']) }}</td>
                                     <td class="text-end">{{ formatearNumero(producto.Valuacion) }}</td>

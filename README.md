@@ -38,6 +38,9 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 - Se sube endopoint que genera/reemplaza entidad ultimaCompra que agrupa el último producto para cada item de balanza. 
 - Se actualiza en el endpoint de ultimaCompra para tomar el precio de las últimas compras.
 
+## Diciembre 2024
+- Se finaliza la consulta de valuación de mercadería a fecha de stock.
+
 
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.

@@ -30,12 +30,15 @@
             <div class="comboSeleccion" v-if="comboSeleccion"> <!-- activo al seleccionar "Elegir" -->
                 
                 <p>Seleccione Balanza</p>
-                <select v-model="balanzaSeleccionada">
+                <select v-model="balanzaSeleccionada" @change="eleccionBalanza">
                     <option v-for="balanzaSeleccionada in balanza" :key="balanzaSeleccionada.idBalanza" :value="balanzaSeleccionada.idBalanza"> {{balanzaSeleccionada.idBalanza}} - {{balanzaSeleccionada.nombre1}} - $ {{balanzaSeleccionada.precio}} </option>
                 </select><hr>
             </div>
             <div v-if="balanzaSeleccionada" class="datosBalanza">
-                <button type="button" class="btn btn-dark" @click="balanzaSeleccionada = null">Reset</button><hr>
+                <button type="button" class="btn btn-dark" @click="balanzaSeleccionada = null">Reset</button>
+                <!-- <p>Margen Producto: {{ Math.round((margenBalanzaSeleccionada - 1) * 100) }}%</p> -->
+                <hr>
+
             </div>
             <div v-if="balanzaSeleccionada" class="datosSeleccion">
                 <div class="table-responsive">

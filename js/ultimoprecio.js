@@ -8,11 +8,14 @@ const app = Vue.createApp({
             // Cargar datos al inicio
             ultimaCompra: [],
             balanza: [],
+            relacionProductos: [],
 
             // variables
             comboSeleccion: false,
             balanzaSeleccionada: null,
 
+            // datos
+            margenBalanzaSeleccionada: null,
         };
     },
     methods: {
@@ -37,6 +40,24 @@ const app = Vue.createApp({
                 .catch(error => {
                     console.error('Ocurrio un error al cargar la balanza', error);
                 });
+        },
+        cargarRelacionProductos() {
+            fetch(this.url + '/relacion')
+                .then(response => response.json() )
+                .then(data => {
+                    this.relacionProductos = data;
+                    //console.log(this.relacionProductos)
+                })
+                .catch(error => {
+                    console.error('Error al recuperar la relacion de productos.',error);
+                });
+        },
+        eleccionBalanza() {
+            const productoSeleccionado = this.relacionProductos.find(
+                producto => producto.idBalanza === this.balanzaSeleccionada
+            );
+            this.margenBalanzaSeleccionada = productoSeleccionado ? productoSeleccionado.margen : null;
+            const comprasFiltradas = this.ultimaCompra.filter(compra => compra.idBalanza === this.balanzaSeleccionada);
         },
         formatearNumero(valor) {
             const numero = parseFloat(valor);
@@ -68,6 +89,7 @@ const app = Vue.createApp({
     mounted() {
         this.cargarDatosUltimasCompras();
         this.cargarBalanza();
+        this.cargarRelacionProductos();
     }
 });
 

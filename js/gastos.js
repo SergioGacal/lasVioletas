@@ -254,7 +254,10 @@ const app = Vue.createApp({
                 .catch(error => {
                     console.error('Error al realizar el pago total:', error);
                 });
-        }
+        },
+        salir() {
+            window.close();
+        },
     },
     computed: {
         filtrarGastos() {

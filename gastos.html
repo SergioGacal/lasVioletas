@@ -40,9 +40,12 @@
                         Mostrar: {{ filtroPagado === 0 ? 'No Pagados' : filtroPagado === 1 ? 'Pagados' : 'Todos' }}
                     </button>
                     <button @click="resetFiltros">Reset</button>
+                </div><hr>
+                <div class="button-group" >
                     <button @click="mostrarFormulario = !mostrarFormulario">Nuevo Gasto</button>
                     <button @click="salir">Salir</button>
                 </div>
+
             </div>
             <div v-if="mostrarFormulario" class="formulario">
                 <h2>Nuevo Gasto</h2>

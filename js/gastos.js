@@ -117,7 +117,7 @@ const app = Vue.createApp({
                         .then(gastos => {
                             if (gastos.length > 0) {
                                 let fechas = gastos.map(gasto => new Date(gasto.fecha_gasto));
-                                this.filtroFechaDesde = this.formatearFecha(new Date(Math.min(...fechas)));
+                                this.filtroFechaDesde = this.formatearFecha(new Date(Math.min(...fechas))); // inicializa fecha desde con la menor fecha de la tabla
                             }
                             this.gastos = gastos.map(gasto => {
                                 const motivo = this.motivosGasto.find(m => m.idMotivo === gasto.idMotivo);

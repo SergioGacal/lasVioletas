@@ -41,6 +41,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 ## Diciembre 2024
 - Se finaliza la consulta de valuación de mercadería a fecha de stock.
 - Se agregan datos de análisis en la consulta de ultimo precio.
+- Se modifica el ingreso por menú a la versión 2.
 
 
 

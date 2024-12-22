@@ -36,6 +36,7 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 - Se prepara nueva versión del formulario de compras.
 - Corrección del menú principal. Se removieron los íconos que están en el menú mobile.
 - Se sube endopoint que genera/reemplaza entidad ultimaCompra que agrupa el último producto para cada item de balanza. 
+- Se sube consulta que permite ver la valuación de mercadería a la fecha de último stock.
 - Se actualiza en el endpoint de ultimaCompra para tomar el precio de las últimas compras.
 
 ## Diciembre 2024

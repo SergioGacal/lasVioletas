@@ -44,8 +44,6 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 - Se agregan datos de análisis en la consulta de ultimo precio.
 - Se modifica el ingreso por menú a la versión 2.
 
-
-
 ## Tecnologías Utilizadas
 - **Vue.js**: Framework de JavaScript utilizado para construir la interfaz de usuario dinámica.
 - **HTML/CSS**: Lenguajes de marcado y estilos utilizados para estructurar y diseñar la interfaz de usuario. Se agregó bootstrap en algunas interfaces.

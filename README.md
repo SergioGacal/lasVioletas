@@ -55,4 +55,3 @@ El enfoque que permitirá agregar soluciones parciales será por pequeños módu
 - **Flask**: Framework de Python utilizado para crear el backend del proyecto y proporcionar una API RESTful.
 - **Git**: Sistema de control de versiones utilizado para gestionar el código del proyecto.
 - **GitHub**: Plataforma de alojamiento de código utilizada para almacenar y compartir el repositorio del proyecto.
-

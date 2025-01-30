@@ -102,6 +102,16 @@
         function lindoDia() {
             alert('Hola!!')
         }
+        function ivaLeopardo() {
+            const url = `https://gacalsergio.pythonanywhere.com/compras/detalle/ivaleopardo`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message || data.error))
+            .catch(error => console.error("Error:", error));
+        }
     </script>
 </head>
 <body>
@@ -175,6 +185,12 @@
                 <p>Valuacion de Stock</p>
             </div>
         </a>
+        <div class="menu-item" onclick="ivaLeopardo()">
+            <img src="img/IVALeopardo.jpeg" alt="Corrección IVA">
+            <div class="overlay">
+                <p>Corrección Iva Leopardo</p>
+            </div>
+        </div>        
         <a href="#" class="menu-item" onclick="window.close(); return false;">
             <img src="./img/salir.jpeg" alt="Valuacion">
             <div class="overlay">

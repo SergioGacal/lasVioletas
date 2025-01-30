@@ -1375,6 +1375,16 @@ def modificar_detalle(idDetalle):
         return jsonify({'mensaje': f'Detalle de compra con id {idDetalle} fue modificado exitosamente.'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+@app.route('/compras/detalle/ivaleopardo' ,methods=['POST'])
+def corregirIVALeopardo():
+    try:
+        sql = text("UPDATE detalle_compra SET precioFinal = precioUnitario, importeFinal = precioUnitario WHERE idProveedor = 25 AND idProducto = 9999 AND precioFinal != precioUnitario;")
+        db.session.execute(sql)
+        db.session.commit()
+        return jsonify({"message":"Registro corregido con éxito"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Se ha producido un error: " + str(e)}), 500
 
 # relacion_productos
 @app.route('/relacion', methods= ['GET'])

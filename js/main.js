@@ -770,32 +770,42 @@ const app = Vue.createApp({
             return this.reporteEfectivoFechasDisponibles.sort();
         },
         stocksFiltradosPorProveedorYFecha() {
+            let filtrados;
             if (this.filtroProveedor && this.filtroFechaStock) {
-              return this.stocks.filter((stock) => {
-                return this.productoProveedor.some(
-                  (producto) =>
-                    producto.idProducto === stock.idProducto &&
-                    producto.idProveedor === Number(this.filtroProveedor)
-                ) && stock.fecha === this.filtroFechaStock;
-              });
+                filtrados = this.stocks.filter((stock) => {
+                    return this.productoProveedor.some(
+                        (producto) =>
+                            producto.idProducto === stock.idProducto &&
+                            producto.idProveedor === Number(this.filtroProveedor)
+                    ) && stock.fecha === this.filtroFechaStock;
+                });
             } else if (this.filtroProveedor) {
-              return this.stocks.filter((stock) => {
-                return this.productoProveedor.some(
-                  (producto) =>
-                    producto.idProducto === stock.idProducto &&
-                    producto.idProveedor === Number(this.filtroProveedor)
-                );
-              });
+                filtrados = this.stocks.filter((stock) => {
+                    return this.productoProveedor.some(
+                        (producto) =>
+                            producto.idProducto === stock.idProducto &&
+                            producto.idProveedor === Number(this.filtroProveedor)
+                    );
+                });
             } else if (this.filtroFechaStock) {
-              return this.stocks.filter((stock) => {
-                return stock.fecha === this.filtroFechaStock;
-              });
+                filtrados = this.stocks.filter((stock) => {
+                    return stock.fecha === this.filtroFechaStock;
+                });
             } else {
-              return this.stocks;
+                filtrados = this.stocks;
             }
-          },
-          
-          
+            let datosACopiar = filtrados.map(stock => {
+                let producto = this.obtenerDescripcionProducto(stock.idProducto);
+                let cantidad = stock.cantidad;
+                return `${producto} Tengo: ${cantidad}`;
+            }).join("\n");
+            navigator.clipboard.writeText(datosACopiar).then(() => {
+                //console.log("Datos copiados al portapapeles:\n" + datosACopiar);
+            }).catch(err => {
+                console.error("Error al copiar: ", err);
+            });
+            return filtrados;
+        }
     },
     mounted() {
         this.generaReporteEfectivo();

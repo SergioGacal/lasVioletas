@@ -205,3 +205,8 @@ p {
     text-decoration: none;
     cursor: pointer;
 }
+
+.diferente-saldo {
+  background-color: #0033a0; /* Azul Francia */
+  color: gold;
+}

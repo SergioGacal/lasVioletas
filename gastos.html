@@ -81,11 +81,11 @@
                     <thead>
                         <tr>
                             <th>Motivo</th>
-                            <th>Importe</th>
+                            <th>Saldo</th>
                             <th>Fecha Gasto</th>
                             <th>Fecha Pago</th>
                             <th>Pagado</th>
-                            <th>Saldo</th>
+                            <th>Importe</th>
                             <th>Observaciones</th>
                             <th>Acciones</th>
                         </tr>
@@ -95,11 +95,11 @@
                             <tr
                                 v-if="filtroPagado === 2 || (filtroPagado === 1 && gasto.pagado) || (filtroPagado === 0 && !gasto.pagado)">
                                 <td>{{ gasto.motivoDescripcion }}</td>
+                                <td style="text-align: right;" :class="{ 'diferente-saldo': gasto.saldo !== gasto.importe && gasto.saldo !== 0 }">{{ formatearNumero(gasto.saldo) }}</td>
+                                <td style="text-align: center;" > {{ gasto.fecha_gasto }}</td>
+                                <td style="text-align: center;" > {{ gasto.fecha_pago }}</td>
+                                <td style="text-align: center;" > {{ gasto.pagado ? 'Si' : 'No' }}</td>
                                 <td style="text-align: right;">{{ formatearNumero(gasto.importe) }}</td>
-                                <td>{{ gasto.fecha_gasto }}</td>
-                                <td>{{ gasto.fecha_pago }}</td>
-                                <td>{{ gasto.pagado ? 'Si' : 'No' }}</td>
-                                <td style="text-align: right;">{{ formatearNumero(gasto.saldo) }}</td>
                                 <td>{{ gasto.observaciones }}</td>
                                 <td>
                                     <div class="button-group">
